@@ -70,5 +70,5 @@ jobs:
               -e SPRING_DATASOURCE_USERNAME=roomfit \
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
-              -e CORS_ALLOWED_ORIGINS=http://3.34.165.22,http://localhost:5173 \
+              -e CORS_ALLOWED_ORIGINS=https://roomfit-khu.kro.kr,http://localhost:5173 \
               ghcr.io/${{ github.repository_owner }}/roomfit-backend:${{ github.sha }}
