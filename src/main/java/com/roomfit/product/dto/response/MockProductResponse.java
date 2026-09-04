@@ -1,9 +1,12 @@
 package com.roomfit.product.dto.response;
 
 import com.roomfit.product.domain.MockProduct;
+import com.roomfit.product.service.PurchaseUrlHealthCheckService;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Schema(description = "MVP 제품 카드 렌더링용 Mock Product 응답")
 public class MockProductResponse {
@@ -37,12 +40,18 @@ public class MockProductResponse {
             example = "https://www.ikea.com/kr/ko/p/micke-desk-white-80354281/",
             format = "uri", nullable = true)
     private final String purchaseUrl;
+    @Schema(description = "가장 최근 purchaseUrl 헬스체크 결과. 아직 한 번도 체크되지 않았으면 null",
+            example = "ALIVE", nullable = true)
+    private final String purchaseUrlStatus;
+    @Schema(description = "purchaseUrl을 마지막으로 확인한 시각. 아직 체크되지 않았으면 null", nullable = true)
+    private final LocalDateTime purchaseUrlCheckedAt;
     @Schema(description = "가구 앞/옆 권장 여유 공간")
     private final RequiredClearanceResponse requiredClearance;
 
     private MockProductResponse(String productId, String variantId, String type, String name, String brand,
                                 double width, double depth, double height, Integer price,
                                 List<String> styleTags, String imageUrl, String purchaseUrl,
+                                String purchaseUrlStatus, LocalDateTime purchaseUrlCheckedAt,
                                 RequiredClearanceResponse requiredClearance) {
         this.productId = productId;
         this.variantId = variantId;
@@ -56,10 +65,16 @@ public class MockProductResponse {
         this.styleTags = styleTags;
         this.imageUrl = imageUrl;
         this.purchaseUrl = purchaseUrl;
+        this.purchaseUrlStatus = purchaseUrlStatus;
+        this.purchaseUrlCheckedAt = purchaseUrlCheckedAt;
         this.requiredClearance = requiredClearance;
     }
 
     public static MockProductResponse from(MockProduct product) {
+        return from(product, Optional.empty());
+    }
+
+    public static MockProductResponse from(MockProduct product, Optional<PurchaseUrlHealthCheckService.UrlHealth> health) {
         return new MockProductResponse(
                 product.getProductId(),
                 product.getVariantId(),
@@ -73,6 +88,8 @@ public class MockProductResponse {
                 product.getStyleTags(),
                 product.getImageUrl(),
                 product.getPurchaseUrl(),
+                health.map(h -> h.status().name()).orElse(null),
+                health.map(PurchaseUrlHealthCheckService.UrlHealth::checkedAt).orElse(null),
                 RequiredClearanceResponse.from(product.getRequiredClearance())
         );
     }
@@ -123,6 +140,14 @@ public class MockProductResponse {
 
     public String getPurchaseUrl() {
         return purchaseUrl;
+    }
+
+    public String getPurchaseUrlStatus() {
+        return purchaseUrlStatus;
+    }
+
+    public LocalDateTime getPurchaseUrlCheckedAt() {
+        return purchaseUrlCheckedAt;
     }
 
     public RequiredClearanceResponse getRequiredClearance() {

@@ -7,6 +7,7 @@ import com.roomfit.product.catalog.GeneratedFurnitureCatalog;
 import com.roomfit.product.domain.MockProduct;
 import com.roomfit.product.repository.MockProductRepository;
 import com.roomfit.product.service.MockProductService;
+import com.roomfit.product.service.PurchaseUrlHealthCheckService;
 import com.roomfit.product.service.ProductRecommendationService;
 import com.roomfit.room.Furniture;
 import com.roomfit.room.FurnitureBoundary;
@@ -26,7 +27,7 @@ class RecommendationFeasibilityTest {
 
     private final GeneratedFurnitureCatalog catalog = GeneratedFurnitureCatalog.get();
     private final RuleBasedPlacementService placementService = new RuleBasedPlacementService(
-            new MockProductService(new MockProductRepository()),
+            new MockProductService(new MockProductRepository(), new PurchaseUrlHealthCheckService(new MockProductRepository())),
             new ProductRecommendationService(new MockProductRepository()));
 
     static Stream<String> canonicalFurnitureTypes() {

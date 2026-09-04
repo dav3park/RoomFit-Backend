@@ -83,7 +83,9 @@ public class RoomUploadRequest {
         private String id;
         @Schema(description = "문/창문 타입", example = "door", allowableValues = {"door", "window"})
         private String type;
-        @Schema(description = "위치한 벽", example = "south", allowableValues = {"north", "south", "east", "west"})
+        @Schema(description = "이 문/창문이 위치한 벽. `walls[].id`를 참조하는 wall id 문자열이 표준이며, "
+                + "walls가 비어 있던 과거 업로드/샘플과의 하위 호환을 위해 레거시 north/south/east/west "
+                + "리터럴도 계속 허용된다.", example = "wall-2")
         private String wall;
         @Schema(description = "해당 벽 시작점 기준 offset(meter)", example = "0.7")
         private Double offset;

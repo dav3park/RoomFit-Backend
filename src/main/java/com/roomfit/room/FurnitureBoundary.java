@@ -2,6 +2,7 @@ package com.roomfit.room;
 
 import com.roomfit.product.catalog.GeneratedFurnitureCatalog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,10 @@ public final class FurnitureBoundary {
     public static final double DEFAULT_WALL_THICKNESS_METERS = 0.12;
     public static final double EPSILON = 1.0e-9;
     private static final double RIGHT_ANGLE_TOLERANCE_DEGREES = 1.0e-4;
+    private static final double WALL_CHAIN_TOLERANCE_METERS = 0.05;
+    private static final double AXIS_ALIGNED_EDGE_TOLERANCE_METERS = 0.01;
+    private static final double POLYGON_CLAMP_STEP_METERS = 0.05;
+    private static final int POLYGON_CLAMP_MAX_STEPS_PER_AXIS = 400;
 
     private FurnitureBoundary() {
     }
@@ -73,11 +78,26 @@ public final class FurnitureBoundary {
         return isInside(room, furniture.getPosition(), footprint(furniture));
     }
 
+    // Non-rectangular rooms (L-shaped studios, etc.) are handled by walking the
+    // room's own wall polygon instead of a single axis-aligned bounding box —
+    // see `orderedPolygon`. Simple rectangular rooms (today's common case, and
+    // every existing test fixture) deliberately keep using the original
+    // per-side-inset arithmetic below unchanged: `orderedPolygon` returns
+    // empty for them on purpose, so this method's behavior for a rectangle is
+    // byte-for-byte the same as before this class supported concave rooms.
     public static boolean isInside(Room room, Position center, Footprint footprint) {
         if (!finitePosition(center)) {
             return false;
         }
-        Optional<UsableBounds> usable = usableBounds(room);
+        Optional<List<Position>> polygon = orderedPolygon(room);
+        if (polygon.isPresent()) {
+            return isInsidePolygon(room, polygon.get(), center, footprint);
+        }
+        return isInsideRectangle(room, center, footprint);
+    }
+
+    private static boolean isInsideRectangle(Room room, Position center, Footprint footprint) {
+        Optional<UsableBounds> usable = usableBoundsRectangle(room);
         if (usable.isEmpty()) {
             return false;
         }
@@ -90,6 +110,24 @@ public final class FurnitureBoundary {
         });
     }
 
+    private static boolean isInsidePolygon(Room room, List<Position> polygon, Position center, Footprint footprint) {
+        List<Wall> walls = room.getWalls();
+        for (Offset corner : footprint.corners()) {
+            double x = center.getX() + corner.x();
+            double z = center.getZ() + corner.z();
+            if (!pointInPolygon(x, z, polygon)) {
+                return false;
+            }
+            for (Wall wall : walls) {
+                double clearance = wall.getThickness() / 2.0 + WALL_CLEARANCE_METERS;
+                if (distanceToWallSegment(x, z, wall) < clearance - EPSILON) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static Optional<Position> clamp(Room room, Position proposed, Furniture furniture) {
         return clamp(room, proposed, footprint(furniture));
     }
@@ -98,7 +136,15 @@ public final class FurnitureBoundary {
         if (!finitePosition(proposed)) {
             return Optional.empty();
         }
-        Optional<UsableBounds> usable = usableBounds(room);
+        Optional<List<Position>> polygon = orderedPolygon(room);
+        if (polygon.isPresent()) {
+            return clampToPolygon(room, polygon.get(), proposed, footprint);
+        }
+        return clampToRectangle(room, proposed, footprint);
+    }
+
+    private static Optional<Position> clampToRectangle(Room room, Position proposed, Footprint footprint) {
+        Optional<UsableBounds> usable = usableBoundsRectangle(room);
         if (usable.isEmpty()) {
             return Optional.empty();
         }
@@ -116,7 +162,69 @@ public final class FurnitureBoundary {
         ));
     }
 
+    // No closed-form inward offset of a (possibly concave) polygon is computed
+    // here — for an L-shaped room that's fiddly to get right at the reflex
+    // corner. Instead: if `proposed` already clears every wall by the required
+    // margin, keep it as-is; otherwise fall back to a bounded nearest-point
+    // grid search within the polygon's own bounding box, reusing `isInsidePolygon`
+    // as the sole source of truth for validity. Bounded by
+    // `POLYGON_CLAMP_MAX_STEPS_PER_AXIS` per axis so a pathologically large
+    // scanned room can't turn one clamp call into an unbounded scan.
+    private static Optional<Position> clampToPolygon(Room room, List<Position> polygon, Position proposed, Footprint footprint) {
+        if (isInsidePolygon(room, polygon, proposed, footprint)) {
+            return Optional.of(proposed);
+        }
+
+        UsableBounds bounds = polygonBounds(polygon);
+        double minX = bounds.minX() - footprint.minX();
+        double maxX = bounds.maxX() - footprint.maxX();
+        double minZ = bounds.minZ() - footprint.minZ();
+        double maxZ = bounds.maxZ() - footprint.maxZ();
+        if (maxX < minX - EPSILON || maxZ < minZ - EPSILON) {
+            return Optional.empty();
+        }
+
+        int stepsX = Math.min(POLYGON_CLAMP_MAX_STEPS_PER_AXIS,
+                (int) Math.ceil((maxX - minX) / POLYGON_CLAMP_STEP_METERS) + 1);
+        int stepsZ = Math.min(POLYGON_CLAMP_MAX_STEPS_PER_AXIS,
+                (int) Math.ceil((maxZ - minZ) / POLYGON_CLAMP_STEP_METERS) + 1);
+
+        Position best = null;
+        double bestDistanceSquared = Double.MAX_VALUE;
+        for (int ix = 0; ix < stepsX; ix++) {
+            double x = Math.min(maxX, minX + ix * POLYGON_CLAMP_STEP_METERS);
+            for (int iz = 0; iz < stepsZ; iz++) {
+                double z = Math.min(maxZ, minZ + iz * POLYGON_CLAMP_STEP_METERS);
+                Position candidate = new Position(x, z);
+                if (!isInsidePolygon(room, polygon, candidate, footprint)) {
+                    continue;
+                }
+                double dx = x - proposed.getX();
+                double dz = z - proposed.getZ();
+                double distanceSquared = dx * dx + dz * dz;
+                if (distanceSquared < bestDistanceSquared) {
+                    bestDistanceSquared = distanceSquared;
+                    best = candidate;
+                }
+            }
+        }
+        return Optional.ofNullable(best);
+    }
+
     public static Optional<UsableBounds> usableBounds(Room room) {
+        Optional<List<Position>> polygon = orderedPolygon(room);
+        if (polygon.isPresent()) {
+            // A loose superset (the polygon's own bounding box), not a tight
+            // usable region — callers that only need a search envelope (e.g.
+            // RoomPlanImportValidator's candidate grid) are fine with that,
+            // since `isInside`/`clamp` above remain the authoritative,
+            // polygon-aware correctness gate for any candidate this produces.
+            return Optional.of(polygonBounds(polygon.get()));
+        }
+        return usableBoundsRectangle(room);
+    }
+
+    private static Optional<UsableBounds> usableBoundsRectangle(Room room) {
         if (!finiteRoom(room)) {
             return Optional.empty();
         }
@@ -170,6 +278,128 @@ public final class FurnitureBoundary {
             }
         }
         return new WallInsets(left, right, top, bottom);
+    }
+
+    /**
+     * Chains `room.getWalls()` end-to-end (matching endpoints within
+     * `WALL_CHAIN_TOLERANCE_METERS`) into one ordered, closed polygon loop.
+     * Returns empty — meaning "use the rectangle model instead" — whenever:
+     *   - there are fewer than 3 walls,
+     *   - the walls don't chain into a single closed loop (e.g. legacy
+     *     uploads with no wall segments, or a partial/gapped scan), or
+     *   - the loop it finds is a plain 4-sided axis-aligned rectangle, since
+     *     that's exactly the shape the original rectangle arithmetic already
+     *     handles, and this method must not change behavior for that case.
+     * Genuinely non-rectangular loops (L-shapes, pentagons, rotated rooms,
+     * etc.) are the only ones returned.
+     */
+    private static Optional<List<Position>> orderedPolygon(Room room) {
+        List<Wall> walls = room.getWalls();
+        if (walls == null || walls.size() < 3) {
+            return Optional.empty();
+        }
+
+        List<Wall> remaining = new ArrayList<>(walls);
+        List<Position> loop = new ArrayList<>();
+        Wall first = remaining.remove(0);
+        if (first.getStart() == null || first.getEnd() == null) {
+            return Optional.empty();
+        }
+        loop.add(first.getStart());
+        Position cursor = first.getEnd();
+
+        while (!remaining.isEmpty()) {
+            int matchIndex = -1;
+            boolean reversed = false;
+            for (int i = 0; i < remaining.size(); i++) {
+                Wall candidate = remaining.get(i);
+                if (candidate.getStart() == null || candidate.getEnd() == null) {
+                    continue;
+                }
+                if (near(candidate.getStart(), cursor)) {
+                    matchIndex = i;
+                    reversed = false;
+                    break;
+                }
+                if (near(candidate.getEnd(), cursor)) {
+                    matchIndex = i;
+                    reversed = true;
+                    break;
+                }
+            }
+            if (matchIndex < 0) {
+                return Optional.empty();
+            }
+            Wall next = remaining.remove(matchIndex);
+            loop.add(cursor);
+            cursor = reversed ? next.getStart() : next.getEnd();
+        }
+
+        if (loop.size() < 3 || !near(cursor, loop.get(0))) {
+            return Optional.empty();
+        }
+        return isAxisAlignedRectangle(loop) ? Optional.empty() : Optional.of(loop);
+    }
+
+    private static boolean near(Position a, Position b) {
+        return Math.hypot(a.getX() - b.getX(), a.getZ() - b.getZ()) <= WALL_CHAIN_TOLERANCE_METERS;
+    }
+
+    private static boolean isAxisAlignedRectangle(List<Position> polygon) {
+        if (polygon.size() != 4) {
+            return false;
+        }
+        for (int i = 0; i < polygon.size(); i++) {
+            Position a = polygon.get(i);
+            Position b = polygon.get((i + 1) % polygon.size());
+            double dx = Math.abs(b.getX() - a.getX());
+            double dz = Math.abs(b.getZ() - a.getZ());
+            boolean axisAligned = dx <= AXIS_ALIGNED_EDGE_TOLERANCE_METERS
+                    || dz <= AXIS_ALIGNED_EDGE_TOLERANCE_METERS;
+            if (!axisAligned) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean pointInPolygon(double px, double pz, List<Position> polygon) {
+        boolean inside = false;
+        int n = polygon.size();
+        for (int i = 0, j = n - 1; i < n; j = i++) {
+            double xi = polygon.get(i).getX();
+            double zi = polygon.get(i).getZ();
+            double xj = polygon.get(j).getX();
+            double zj = polygon.get(j).getZ();
+            boolean crosses = (zi > pz) != (zj > pz)
+                    && px < (xj - xi) * (pz - zi) / (zj - zi) + xi;
+            if (crosses) {
+                inside = !inside;
+            }
+        }
+        return inside;
+    }
+
+    private static double distanceToWallSegment(double px, double pz, Wall wall) {
+        Position a = wall.getStart();
+        Position b = wall.getEnd();
+        double dx = b.getX() - a.getX();
+        double dz = b.getZ() - a.getZ();
+        double lengthSquared = dx * dx + dz * dz;
+        double t = lengthSquared < EPSILON ? 0
+                : ((px - a.getX()) * dx + (pz - a.getZ()) * dz) / lengthSquared;
+        t = Math.max(0, Math.min(1, t));
+        double nearestX = a.getX() + t * dx;
+        double nearestZ = a.getZ() + t * dz;
+        return Math.hypot(px - nearestX, pz - nearestZ);
+    }
+
+    private static UsableBounds polygonBounds(List<Position> polygon) {
+        double minX = polygon.stream().mapToDouble(Position::getX).min().orElseThrow();
+        double maxX = polygon.stream().mapToDouble(Position::getX).max().orElseThrow();
+        double minZ = polygon.stream().mapToDouble(Position::getZ).min().orElseThrow();
+        double maxZ = polygon.stream().mapToDouble(Position::getZ).max().orElseThrow();
+        return new UsableBounds(minX, maxX, minZ, maxZ);
     }
 
     private static Offset rotate(double x, double z, double cosine, double sine) {

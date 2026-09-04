@@ -76,8 +76,9 @@ public class RoomService {
         List<Wall> walls = nullToEmpty(request.getWalls()).stream()
                 .map(this::toWall)
                 .toList();
+        Set<String> wallIds = walls.stream().map(Wall::getId).collect(Collectors.toSet());
         List<Opening> openings = nullToEmpty(request.getOpenings()).stream()
-                .map(this::toOpening)
+                .map(opening -> toOpening(opening, wallIds))
                 .toList();
         List<Furniture> furniture = nullToEmpty(request.getFurniture()).stream()
                 .map(this::toFurniture)
@@ -180,16 +181,28 @@ public class RoomService {
                 height, thickness);
     }
 
-    private Opening toOpening(RoomUploadRequest.OpeningData opening) {
+    // "wall" historically had to be one of the 4 cardinal literals (a room was
+    // always a rectangle, so every wall mapped onto exactly one side). Now
+    // that `walls[]` can describe an arbitrary (non-rectangular) polygon, a
+    // door/window may sit on a 5th+ wall that has no cardinal side at all —
+    // so "wall" is primarily a `walls[].id` reference, with the 4 legacy
+    // literals kept valid for old uploads/samples that never sent a walls array.
+    private static final Set<String> LEGACY_CARDINAL_WALLS = Set.of("north", "south", "east", "west");
+
+    private Opening toOpening(RoomUploadRequest.OpeningData opening, Set<String> wallIds) {
         if (opening == null || isBlank(opening.getId()) || isBlank(opening.getType()) || isBlank(opening.getWall())
                 || !nonNegative(opening.getOffset()) || !positive(opening.getWidth()) || !positive(opening.getHeight())
                 || !Set.of("door", "window").contains(opening.getType())
-                || !Set.of("north", "south", "east", "west").contains(opening.getWall())) {
+                || !isValidWallReference(opening.getWall(), wallIds)) {
             throw new CustomException(ErrorCode.INVALID_OPENING_DATA);
         }
 
         return new Opening(opening.getId(), opening.getType(), opening.getWall(), opening.getOffset(),
                 opening.getWidth(), opening.getHeight(), opening.getSillHeight());
+    }
+
+    private boolean isValidWallReference(String wall, Set<String> wallIds) {
+        return LEGACY_CARDINAL_WALLS.contains(wall) || wallIds.contains(wall);
     }
 
     private Furniture toFurniture(RoomUploadRequest.FurnitureData furniture) {

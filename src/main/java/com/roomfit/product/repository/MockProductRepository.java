@@ -20,7 +20,7 @@ public class MockProductRepository {
         this(defaultProducts());
     }
 
-    MockProductRepository(List<MockProduct> products) {
+    public MockProductRepository(List<MockProduct> products) {
         this.products = List.copyOf(products);
         validateUniqueProductIds(this.products);
     }

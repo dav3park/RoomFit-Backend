@@ -11,6 +11,7 @@ import com.roomfit.placement.ValidationService;
 import com.roomfit.product.repository.MockProductRepository;
 import com.roomfit.product.service.MockProductService;
 import com.roomfit.product.service.ProductRecommendationService;
+import com.roomfit.product.service.PurchaseUrlHealthCheckService;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,7 +115,8 @@ class LlmProviderIsolationConfigTest {
 
     private FallbackPlacementService placement(LlmFeedbackProperties properties) {
         PlacementService service = placementConfig.placementService(properties, objectMapper,
-                new MockProductService(repository), new ProductRecommendationService(repository),
+                new MockProductService(repository, new PurchaseUrlHealthCheckService(repository)),
+                new ProductRecommendationService(repository),
                 new ValidationService());
         return (FallbackPlacementService) service;
     }

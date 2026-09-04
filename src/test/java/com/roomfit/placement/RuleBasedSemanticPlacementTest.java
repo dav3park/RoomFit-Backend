@@ -6,6 +6,7 @@ import com.roomfit.agent.domain.LifestyleGoal;
 import com.roomfit.product.repository.MockProductRepository;
 import com.roomfit.product.service.MockProductService;
 import com.roomfit.product.service.ProductRecommendationService;
+import com.roomfit.product.service.PurchaseUrlHealthCheckService;
 import com.roomfit.room.Furniture;
 import com.roomfit.room.FurnitureBoundary;
 import com.roomfit.room.FurnitureStatus;
@@ -24,7 +25,8 @@ class RuleBasedSemanticPlacementTest {
 
     private final MockProductRepository products = new MockProductRepository();
     private final RuleBasedPlacementService service = new RuleBasedPlacementService(
-            new MockProductService(products), new ProductRecommendationService(products));
+            new MockProductService(products, new PurchaseUrlHealthCheckService(products)),
+            new ProductRecommendationService(products));
 
     @Test
     void requestOrderDoesNotPreventDeskMonitorStack() {

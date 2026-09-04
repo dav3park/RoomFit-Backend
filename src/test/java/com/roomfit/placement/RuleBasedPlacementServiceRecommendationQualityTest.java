@@ -7,6 +7,7 @@ import com.roomfit.common.CustomException;
 import com.roomfit.common.ErrorCode;
 import com.roomfit.product.repository.MockProductRepository;
 import com.roomfit.product.service.MockProductService;
+import com.roomfit.product.service.PurchaseUrlHealthCheckService;
 import com.roomfit.product.service.ProductRecommendationService;
 import com.roomfit.room.Furniture;
 import com.roomfit.room.Room;
@@ -27,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class RuleBasedPlacementServiceRecommendationQualityTest {
 
-    private final MockProductService mockProductService = new MockProductService(new MockProductRepository());
+    private final MockProductService mockProductService = new MockProductService(new MockProductRepository(), new PurchaseUrlHealthCheckService(new MockProductRepository()));
     private final ProductRecommendationService productRecommendationService =
             new ProductRecommendationService(new MockProductRepository());
     private final ValidationService validationService = new ValidationService();

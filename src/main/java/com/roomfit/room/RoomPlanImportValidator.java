@@ -143,10 +143,20 @@ public class RoomPlanImportValidator {
     }
 
     private void addWallWarnings(Room room, List<RoomImportWarning> warnings) {
+        // room.width/depth is only a meaningful "canonical boundary" to compare
+        // wall endpoints against when the room's own walls actually form a
+        // simple 4-sided axis-aligned rectangle — for a non-rectangular
+        // (e.g. L-shaped) room, wall endpoints legitimately fall well inside
+        // that bounding box, and flagging that as a normalization warning
+        // would be noise, not signal.
+        boolean isAxisAlignedRectangleRoom = isAxisAlignedRectangleRoom(room);
         for (Wall wall : room.getWalls()) {
             if (wall.getThickness() == 0) {
                 warnings.add(warning("ZERO_WALL_THICKNESS_ACCEPTED", wall.getId(), null,
                         "RoomPlan이 보고한 wall thickness=0 값을 원본 그대로 유지했습니다.", null, null, null, null, null));
+            }
+            if (!isAxisAlignedRectangleRoom) {
+                continue;
             }
             boolean dimensionDifference = nearButDifferent(wall.getStart().getX(), room.getWidth())
                     || nearButDifferent(wall.getEnd().getX(), room.getWidth())
@@ -158,6 +168,30 @@ public class RoomPlanImportValidator {
                         null, null, null, null, null));
             }
         }
+    }
+
+    private boolean isAxisAlignedRectangleRoom(Room room) {
+        List<Wall> walls = room.getWalls();
+        if (walls == null || walls.isEmpty()) {
+            // Nothing to compare wall endpoints against anyway — the warning
+            // loop above never fires in this case regardless of this result.
+            return true;
+        }
+        if (walls.size() != 4) {
+            return false;
+        }
+        double tolerance = 0.01;
+        for (Wall wall : walls) {
+            if (wall.getStart() == null || wall.getEnd() == null) {
+                return false;
+            }
+            double dx = Math.abs(wall.getEnd().getX() - wall.getStart().getX());
+            double dz = Math.abs(wall.getEnd().getZ() - wall.getStart().getZ());
+            if (dx > tolerance && dz > tolerance) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void validateWallGeometry(Room room) {

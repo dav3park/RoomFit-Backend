@@ -13,14 +13,18 @@ import java.util.List;
 public class MockProductService {
 
     private final MockProductRepository mockProductRepository;
+    private final PurchaseUrlHealthCheckService purchaseUrlHealthCheckService;
 
-    public MockProductService(MockProductRepository mockProductRepository) {
+    public MockProductService(MockProductRepository mockProductRepository,
+                              PurchaseUrlHealthCheckService purchaseUrlHealthCheckService) {
         this.mockProductRepository = mockProductRepository;
+        this.purchaseUrlHealthCheckService = purchaseUrlHealthCheckService;
     }
 
     public List<MockProductResponse> getMockProducts() {
         return mockProductRepository.findAll().stream()
-                .map(MockProductResponse::from)
+                .map(product -> MockProductResponse.from(product,
+                        purchaseUrlHealthCheckService.getHealth(product.getProductId())))
                 .toList();
     }
 
