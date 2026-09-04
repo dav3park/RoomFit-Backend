@@ -140,7 +140,9 @@ class PersistenceRestartIntegrationTest {
                 assertThat(sample.getDepth()).isEqualTo(5.4);
                 assertThat(sample.getClientScope()).isNull();
             });
-            assertThat(rooms.findBySourceOrderByIdAsc(RoomSource.SAMPLE)).hasSize(1);
+            // canonical Sample Room + the two seeded non-rectangular samples
+            // (L Studio, Alcove Studio) — see RoomSampleDataInitializer.
+            assertThat(rooms.findBySourceOrderByIdAsc(RoomSource.SAMPLE)).hasSize(3);
             assertThat(rooms.findBySourceOrderByIdAsc(RoomSource.ROOMPLAN))
                     .extracting(Room::getId)
                     .contains(stored.browserRoomId(), stored.appRoomId());

@@ -28,7 +28,10 @@ class RoomSamplesControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.error").value(nullValue()))
                 .andExpect(jsonPath("$.data", notNullValue()))
-                .andExpect(jsonPath("$.data.length()").value(1))
+                // canonical Sample Room + L Studio + Alcove Studio — see
+                // RoomSampleDataInitializer. Seeded in that order, so the
+                // canonical room keeps the lowest id and stays data[0].
+                .andExpect(jsonPath("$.data.length()").value(3))
                 .andExpect(jsonPath("$.data[0].roomId").value(1))
                 .andExpect(jsonPath("$.data[0].room.width").value(5.8))
                 .andExpect(jsonPath("$.data[0].room.depth").value(5.4))
@@ -37,12 +40,19 @@ class RoomSamplesControllerTest {
                 .andExpect(jsonPath("$.data[0].openings[*].type").value(hasItems("door", "window")))
                 .andExpect(jsonPath("$.data[0].furniture[?(@.id == 'wardrobe-1')].rotation").value(hasItems(90.0)))
                 .andExpect(jsonPath("$.data[0].furniture[?(@.id == 'wardrobe-1')].position.x").value(hasItems(5.39)))
-                .andExpect(jsonPath("$.data[0].furniture[*].status").value(hasItems("EXISTING")));
+                .andExpect(jsonPath("$.data[0].furniture[*].status").value(hasItems("EXISTING")))
+                // The two non-rectangular samples must carry a real wall
+                // polygon (more than the 4 walls a plain rectangle has),
+                // not an empty/collapsed walls[] array.
+                .andExpect(jsonPath("$.data[1].name").value("Sample Room - L Studio"))
+                .andExpect(jsonPath("$.data[1].walls.length()").value(6))
+                .andExpect(jsonPath("$.data[2].name").value("Sample Room - Alcove Studio"))
+                .andExpect(jsonPath("$.data[2].walls.length()").value(8));
 
         mockMvc.perform(get("/api/rooms/samples")
                         .header(ClientScopeService.HEADER_NAME, "11111111-1111-4111-8111-111111111111"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.length()").value(1))
+                .andExpect(jsonPath("$.data.length()").value(3))
                 .andExpect(jsonPath("$.data[0].name").value("Sample Room"));
     }
 }

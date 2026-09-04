@@ -37,7 +37,8 @@ public class RoomService {
 
     public List<RoomResponse> getSampleRooms() {
         return roomRepository.findBySourceOrderByIdAsc(RoomSource.SAMPLE).stream()
-                .filter(RoomSampleDataInitializer::isCanonicalSample)
+                .filter(room -> RoomSampleDataInitializer.isCanonicalSample(room)
+                        || RoomSampleDataInitializer.isSeededExtraSample(room))
                 .map(RoomResponse::from)
                 .toList();
     }

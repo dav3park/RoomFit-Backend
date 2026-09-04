@@ -4,8 +4,8 @@ import com.roomfit.placement.ValidationResult;
 import com.roomfit.placement.ValidationService;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,27 +18,38 @@ import static org.mockito.Mockito.when;
 class RoomSampleDataInitializerTest {
 
     @Test
-    void repeatedRunsCreateExactlyOneCanonicalSample() throws Exception {
+    void repeatedRunsSeedExactlyOneOfEachSampleAndBecomeANoOp() throws Exception {
         RoomRepository repository = mock(RoomRepository.class);
-        AtomicReference<Room> saved = new AtomicReference<>();
+        List<Room> savedRooms = new ArrayList<>();
         when(repository.findBySourceOrderByIdAsc(RoomSource.SAMPLE))
-                .thenAnswer(invocation -> saved.get() == null ? List.of() : List.of(saved.get()));
+                .thenAnswer(invocation -> List.copyOf(savedRooms));
         when(repository.save(any(Room.class))).thenAnswer(invocation -> {
             Room room = invocation.getArgument(0);
-            saved.set(room);
+            savedRooms.add(room);
             return room;
         });
         RoomSampleDataInitializer initializer = new RoomSampleDataInitializer(repository);
 
         initializer.run();
+        // Second run must find all three already present (by name) and save nothing new.
         initializer.run();
 
-        verify(repository, times(1)).save(any(Room.class));
-        assertThat(saved.get()).satisfies(room -> {
-            assertThat(RoomSampleDataInitializer.isCanonicalSample(room)).isTrue();
-            assertThat(room.getFurniture()).extracting(Furniture::getId)
-                    .containsExactly("bed-1", "desk-1", "chair-1", "wardrobe-1");
-        });
+        verify(repository, times(3)).save(any(Room.class));
+        assertThat(savedRooms).hasSize(3);
+
+        Room canonical = savedRooms.stream().filter(RoomSampleDataInitializer::isCanonicalSample)
+                .findFirst().orElseThrow(() -> new AssertionError("canonical sample was not seeded"));
+        assertThat(canonical.getFurniture()).extracting(Furniture::getId)
+                .containsExactly("bed-1", "desk-1", "chair-1", "wardrobe-1");
+
+        List<Room> extras = savedRooms.stream()
+                .filter(RoomSampleDataInitializer::isSeededExtraSample)
+                .toList();
+        assertThat(extras).extracting(Room::getName)
+                .containsExactlyInAnyOrder(
+                        RoomSampleDataInitializer.L_STUDIO_SAMPLE_NAME,
+                        RoomSampleDataInitializer.ALCOVE_STUDIO_SAMPLE_NAME);
+        assertThat(extras).allSatisfy(room -> assertThat(room.getWalls()).hasSizeGreaterThan(4));
     }
 
     @Test
