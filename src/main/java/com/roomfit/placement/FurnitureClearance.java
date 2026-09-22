@@ -44,8 +44,22 @@ final class FurnitureClearance {
         return Map.copyOf(byType);
     }
 
-    private static double[] frontSide(String rawType) {
+    // Wardrobes swing a hinged door open rather than needing a fixed clearance
+    // constant — a wider wardrobe needs proportionally more front space, a
+    // narrower one less. Approximated as half the wardrobe's own width (one
+    // door of a typical two-door wardrobe), replacing the catalog's flat
+    // front value for this type only. drawer_chest is excluded: a drawer
+    // pulls straight out by its own depth, not a swinging door, so the
+    // catalog's fixed front value stays the better approximation there.
+    private static final String WARDROBE_TYPE = "wardrobe";
+
+    private static double[] frontSide(Furniture furniture) {
+        String rawType = furniture.getType();
         String canonical = GeneratedFurnitureCatalog.get().normalizeType(rawType);
+        if (WARDROBE_TYPE.equals(canonical)) {
+            double[] catalogValue = BY_CANONICAL_TYPE.getOrDefault(canonical, DEFAULT_CLEARANCE);
+            return new double[]{furniture.getWidth() / 2.0, catalogValue[1]};
+        }
         if (canonical != null && BY_CANONICAL_TYPE.containsKey(canonical)) {
             return BY_CANONICAL_TYPE.get(canonical);
         }
@@ -58,7 +72,7 @@ final class FurnitureClearance {
      * 러그처럼 clearance가 0인 타입은 빈 목록을 반환한다.
      */
     static List<Zone> zonesWorld(Furniture furniture) {
-        double[] clearance = frontSide(furniture.getType());
+        double[] clearance = frontSide(furniture);
         double front = clearance[0];
         double side = clearance[1];
         if (front <= 1.0e-6 && side <= 1.0e-6) {

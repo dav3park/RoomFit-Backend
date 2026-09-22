@@ -17,6 +17,24 @@ public class ScoreService {
     public ScoreSummary calculate(AgentContext context, List<Furniture> furniture,
                                    ValidationResult validationResult) {
         int collisionScore = validationResult.isCollisionFree() ? 100 : 60;
+        // A ZONE_INTRUSION (WARNING) doesn't fail collisionFree — the layout
+        // is still allowed. Every piece of furniture has a front/side
+        // clearance zone (see FurnitureClearance), so a blanket "any zone
+        // intrusion halves the score" rule would also fire for routine,
+        // expected closeness (e.g. a chair sitting right at the foot of a
+        // bed) and make the score noisy. Scoped to door-swing furniture
+        // (wardrobes) specifically, matching the concrete "another item
+        // blocks the wardrobe door" case this is meant to catch.
+        Set<String> doorSwingFurnitureIds = furniture.stream()
+                .filter(item -> "wardrobe".equals(GeneratedFurnitureCatalog.get().normalizeType(item.getType())))
+                .map(Furniture::getId)
+                .collect(Collectors.toSet());
+        boolean hasDoorSwingZoneIntrusion = validationResult.getIssues().stream()
+                .anyMatch(issue -> issue.type() == ValidationIssue.Type.ZONE_INTRUSION
+                        && doorSwingFurnitureIds.contains(issue.furnitureId()));
+        if (hasDoorSwingZoneIntrusion) {
+            collisionScore /= 2;
+        }
         int boundaryScore = validationResult.isBoundaryValid() ? 100 : 60;
         int doorWindowScore = validationResult.isDoorClearance() && validationResult.isWindowClearance() ? 100 : 70;
         int pathScore = validationResult.isPathSecured() ? 100 : 70;

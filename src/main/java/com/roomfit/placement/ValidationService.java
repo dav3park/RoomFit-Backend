@@ -194,7 +194,8 @@ public class ValidationService {
     private boolean checkCollisionFree(List<Furniture> furniture, List<String> warnings) {
         for (int i = 0; i < furniture.size(); i++) {
             for (int j = i + 1; j < furniture.size(); j++) {
-                if (FurnitureSupportPolicy.isStrictStack(furniture.get(i), furniture.get(j))) {
+                if (FurnitureSupportPolicy.isStrictStack(furniture.get(i), furniture.get(j))
+                        || FurnitureSupportPolicy.isCollisionExempt(furniture.get(i), furniture.get(j))) {
                     continue;
                 }
                 if (obbOverlap(worldCorners(furniture.get(i)), worldCorners(furniture.get(j)))) {
@@ -215,7 +216,8 @@ public class ValidationService {
                 if (!evaluatedIds.contains(currentItem.getId()) && !evaluatedIds.contains(otherItem.getId())) {
                     continue;
                 }
-                if (FurnitureSupportPolicy.isStrictStack(currentItem, otherItem)) {
+                if (FurnitureSupportPolicy.isStrictStack(currentItem, otherItem)
+                        || FurnitureSupportPolicy.isCollisionExempt(currentItem, otherItem)) {
                     continue;
                 }
                 if (obbOverlap(worldCorners(currentItem), worldCorners(otherItem))) {
@@ -345,7 +347,7 @@ public class ValidationService {
                 if (evaluatedIds != null && !evaluatedIds.contains(a.getId()) && !evaluatedIds.contains(b.getId())) {
                     continue;
                 }
-                if (FurnitureSupportPolicy.isStrictStack(a, b)) {
+                if (FurnitureSupportPolicy.isStrictStack(a, b) || FurnitureSupportPolicy.isCollisionExempt(a, b)) {
                     continue;
                 }
                 if (obbOverlap(worldCorners(a), worldCorners(b))) {
@@ -417,7 +419,8 @@ public class ValidationService {
                 if (evaluatedIds != null && !evaluatedIds.contains(item.getId()) && !evaluatedIds.contains(other.getId())) {
                     continue;
                 }
-                if (FurnitureSupportPolicy.isStrictStack(item, other)) continue;
+                if (FurnitureSupportPolicy.isStrictStack(item, other)
+                        || FurnitureSupportPolicy.isCollisionExempt(item, other)) continue;
                 List<double[]> otherCorners = worldCorners(other);
                 if (obbOverlap(worldCorners(item), otherCorners)) {
                     // Already reported as BODY_COLLISION (ERROR) — don't also warn.

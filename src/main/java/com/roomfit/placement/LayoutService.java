@@ -147,9 +147,17 @@ public class LayoutService {
             throw new CustomException(ErrorCode.ROOM_CONTEXT_MISMATCH);
         }
 
+        // discardExisting=true: recommend as if the room had no furniture yet,
+        // without ever mutating/saving the persisted Room entity. `placementRoom`
+        // is a detached copy used only as read-only input to the placement
+        // engine (which only reads geometry/furniture off it) — the real `room`
+        // (and its confirmed furniture) is untouched either way.
+        Room placementRoom = request.isDiscardExisting() ? withoutFurniture(room) : room;
+        List<Furniture> baselineFurniture = request.isDiscardExisting() ? List.of() : room.getFurniture();
+
         PlacementResult placementResult;
         try {
-            placementResult = placementService.recommend(context, room);
+            placementResult = placementService.recommend(context, placementRoom);
         } catch (Exception e) {
             // TODO: AI Agent 호출 실패 시 규칙 기반 fallback 로직으로 재시도.
             // 지금은 스켈레톤이라 바로 예외 처리.
@@ -158,7 +166,7 @@ public class LayoutService {
 
         furnitureDomainPolicy.validateFinalState(placementResult.getRecommendedFurniture());
         ValidationResult changeValidationResult = validationService.validateChange(
-                room, room.getFurniture(), placementResult.getRecommendedFurniture());
+                room, baselineFurniture, placementResult.getRecommendedFurniture());
         ValidationResult validationResult = validationService.validate(
                 room, placementResult.getRecommendedFurniture());
         // A PlacementService may use a provisional summary while it constructs a
@@ -191,6 +199,18 @@ public class LayoutService {
     private boolean isHardValid(ValidationResult result) {
         return result.isCollisionFree() && result.isBoundaryValid() && result.isDoorClearance()
                 && result.isWindowClearance() && result.isPathSecured();
+    }
+
+    /**
+     * A detached copy of {@code room} with an empty furniture list, for
+     * discardExisting recommendations. Never persisted — {@link RoomRepository}
+     * is never called with this instance, and the caller must keep using the
+     * original {@code room} for anything that touches the database.
+     */
+    private Room withoutFurniture(Room room) {
+        return new Room(room.getId(), room.getName(), room.getWidth(), room.getDepth(), room.getHeight(),
+                room.getUnit(), room.getWalls(), room.getOpenings(), List.of(),
+                room.getSource(), room.getCreatedAt(), room.getClientScope());
     }
 
     public LayoutResponse getLayout(Long layoutId) {

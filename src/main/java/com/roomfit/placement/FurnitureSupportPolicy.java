@@ -24,6 +24,27 @@ final class FurnitureSupportPolicy {
                 && localZ <= footprint.maxZ() + POSITION_EPSILON;
     }
 
+    /**
+     * Full exemption for furniture pairs that are expected to sit tight
+     * against/inside each other during normal use (a chair pushed under its
+     * desk) — unlike {@link #isStrictStack}, this doesn't require the
+     * dependent's center to fall inside the other's footprint, since a chair
+     * pushed under a desk usually only partially overlaps it (seat under the
+     * desktop, back sticking out). Any overlap between the pair — body
+     * collision or clearance-zone intrusion — is ignored entirely.
+     */
+    static boolean isCollisionExempt(Furniture first, Furniture second) {
+        if (!active(first) || !active(second)) return false;
+        String firstType = GeneratedFurnitureCatalog.get().normalizeType(first.getType());
+        String secondType = GeneratedFurnitureCatalog.get().normalizeType(second.getType());
+        return isDeskChairPair(firstType, secondType);
+    }
+
+    private static boolean isDeskChairPair(String firstType, String secondType) {
+        return ("desk".equals(firstType) && "desk_chair".equals(secondType))
+                || ("desk_chair".equals(firstType) && "desk".equals(secondType));
+    }
+
     private static boolean active(Furniture furniture) {
         return furniture != null
                 && furniture.getPosition() != null

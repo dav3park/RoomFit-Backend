@@ -153,4 +153,57 @@ class ValidationServiceObbAndZoneTest {
         assertThat(result.isDoorClearance()).isTrue();
         assertThat(result.getIssues()).noneMatch(issue -> issue.type() == ValidationIssue.Type.DOOR_CLEARANCE);
     }
+
+    @Test
+    void chairPushedCompletelyUnderADeskIsNeverFlaggedAsCollisionOrZoneIntrusion() {
+        Furniture desk = new Furniture("desk-1", "desk", "desk", 1.2, 0.7, 0.72,
+                new Position(1.0, 1.0), 0.0, FurnitureStatus.EXISTING);
+        // Deliberately overlapping the desk's own body, not just its front
+        // clearance zone — a chair tucked all the way under a desk.
+        Furniture chair = new Furniture("chair-1", "desk_chair", "chair", 0.5, 0.5, 0.8,
+                new Position(1.0, 1.05), 0.0, FurnitureStatus.EXISTING);
+
+        ValidationResult result = validationService.validate(room, List.of(desk, chair));
+
+        assertThat(result.isCollisionFree()).isTrue();
+        assertThat(result.getIssues())
+                .noneMatch(issue -> issue.type() == ValidationIssue.Type.BODY_COLLISION
+                        || issue.type() == ValidationIssue.Type.ZONE_INTRUSION);
+    }
+
+    @Test
+    void deskChairExemptionAppliesRegardlessOfWhichRawTypeAliasIsUsed() {
+        // The catalog aliases the legacy "chair" literal to canonical
+        // "desk_chair" — the exemption must key off the normalized type, not
+        // the raw string, so old scanned/legacy furniture is covered too.
+        Furniture desk = new Furniture("desk-1", "desk", "desk", 1.2, 0.7, 0.72,
+                new Position(1.0, 1.0), 0.0, FurnitureStatus.EXISTING);
+        Furniture legacyChair = new Furniture("chair-1", "chair", "chair", 0.5, 0.5, 0.8,
+                new Position(1.0, 1.05), 0.0, FurnitureStatus.EXISTING);
+
+        ValidationResult result = validationService.validate(room, List.of(desk, legacyChair));
+
+        assertThat(result.isCollisionFree()).isTrue();
+    }
+
+    @Test
+    void wardrobeFrontClearanceZoneDepthIsHalfItsOwnWidthNotAFixedCatalogConstant() {
+        // Width 1.6m is chosen specifically so half-width (0.8m) differs from
+        // the catalog's flat wardrobe front value (0.5m) — proving the zone
+        // is actually derived from this item's own width, not a constant.
+        Furniture wideWardrobe = new Furniture("wardrobe-1", "wardrobe", "wardrobe", 1.6, 0.6, 2.0,
+                new Position(1.0, 0.3), 0.0, FurnitureStatus.EXISTING);
+        // Wardrobe's front edge is at z=0.6. This chair's body spans
+        // z:[1.1,1.5] — clear of the old fixed 0.5m zone (z:[0.6,1.1], only
+        // touches at 1.1) but genuinely inside the new 0.8m half-width zone
+        // (z:[0.6,1.4]).
+        Furniture chair = new Furniture("chair-1", "desk_chair", "chair", 0.4, 0.4, 0.8,
+                new Position(1.0, 1.3), 0.0, FurnitureStatus.EXISTING);
+
+        ValidationResult result = validationService.validate(room, List.of(wideWardrobe, chair));
+
+        assertThat(result.getIssues())
+                .anyMatch(issue -> issue.type() == ValidationIssue.Type.ZONE_INTRUSION
+                        && issue.furnitureId().equals("wardrobe-1"));
+    }
 }

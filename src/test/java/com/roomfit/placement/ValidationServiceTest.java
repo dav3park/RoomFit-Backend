@@ -82,12 +82,16 @@ class ValidationServiceTest {
 
     @Test
     void validate_withRotationAwareFootprintsOverlapping_returnsCollision() {
+        // Types deliberately avoid desk/desk_chair — that pair is now a full
+        // collision exemption (see isCollisionExempt_deskAndDeskChairPairIsNeverFlagged
+        // below), which would defeat this test's actual purpose of checking
+        // rotation-aware footprint overlap.
         Furniture desk = new Furniture("desk-1", "desk", "desk", 1.4, 0.5, 0.72,
                 new Position(1.0, 1.0), 90.0, FurnitureStatus.EXISTING);
-        Furniture chair = new Furniture("chair-1", "chair", "chair", 0.2, 0.2, 0.8,
+        Furniture bookshelf = new Furniture("bookshelf-1", "bookshelf", "bookshelf", 0.2, 0.2, 0.8,
                 new Position(1.0, 1.6), 0.0, FurnitureStatus.EXISTING);
 
-        ValidationResult result = validationService.validate(room, List.of(desk, chair));
+        ValidationResult result = validationService.validate(room, List.of(desk, bookshelf));
 
         assertThat(result.isCollisionFree()).isFalse();
     }
@@ -227,8 +231,10 @@ class ValidationServiceTest {
 
     @Test
     void validateChange_rejectsCollisionIntroducedByAddedFurniture() {
+        // desk/desk_chair avoided here too — see comment on
+        // validate_withRotationAwareFootprintsOverlapping_returnsCollision above.
         Furniture existing = furniture("existing-1", "desk", 1.0, 1.0, 1.2, 1.2);
-        Furniture added = furniture("new-chair", "desk_chair", 0.5, 0.5, 1.2, 1.2);
+        Furniture added = furniture("new-bookshelf", "bookshelf", 0.5, 0.5, 1.2, 1.2);
 
         ValidationResult validation = validationService.validateChange(
                 room, List.of(existing), List.of(existing, added));
