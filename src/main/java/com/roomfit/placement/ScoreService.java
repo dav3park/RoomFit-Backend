@@ -20,8 +20,12 @@ public class ScoreService {
         int boundaryScore = validationResult.isBoundaryValid() ? 100 : 60;
         int doorWindowScore = validationResult.isDoorClearance() && validationResult.isWindowClearance() ? 100 : 70;
         int pathScore = validationResult.isPathSecured() ? 100 : 70;
-        int goalScore = calculateGoalScore(context, furniture);
-        int styleScore = calculateStyleScore(context, furniture);
+        // A blank/direct-placement layout has no AgentContext (no lifestyle
+        // goal or style preference was ever collected) — goal/style scoring
+        // has nothing to compare against, so it falls back to the same
+        // neutral default already used when a context carries no tags below.
+        int goalScore = context == null ? 80 : calculateGoalScore(context, furniture);
+        int styleScore = context == null ? 80 : calculateStyleScore(context, furniture);
 
         return new ScoreSummary(collisionScore, boundaryScore, doorWindowScore,
                 pathScore, goalScore, styleScore);

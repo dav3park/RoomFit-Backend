@@ -33,20 +33,12 @@ public final class FurnitureBoundary {
 
     public static Footprint footprint(double width, double depth, double rotationDegrees, String variantId) {
         LocalFootprint local = resolveLocalFootprint(width, depth, variantId);
-        double normalizedRotation = normalizeDegrees(rotationDegrees);
-        double nearestRightAngle = Math.rint(normalizedRotation / 90.0) * 90.0;
-        double radians = Math.toRadians(
-                Math.abs(normalizedRotation - nearestRightAngle) <= RIGHT_ANGLE_TOLERANCE_DEGREES
-                        ? nearestRightAngle
-                        : normalizedRotation);
-        double cosine = Math.cos(radians);
-        double sine = Math.sin(radians);
 
         List<Offset> corners = List.of(
-                rotate(local.minX(), local.minZ(), cosine, sine),
-                rotate(local.maxX(), local.minZ(), cosine, sine),
-                rotate(local.maxX(), local.maxZ(), cosine, sine),
-                rotate(local.minX(), local.maxZ(), cosine, sine)
+                rotateLocalOffset(local.minX(), local.minZ(), rotationDegrees),
+                rotateLocalOffset(local.maxX(), local.minZ(), rotationDegrees),
+                rotateLocalOffset(local.maxX(), local.maxZ(), rotationDegrees),
+                rotateLocalOffset(local.minX(), local.maxZ(), rotationDegrees)
         );
         double minX = corners.stream().mapToDouble(Offset::x).min().orElseThrow();
         double maxX = corners.stream().mapToDouble(Offset::x).max().orElseThrow();
@@ -404,6 +396,42 @@ public final class FurnitureBoundary {
 
     private static Offset rotate(double x, double z, double cosine, double sine) {
         return new Offset(x * cosine - z * sine, x * sine + z * cosine);
+    }
+
+    /**
+     * Rotates a local (center-offset) point by a furniture rotation, snapping
+     * to the nearest right angle within tolerance exactly like {@link #footprint}
+     * does for its corners. Shared with callers that need to rotate a single
+     * point/rectangle the same way a footprint's corners are rotated — e.g.
+     * clearance-zone rectangles attached to a furniture's front/side edges.
+     */
+    public static Offset rotateLocalOffset(double x, double z, double rotationDegrees) {
+        double normalizedRotation = normalizeDegrees(rotationDegrees);
+        double nearestRightAngle = Math.rint(normalizedRotation / 90.0) * 90.0;
+        double radians = Math.toRadians(
+                Math.abs(normalizedRotation - nearestRightAngle) <= RIGHT_ANGLE_TOLERANCE_DEGREES
+                        ? nearestRightAngle
+                        : normalizedRotation);
+        return rotate(x, z, Math.cos(radians), Math.sin(radians));
+    }
+
+    /**
+     * Loose room-membership test with no wall-clearance margin (unlike
+     * {@link #isInside}, which also enforces {@link #WALL_CLEARANCE_METERS}).
+     * Used to probe "which side of this wall segment is the room interior"
+     * when a wall's winding direction isn't known — see
+     * ValidationService's wall-id clearance-zone computation.
+     */
+    public static boolean containsPoint(Room room, double x, double z) {
+        Optional<List<Position>> polygon = orderedPolygon(room);
+        if (polygon.isPresent()) {
+            return pointInPolygon(x, z, polygon.get());
+        }
+        if (!finiteRoom(room)) {
+            return false;
+        }
+        return x >= -EPSILON && x <= room.getWidth() + EPSILON
+                && z >= -EPSILON && z <= room.getDepth() + EPSILON;
     }
 
     private static double normalizeDegrees(double rotation) {

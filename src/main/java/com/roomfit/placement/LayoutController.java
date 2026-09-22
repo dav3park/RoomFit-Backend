@@ -22,6 +22,33 @@ public class LayoutController {
         this.layoutService = layoutService;
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "빈 배치 생성", description = "AgentContext 없이 방의 기존 가구만 담은 미확정 Layout을 생성합니다. "
+            + "AI 추천을 거치지 않고 카탈로그에서 가구를 직접 드래그해 배치하는 흐름의 시작점입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "빈 배치 생성 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 roomId")
+    })
+    public CommonResponse<LayoutResponse> createLayout(@RequestBody CreateLayoutRequest request) {
+        return CommonResponse.ok(layoutService.createBlankLayout(request));
+    }
+
+    @PostMapping("/{layoutId}/furniture")
+    @Operation(summary = "가구 직접 추가", description = "카탈로그 productId를 클라이언트가 고른 좌표/회전 그대로 Layout에 추가합니다. "
+            + "AI 배치와 달리 서버는 좌표를 옮기거나 clamp하지 않습니다 — 방 밖이거나 다른 가구와 겹쳐도 추가는 허용되며, "
+            + "결과 validationResult.issues로 어떤 가구가 왜 문제인지 알려줍니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "가구 추가 성공(충돌/경계 이슈가 있어도 성공)"),
+            @ApiResponse(responseCode = "400", description = "PRODUCT_NOT_FOUND, INVALID_REQUEST_BODY"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 layoutId"),
+            @ApiResponse(responseCode = "409", description = "이미 확정된 배치(ALREADY_CONFIRMED)")
+    })
+    public CommonResponse<LayoutResponse> addFurnitureDirect(@PathVariable Long layoutId,
+                                                              @RequestBody AddFurnitureRequest request) {
+        return CommonResponse.ok(layoutService.addFurnitureDirect(layoutId, request));
+    }
+
     @PostMapping("/recommend")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "배치 추천 생성", description = "Agent Context를 기반으로 기존 가구와 선택 제품을 고려한 추천 배치를 생성합니다. recommendedFurniture, validationResult, scoreSummary를 반환합니다.")

@@ -21,10 +21,20 @@ public class ValidationResult {
     private final List<ValidationItem> validationItems;
     @Schema(description = "검증 경고 메시지 목록")
     private final List<String> warnings;
+    @Schema(description = "가구별 검증 이슈(충돌/경계/문/창/동선/작동공간). 3D 뷰의 빨강(ERROR)/주황(WARNING) 표시에 사용합니다.")
+    private final List<ValidationIssue> issues;
 
     public ValidationResult(boolean collisionFree, boolean boundaryValid, boolean doorClearance,
                              boolean windowClearance, boolean pathSecured,
                              List<ValidationItem> validationItems, List<String> warnings) {
+        this(collisionFree, boundaryValid, doorClearance, windowClearance, pathSecured,
+                validationItems, warnings, List.of());
+    }
+
+    public ValidationResult(boolean collisionFree, boolean boundaryValid, boolean doorClearance,
+                             boolean windowClearance, boolean pathSecured,
+                             List<ValidationItem> validationItems, List<String> warnings,
+                             List<ValidationIssue> issues) {
         this.collisionFree = collisionFree;
         this.boundaryValid = boundaryValid;
         this.doorClearance = doorClearance;
@@ -32,6 +42,7 @@ public class ValidationResult {
         this.pathSecured = pathSecured;
         this.validationItems = List.copyOf(validationItems);
         this.warnings = warnings;
+        this.issues = List.copyOf(issues);
     }
 
     public boolean isCollisionFree() {
@@ -60,5 +71,9 @@ public class ValidationResult {
 
     public List<String> getWarnings() {
         return warnings;
+    }
+
+    public List<ValidationIssue> getIssues() {
+        return issues;
     }
 }
