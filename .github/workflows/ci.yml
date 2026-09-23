@@ -63,6 +63,7 @@ jobs:
             docker rm -f roomfit-backend
             docker run -d \
               --name roomfit-backend \
+              --restart unless-stopped \
               --network roomfit-net \
               -p 10000:10000 \
               -e SPRING_PROFILES_ACTIVE=prod \
