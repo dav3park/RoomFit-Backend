@@ -56,7 +56,7 @@ class WorkspaceFeedbackPreviewServiceTest {
     @Test
     void untouchedFurnitureMetadataAndGeometryArePreserved() {
         plan(List.of(move("op-1", "desk-1")), Map.of());
-        var result = service.preview(request(List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of()));
+        var result = service.preview(selected(request(List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of()), "desk-1"));
         assertThat(result.status()).isEqualTo(FeedbackStatus.SUCCESS);
         Furniture untouched = result.furniture().get(1);
         assertThat(untouched.getPosition().getX()).isEqualTo(4);
@@ -100,7 +100,7 @@ class WorkspaceFeedbackPreviewServiceTest {
     @Test
     void existingUnsafeUntouchedFurniturePreventsWholeCandidateSuccess() {
         plan(List.of(move("op-1", "desk-1")), Map.of());
-        var result = service.preview(request(List.of(desk("desk-1", 2, 2), desk("desk-2", 10, 10)), List.of()));
+        var result = service.preview(selected(request(List.of(desk("desk-1", 2, 2), desk("desk-2", 10, 10)), List.of()), "desk-1"));
         assertThat(result.status()).isEqualTo(FeedbackStatus.FAILED);
         assertThat(result.reasonCode()).isEqualTo("NO_SAFE_CANDIDATE");
         assertThat(result.furniture().getFirst().getPosition().getX()).isEqualTo(2);
@@ -161,6 +161,82 @@ class WorkspaceFeedbackPreviewServiceTest {
         var result = service.preview(request(List.of(), List.of()));
         assertThat(result.status()).isEqualTo(FeedbackStatus.SUCCESS);
         assertThat(result.furniture()).extracting(Furniture::getType).containsExactly("mood_lamp");
+    }
+
+    @Test
+    void providerGuessedIdCannotResolveDuplicateUnqualifiedTargets() {
+        plan(List.of(move("op-1", "desk-1")), Map.of());
+        var result = service.preview(request(List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of()));
+        assertThat(result.status()).isEqualTo(FeedbackStatus.NEEDS_CLARIFICATION);
+        assertThat(result.clarification().requiredField()).isEqualTo("targetFurnitureId");
+        assertThat(result.clarification().candidates()).extracting(candidate -> candidate.furnitureId()).containsExactly("desk-1", "desk-2");
+        assertThat(result.operationResults()).isEmpty();
+        assertThat(result.furniture().getFirst().getPosition().getX()).isEqualTo(2);
+    }
+
+    @Test
+    void explicitRoleAnswerAllowsOnlyChosenDuplicateTarget() {
+        plan(List.of(move("op-1", "desk-2")), Map.of());
+        var base = request(List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of());
+        var answered = new WorkspaceFeedbackPreviewRequest(base.roomId(), base.revision(), base.feedback(), base.roomDimensions(),
+                base.furniture(), base.lockedFurnitureIds(), null, base.preferences(), List.of(
+                new WorkspaceFeedbackPreviewRequest.ClarificationSelection(base.revision(), base.feedback(), "targetFurnitureId", "desk-2")));
+        var result = service.preview(answered);
+        assertThat(result.status()).isEqualTo(FeedbackStatus.SUCCESS);
+        assertThat(result.furniture().getFirst().getPosition().getX()).isEqualTo(2);
+        assertThat(result.furniture().get(1).getPosition().getX()).isEqualTo(4.2);
+    }
+
+    @Test
+    void toolbarSelectionResolvesIdenticallyNamedTargets() {
+        plan(List.of(move("op-1", "desk-1")), Map.of());
+        var desks = List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)).stream().map(item ->
+                new WorkspaceFeedbackPreviewRequest.FurnitureSnapshot(item.id(), item.type(), "책상", item.width(), item.depth(), item.height(),
+                        item.position(), item.rotation(), item.status(), item.productId(), item.variantId(), item.styleTags())).toList();
+        var base = request(desks, List.of());
+        var selected = new WorkspaceFeedbackPreviewRequest(base.roomId(), base.revision(), "책상을 방 기준 오른쪽으로 이동", base.roomDimensions(),
+                desks, List.of(), "desk-1", base.preferences());
+        assertThat(service.preview(selected).status()).isEqualTo(FeedbackStatus.SUCCESS);
+    }
+
+    @Test
+    void uniqueNameInUserTextResolvesTargetButConflictingToolbarDoesNotOverrideIt() {
+        plan(List.of(move("op-1", "desk-1")), Map.of());
+        var base = request(List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of());
+        var named = new WorkspaceFeedbackPreviewRequest(base.roomId(), base.revision(), "책상 desk-1을 방 기준 오른쪽으로 이동", base.roomDimensions(),
+                base.furniture(), List.of(), "desk-2", base.preferences());
+        assertThat(service.preview(named).status()).isEqualTo(FeedbackStatus.SUCCESS);
+        plan(List.of(move("op-1", "desk-2")), Map.of());
+        assertThat(service.preview(named).status()).isEqualTo(FeedbackStatus.NEEDS_CLARIFICATION);
+    }
+
+    @Test
+    void inventedLabelDiscriminatorDoesNotResolveAnUnqualifiedRequest() {
+        FeedbackOperation guessed = new FeedbackOperation("op-1", FeedbackOperationType.MOVE,
+                new FeedbackTargetSelector("desk-1", "desk", "desk-1"),
+                new FeedbackPlacement(FeedbackRelation.RIGHT, FeedbackMagnitude.SMALL, null), null, List.of());
+        plan(List.of(guessed), Map.of());
+        assertThat(service.preview(request(List.of(desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of())).status())
+                .isEqualTo(FeedbackStatus.NEEDS_CLARIFICATION);
+    }
+
+    @Test
+    void toolbarTargetSelectionNeverResolvesAnAmbiguousReference() {
+        var chair = new WorkspaceFeedbackPreviewRequest.FurnitureSnapshot("chair-1", "desk_chair", "의자", .5, .5, .8,
+                new WorkspaceFeedbackPreviewRequest.PositionSnapshot(3, 2), 0, FurnitureStatus.EXISTING, null, null, List.of());
+        FeedbackOperation move = new FeedbackOperation("op-1", FeedbackOperationType.MOVE,
+                new FeedbackTargetSelector("chair-1", "desk_chair", ""), new FeedbackTargetSelector("desk-1", "desk", ""),
+                new FeedbackPlacement(FeedbackRelation.NEXT_TO, null, null), null, null, null, List.of());
+        plan(List.of(move), Map.of());
+        var result = service.preview(selected(request(List.of(chair, desk("desk-1", 2, 2), desk("desk-2", 4, 4)), List.of()), "chair-1"));
+        assertThat(result.status()).isEqualTo(FeedbackStatus.NEEDS_CLARIFICATION);
+        assertThat(result.clarification().requiredField()).isEqualTo("referenceFurnitureId");
+        assertThat(result.clarification().candidates()).hasSize(2);
+    }
+
+    private static WorkspaceFeedbackPreviewRequest selected(WorkspaceFeedbackPreviewRequest base, String id) {
+        return new WorkspaceFeedbackPreviewRequest(base.roomId(), base.revision(), base.feedback(), base.roomDimensions(),
+                base.furniture(), base.lockedFurnitureIds(), id, base.preferences());
     }
 
     private void plan(List<FeedbackOperation> operations, Map<String, Set<String>> preserve) {

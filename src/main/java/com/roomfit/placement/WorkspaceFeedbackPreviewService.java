@@ -48,6 +48,11 @@ public class WorkspaceFeedbackPreviewService {
             return response(request, FeedbackStatus.NEEDS_CLARIFICATION, "NEEDS_CLARIFICATION",
                     interpreted.clarification().question(), original, List.of(), interpreted.clarification(), baseline);
         }
+        FeedbackClarificationResponse unconfirmed = unconfirmedDuplicate(request, interpreted.plan(), original);
+        if (unconfirmed != null) {
+            return response(request, FeedbackStatus.NEEDS_CLARIFICATION, unconfirmed.reasonCode(),
+                    unconfirmed.question(), original, List.of(), unconfirmed, baseline);
+        }
 
         // The executor also uses an isolated snapshot; preservation is checked again after execution.
         FeedbackExecution execution = executor.execute(interpreted.plan(), room, original, context(request));
@@ -185,6 +190,47 @@ public class WorkspaceFeedbackPreviewService {
         return new FeedbackClarificationResponse(reason, reference ? "어느 가구를 기준으로 할까요?" : "어느 가구를 변경할까요?",
                 operation.operationId(), reference ? "referenceFurnitureId" : "targetFurnitureId", candidates);
     }
+
+    /** A provider-supplied ID is not evidence that the user chose one of several items. */
+    private static FeedbackClarificationResponse unconfirmedDuplicate(WorkspaceFeedbackPreviewRequest request,
+                                                                     FeedbackPlan plan, List<Furniture> items) {
+        for (FeedbackOperation operation : plan.operations()) {
+            for (boolean reference : List.of(false, true)) {
+                if (!reference && operation.type() == FeedbackOperationType.ADD_FURNITURE) continue;
+                FeedbackTargetSelector selector = reference ? operation.referenceTarget() : operation.target();
+                if (selector == null) continue;
+                String type = selector.furnitureType();
+                if (type.isBlank()) type = items.stream().filter(item -> item.getId().equals(selector.furnitureId()))
+                        .map(Furniture::getType).findFirst().orElse("");
+                final String targetType = type;
+                List<Furniture> matches = items.stream().filter(item -> item.getStatus() != FurnitureStatus.DELETED)
+                        .filter(item -> item.getType().equals(targetType)).toList();
+                if (matches.size() < 2) continue;
+                String field = reference ? "referenceFurnitureId" : "targetFurnitureId";
+                boolean answered = request.clarificationSelections() != null && request.clarificationSelections().stream()
+                        .anyMatch(answer -> answer.requiredField().equals(field) && answer.furnitureId().equals(selector.furnitureId()));
+                if (answered) continue;
+                String text = compact(request.feedback());
+                String keyword = compact(selector.labelKeyword());
+                List<Furniture> named = matches.stream().filter(item -> !compact(item.getLabel()).isBlank()
+                        && text.contains(compact(item.getLabel()))).toList();
+                if (named.isEmpty() && !keyword.isBlank() && text.contains(keyword)) {
+                    named = matches.stream().filter(item -> compact(item.getLabel()).contains(keyword)).toList();
+                }
+                if (named.size() == 1 && named.getFirst().getId().equals(selector.furnitureId())) continue;
+                // Toolbar selection resolves only an unqualified action target, never a reference or a conflicting name.
+                if (!reference && named.size() != 1 && Objects.equals(request.selectedFurnitureId(), selector.furnitureId())) continue;
+                List<FeedbackClarificationResponse.Candidate> candidates = matches.stream()
+                        .map(item -> new FeedbackClarificationResponse.Candidate(item.getId(), item.getType(), item.getLabel())).toList();
+                return new FeedbackClarificationResponse(reference ? "AMBIGUOUS_REFERENCE_TARGET" : "AMBIGUOUS_TARGET",
+                        reference ? "어느 가구를 기준으로 할까요?" : "어느 가구를 변경할까요?",
+                        operation.operationId(), field, candidates);
+            }
+        }
+        return null;
+    }
+
+    private static String compact(String text) { return text == null ? "" : text.toLowerCase(Locale.ROOT).replaceAll("\\s+", ""); }
 
     private static AgentContext context(WorkspaceFeedbackPreviewRequest request) {
         LifestyleGoal purpose = switch (request.preferences().purpose()) {
