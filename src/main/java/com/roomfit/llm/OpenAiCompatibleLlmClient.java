@@ -65,6 +65,34 @@ public class OpenAiCompatibleLlmClient implements LlmClient {
         return stripMarkdownCodeFence(extractText(responseBody));
     }
 
+    /** The workspace preview has a separate schema; legacy feedback/placement requests stay unchanged. */
+    public String completeStructured(String instructions, Object input, Map<String, Object> schema) {
+        try {
+            Map<String, Object> body = Map.of(
+                    "model", model,
+                    "messages", List.of(Map.of("role", model.startsWith("gpt-4o") ? "system" : "developer", "content", instructions),
+                            Map.of("role", "user", "content", objectMapper.writeValueAsString(input))),
+                    "response_format", Map.of("type", "json_schema", "json_schema", Map.of(
+                            "name", "roomfit_workspace_feedback", "strict", true, "schema", schema)),
+                    "max_completion_tokens", 4096);
+            String response = restClient.post().uri(endpoint).body(body).retrieve().body(String.class);
+            JsonNode choice = objectMapper.readTree(response).path("choices").path(0);
+            JsonNode message = choice.path("message");
+            if (!"stop".equals(choice.path("finish_reason").asText())
+                    || (!message.path("refusal").isMissingNode() && !message.path("refusal").isNull())
+                    || !message.path("content").isTextual()) {
+                throw new IllegalStateException("Incomplete or refused workspace feedback");
+            }
+            String content = message.path("content").asText();
+            if (content.length() > 32_000 || !objectMapper.readTree(content).isObject()) {
+                throw new IllegalStateException("Invalid workspace feedback response");
+            }
+            return content;
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Invalid workspace feedback response");
+        }
+    }
+
     private String extractText(String responseBody) {
         if (responseBody == null || responseBody.isBlank()) {
             return "";

@@ -14,6 +14,13 @@ server:
   port: ${PORT:10000}
 
 roomfit:
+  llm:
+    feedback:
+      enabled: ${ROOMFIT_LLM_FEEDBACK_ENABLED:false}
+      api-key: ${ROOMFIT_LLM_FEEDBACK_API_KEY:}
+      base-url: ${ROOMFIT_LLM_FEEDBACK_BASE_URL:}
+      model: ${ROOMFIT_LLM_FEEDBACK_MODEL:}
+      timeout-ms: ${ROOMFIT_LLM_FEEDBACK_TIMEOUT_MS:0}
   client-scope:
     # Header-less RoomPlan/Web clients stay in the legacy scope while they migrate.
     enabled: ${ROOMFIT_CLIENT_SCOPE_ENABLED:true}

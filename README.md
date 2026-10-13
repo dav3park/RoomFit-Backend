@@ -109,6 +109,7 @@ LLM 기능은 선택 사항입니다. 설정하지 않아도 규칙 기반 추�
 
 ## 운영 및 개발 문서
 
+- [작업실 OpenAI 피드백 설정·미리보기 API](docs/workspace-feedback-preview.md)
 - [Frontend API 연동 가이드](docs/frontend-api-integration.md)
 - [LLM 피드백 평가 가이드](docs/llm-feedback-evaluation.md)
 - [OpenAPI 명세](docs/openapi/roomfit-api.yaml)
