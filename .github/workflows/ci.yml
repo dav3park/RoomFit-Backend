@@ -72,4 +72,9 @@ jobs:
               -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
               -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
               -e CORS_ALLOWED_ORIGINS=https://roomfit-khu.kro.kr,http://localhost:5173 \
+              -e ROOMFIT_LLM_FEEDBACK_ENABLED=${{ vars.ROOMFIT_LLM_FEEDBACK_ENABLED }} \
+              -e ROOMFIT_LLM_FEEDBACK_BASE_URL=${{ vars.ROOMFIT_LLM_FEEDBACK_BASE_URL }} \
+              -e ROOMFIT_LLM_FEEDBACK_MODEL=${{ vars.ROOMFIT_LLM_FEEDBACK_MODEL }} \
+              -e ROOMFIT_LLM_FEEDBACK_TIMEOUT_MS=${{ vars.ROOMFIT_LLM_FEEDBACK_TIMEOUT_MS }} \
+              -e ROOMFIT_LLM_FEEDBACK_API_KEY=${{ secrets.ROOMFIT_LLM_FEEDBACK_API_KEY }} \
               ghcr.io/${{ github.repository_owner }}/roomfit-backend:${{ github.sha }}
