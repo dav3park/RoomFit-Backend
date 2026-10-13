@@ -90,7 +90,9 @@ class WorkspaceFeedbackPreviewServiceTest {
         FeedbackOperation rotate = new FeedbackOperation("op-1", FeedbackOperationType.ROTATE,
                 new FeedbackTargetSelector("desk-1", "desk", ""), new FeedbackPlacement(null, null, FeedbackOrientation.QUARTER_TURN_CW), null, List.of());
         plan(List.of(rotate), Map.of());
-        var result = service.preview(request(List.of(desk("desk-1", 2, 0.3)), List.of()));
+        var base = request(List.of(desk("desk-1", 2, 0.3)), List.of());
+        var result = service.preview(new WorkspaceFeedbackPreviewRequest(base.roomId(), base.revision(), "책상을 시계 방향으로 90도 회전해줘",
+                base.roomDimensions(), base.furniture(), List.of(), null, base.preferences()));
         assertThat(result.status()).isEqualTo(FeedbackStatus.FAILED);
         assertThat(result.reasonCode()).isIn("UNREQUESTED_CHANGE", "NO_SAFE_ORIENTATION_CANDIDATE");
         assertThat(result.furniture().getFirst().getRotation()).isZero();
@@ -158,7 +160,9 @@ class WorkspaceFeedbackPreviewServiceTest {
                 new FeedbackPlacement(FeedbackRelation.CENTER, null, null), null,
                 new FeedbackProductRequirements("mood_lamp", FeedbackSizePreference.ANY, false, List.of()), null, List.of());
         plan(List.of(add), Map.of());
-        var result = service.preview(request(List.of(), List.of()));
+        var base = request(List.of(), List.of());
+        var result = service.preview(new WorkspaceFeedbackPreviewRequest(base.roomId(), base.revision(), "무드등 하나 추가해줘",
+                base.roomDimensions(), base.furniture(), List.of(), null, base.preferences()));
         assertThat(result.status()).isEqualTo(FeedbackStatus.SUCCESS);
         assertThat(result.furniture()).extracting(Furniture::getType).containsExactly("mood_lamp");
     }

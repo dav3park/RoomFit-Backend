@@ -94,6 +94,22 @@ class WorkspaceFeedbackControllerTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"책상을 방 기준 오른쪽으로 30cm 옮겨줘", "책상을 45도 회전해줘"})
+    void unsupportedNumericalRequestsReturnExplicitGuardFailureWithoutProviderOrPersistence(String feedback) throws Exception {
+        ObjectNode json = mapper.valueToTree(request()); json.put("feedback", feedback);
+        long roomCount = rooms.count(), layoutCount = layouts.count(), contextCount = contexts.count();
+        mvc.perform(post("/api/layouts/feedback/preview").header("X-RoomFit-Client-Id", OWNER)
+                        .contentType(MediaType.APPLICATION_JSON).content(json.toString()))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.status").value("FAILED"))
+                .andExpect(jsonPath("$.data.source").value("INPUT_GUARD"))
+                .andExpect(jsonPath("$.data.operationResults").isEmpty());
+        verifyNoInteractions(interpreter);
+        assertThat(rooms.count()).isEqualTo(roomCount); assertThat(layouts.count()).isEqualTo(layoutCount);
+        assertThat(contexts.count()).isEqualTo(contextCount);
+        assertThat(rooms.findById(room.getId()).orElseThrow().getFurniture()).extracting(Furniture::getId).containsExactly("db-only");
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"zero-size", "missing-position", "unknown-palette", "long-text", "missing-locks", "invalid-variant", "unknown-selection"})
     void invalidInputGets400BeforeAnyProviderCall(String kind) throws Exception {
         ObjectNode json = mapper.valueToTree(request());

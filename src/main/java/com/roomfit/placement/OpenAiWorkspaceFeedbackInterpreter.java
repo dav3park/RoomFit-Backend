@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.roomfit.common.CustomException;
 import com.roomfit.common.ErrorCode;
+import com.roomfit.common.RequestIdContext;
 import com.roomfit.config.LlmFeedbackProperties;
 import com.roomfit.llm.OpenAiCompatibleLlmClient;
 import com.roomfit.placement.dto.FeedbackClarificationResponse;
@@ -13,12 +14,16 @@ import com.roomfit.room.Furniture;
 import com.roomfit.room.FurnitureStatus;
 import com.roomfit.room.Room;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.net.URI;
 import java.util.*;
 
 @Service
 public class OpenAiWorkspaceFeedbackInterpreter {
+    private static final Logger log = LoggerFactory.getLogger(OpenAiWorkspaceFeedbackInterpreter.class);
     private final ObjectMapper mapper;
     private final OpenAiCompatibleLlmClient client;
     private final FeedbackPlanValidator validator = new FeedbackPlanValidator();
@@ -37,6 +42,7 @@ public class OpenAiWorkspaceFeedbackInterpreter {
                                             List<Furniture> furniture) {
         if (client == null) throw new CustomException(ErrorCode.FEEDBACK_LLM_NOT_CONFIGURED);
         callLimit.acquire();
+        String stage = "provider_request";
         try {
             Map<String, Object> input = new LinkedHashMap<>();
             input.put("feedback", request.feedback());
@@ -45,11 +51,24 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             input.put("preferences", request.preferences());
             input.put("lockedFurnitureIds", request.lockedFurnitureIds());
             input.put("clarificationSelections", request.clarificationSelections());
+            var guards = WorkspaceFeedbackIntentGuard.analyze(request, furniture);
+            input.put("sourceForbiddenOperations", guards.forbidden());
+            input.put("sourceForbiddenAddTypes", guards.forbiddenAddTypes());
             input.put("room", Map.of("width", room.getWidth(), "depth", room.getDepth(),
                     "height", room.getHeight(), "walls", room.getWalls(), "openings", room.getOpenings()));
             input.put("furniture", furniture.stream().filter(item -> item.getStatus() != FurnitureStatus.DELETED).toList());
-            return parse(client.completeStructured(INSTRUCTIONS, input, WorkspaceFeedbackSchema.SCHEMA), request.feedback(), furniture, request.clarificationSelections());
+            String response = client.completeStructured(INSTRUCTIONS, input, WorkspaceFeedbackSchema.SCHEMA);
+            stage = "plan_parse";
+            return parse(response, request.feedback(), furniture, request.clarificationSelections());
         } catch (RuntimeException e) {
+            if (e instanceof InvalidPlan invalid) stage = invalid.stage;
+            else if (e instanceof IllegalStateException) stage = "provider_response";
+            int providerStatus = e instanceof RestClientResponseException http ? http.getStatusCode().value() : 0;
+            String providerRequestId = e instanceof RestClientResponseException http && http.getResponseHeaders() != null
+                    ? safeId(http.getResponseHeaders().getFirst("x-request-id")) : "unavailable";
+            // Never log exception messages/causes: provider errors can contain keys or user content.
+            log.warn("workspace_feedback_failure requestId={} stage={} exception={} providerStatus={} providerRequestId={}",
+                    RequestIdContext.get(), stage, e.getClass().getSimpleName(), providerStatus, providerRequestId);
             throw new CustomException(ErrorCode.FEEDBACK_LLM_FAILED);
         } finally {
             callLimit.release();
@@ -62,10 +81,14 @@ public class OpenAiWorkspaceFeedbackInterpreter {
 
     WorkspaceFeedbackPlan parse(String response, String feedback, List<Furniture> furniture,
                                 List<WorkspaceFeedbackPreviewRequest.ClarificationSelection> selections) {
+        String stage = "json_decode";
         try {
             JsonNode root = mapper.readTree(response);
+            stage = "json_schema";
             WorkspaceFeedbackSchema.validate(root);
+            stage = "provider_fields";
             validator.validateProviderResponse(root);
+            stage = "preservation_fields";
             Map<String, Furniture> active = new LinkedHashMap<>();
             furniture.stream().filter(item -> item.getStatus() != FurnitureStatus.DELETED).forEach(item -> active.put(item.getId(), item));
             Map<String, Set<String>> preserve = new LinkedHashMap<>();
@@ -83,17 +106,18 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             }
             legacy.put("source", "LLM");
             legacy.put("fallbackUsed", false);
+            stage = "plan_validation";
             FeedbackPlan plan = mapper.treeToValue(legacy, FeedbackPlan.class);
             validator.validate(plan);
+            stage = "target_validation";
             for (FeedbackOperation operation : plan.operations()) {
                 if (operation.type() == FeedbackOperationType.ADD_FURNITURE) {
-                    String compact = feedback.replaceAll("\\s+", "");
-                    if (!FeedbackActionIntentResolver.hasExplicitFurnitureCreationIntent(feedback)
-                            || compact.contains("추가하지") || compact.contains("추가말고")) invalid();
+                    if (!WorkspaceFeedbackIntentGuard.hasPositiveCreation(feedback, operation.target().furnitureType())) invalid();
                     if (FeedbackVocabularyNormalizer.normalizeCanonicalType(operation.target().furnitureType()).isBlank()) invalid();
                 } else validateSelector(operation.target(), active);
                 if (operation.referenceTarget() != null) validateSelector(operation.referenceTarget(), active);
             }
+            stage = "selection_validation";
             if (!plan.needsClarification() && selections != null) for (var selection : selections) {
                 Furniture chosen = active.get(selection.furnitureId());
                 if (chosen == null || !selection.feedback().equals(feedback)) invalid();
@@ -111,6 +135,7 @@ public class OpenAiWorkspaceFeedbackInterpreter {
                 }
                 if (!honored) invalid();
             }
+            stage = "clarification_validation";
             String unsupported = root.path("unsupportedReason").isNull() ? null : root.path("unsupportedReason").asText();
             if (unsupported != null && !plan.needsClarification()) invalid();
             FeedbackClarificationResponse clarification = null;
@@ -132,9 +157,15 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             }
             return new WorkspaceFeedbackPlan(plan, Map.copyOf(preserve), clarification, unsupported);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid workspace feedback plan");
+            throw new InvalidPlan(stage);
         }
     }
+
+    static final class InvalidPlan extends IllegalArgumentException {
+        final String stage;
+        InvalidPlan(String stage) { super("Invalid workspace feedback plan: " + stage); this.stage = stage; }
+    }
+    private static String safeId(String id) { return id != null && id.matches("[A-Za-z0-9_-]{1,128}") ? id : "unavailable"; }
 
     private static void validateSelector(FeedbackTargetSelector selector, Map<String, Furniture> active) {
         if (!selector.furnitureType().isBlank()
@@ -178,15 +209,22 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             the corresponding ambiguous type, without changing the requested action or keep/lock constraints.
             Preserve unmentioned furniture. Extract explicit keep/negation clauses into preserve fields:
             PRODUCT, DIMENSIONS, POSITION, ORIENTATION, APPEARANCE. Keep-all protects all five.
+            sourceForbiddenOperations/sourceForbiddenAddTypes are independently derived from the original text.
+            Never include their negated action as an operation: '침대를 삭제하지 말고 책상을 옮겨줘'
+            means preserve the bed and MOVE the desk, with no REMOVE_FURNITURE operation.
             Toolbar locks protect product/dimensions/position/orientation. Do not silently unlock them.
             MOVE directional relations LEFT/RIGHT/FORWARD/BACKWARD require an explicit room reference frame.
             Room RIGHT is +x, LEFT is -x, FORWARD is -z, BACKWARD is +z. Unqualified or screen directions
             require clarification. Relative LEFT_OF/RIGHT_OF/NEXT_TO identify another furniture reference.
-            Use magnitude SMALL/MEDIUM/LARGE only for simple moves, not relative or IN_CORNER moves.
+            MOVE LEFT/RIGHT/FORWARD/BACKWARD/NEAR_WINDOW/NEAR_WALL/AWAY_FROM_DOOR/CENTER must have
+            magnitude SMALL/MEDIUM/LARGE. Use SMALL for an unquantified window/wall/center destination.
+            MOVE NEXT_TO/LEFT_OF/RIGHT_OF/IN_CORNER must have magnitude=null. ADD_FURNITURE always has
+            magnitude=null. Never transfer unused fields or default magnitudes between operation types.
             Use referenceTarget only with NEXT_TO, LEFT_OF, RIGHT_OF. NEXT_TO alone may have side.
             ROTATE uses QUARTER_TURN_CW, QUARTER_TURN_CCW, HALF_TURN or ALIGN_WITH_WALL.
-            REPLACE_PRODUCT uses same-type constraints: largerThanCurrent, smallerThanCurrent, minWidth,
+            REPLACE_PRODUCT uses same-type constraints: largerThanCurrent, smallerThanCurrent,
             requiredStyleTags, requiredLifestyleTags, storagePreferred. Do not guess that '더 넓게' means replacement.
+            minWidth must be null in this pilot. Do not invent numeric thresholds from a larger/smaller request.
             SWAP_FURNITURE uses same-type replacementRequirements; wood/white/metal material keywords
             are wood/paintedWhite/metal. ADD_FURNITURE uses productRequirements and a semantic placement.
             Requirements have furnitureType, sizePreference SMALL/LARGE/SIMILAR/ANY, storagePreferred,

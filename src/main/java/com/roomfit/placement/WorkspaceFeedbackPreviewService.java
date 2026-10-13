@@ -39,7 +39,15 @@ public class WorkspaceFeedbackPreviewService {
         Room room = roomAccess.findReadableRoom(request.roomId());
         List<Furniture> original = snapshot(request, room);
         ValidationResult baseline = validation.validate(room, original);
+        var source = WorkspaceFeedbackIntentGuard.analyze(request, original);
+        if (source.issue() != null) return guardedResponse(request, source.issue(), original, baseline, "INPUT_GUARD");
         WorkspaceFeedbackPlan interpreted = interpreter.interpret(request, room, original);
+        var issue = source.check(interpreted.plan(), original);
+        if (issue != null) return guardedResponse(request, issue, original, baseline, "LLM");
+        Map<String, Set<String>> preserve = new LinkedHashMap<>();
+        interpreted.preserve().forEach((id, fields) -> preserve.put(id, new HashSet<>(fields)));
+        source.preserve().forEach((id, fields) -> preserve.computeIfAbsent(id, key -> new HashSet<>()).addAll(fields));
+        interpreted = new WorkspaceFeedbackPlan(interpreted.plan(), preserve, interpreted.clarification(), interpreted.unsupportedReason());
         if (interpreted.unsupportedReason() != null) {
             return response(request, FeedbackStatus.FAILED, interpreted.unsupportedReason(),
                     "이번 연결에서는 이 요청을 아직 지원하지 않습니다. 현재 배치는 유지됩니다.", original, List.of(), null, baseline);
@@ -80,6 +88,14 @@ public class WorkspaceFeedbackPreviewService {
         }
         return response(request, FeedbackStatus.SUCCESS, null, "배치 변경 후보를 만들었습니다. 아직 적용하거나 저장하지 않았습니다.",
                 candidate, execution.operationResults(), null, checked);
+    }
+
+    private static WorkspaceFeedbackPreviewResponse guardedResponse(WorkspaceFeedbackPreviewRequest request,
+            WorkspaceFeedbackIntentGuard.Issue issue, List<Furniture> original, ValidationResult validation, String source) {
+        var question = issue.status() == FeedbackStatus.NEEDS_CLARIFICATION
+                ? new FeedbackClarificationResponse(issue.code(), issue.message(), null, issue.requiredField(), List.of()) : null;
+        return new WorkspaceFeedbackPreviewResponse(request.revision(), issue.status(), source, issue.code(), issue.message(),
+                original, List.of(), question, validation);
     }
 
     private List<Furniture> snapshot(WorkspaceFeedbackPreviewRequest request, Room room) {

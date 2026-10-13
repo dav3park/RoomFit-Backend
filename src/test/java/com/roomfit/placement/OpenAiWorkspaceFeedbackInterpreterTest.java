@@ -5,13 +5,24 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.roomfit.config.LlmFeedbackProperties;
 import com.roomfit.common.CustomException;
 import com.roomfit.common.ErrorCode;
+import com.roomfit.common.RequestIdContext;
+import com.roomfit.llm.OpenAiCompatibleLlmClient;
 import com.roomfit.room.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import java.util.List;
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.HttpClientErrorException;
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class OpenAiWorkspaceFeedbackInterpreterTest {
     private final ObjectMapper mapper = new ObjectMapper();
@@ -110,6 +121,52 @@ class OpenAiWorkspaceFeedbackInterpreterTest {
         assertThatThrownBy(() -> interpreter.parse(root.toString(), feedback, furniture)).isInstanceOf(IllegalArgumentException.class);
         assertThat(interpreter.parse(root.toString(), "책상 하나 추가해줘", furniture).plan().operations().getFirst().type())
                 .isEqualTo(FeedbackOperationType.ADD_FURNITURE);
+    }
+
+    @Test
+    void prohibitingOneTypeDoesNotProhibitExplicitlyAddingAnother() throws Exception {
+        ObjectNode root = move();
+        ObjectNode op = (ObjectNode) root.path("operations").get(0);
+        op.put("type", "ADD_FURNITURE"); op.withObject("target").put("furnitureId", "").put("furnitureType", "mood_lamp");
+        op.withObject("placement").put("relation", "CENTER").putNull("magnitude");
+        op.set("productRequirements", mapper.readTree("{\"furnitureType\":\"mood_lamp\",\"sizePreference\":\"ANY\",\"storagePreferred\":false,\"styleKeywords\":[]}"));
+        assertThat(interpreter.parse(root.toString(), "책상은 추가하지 말고 무드등 하나 추가해줘", furniture).plan().operations().getFirst().type())
+                .isEqualTo(FeedbackOperationType.ADD_FURNITURE);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"json_schema", "plan_validation", "provider_request", "provider_response"})
+    void failuresAreCorrelatedByRequestIdWithoutLoggingSecretsOrUserContent(String stage) throws Exception {
+        var client = mock(OpenAiCompatibleLlmClient.class);
+        ObjectNode body = move();
+        if (stage.equals("json_schema")) body.remove("preserve");
+        if (stage.equals("plan_validation")) body.withArray("operations").get(0).withObject("placement").putNull("magnitude");
+        if (stage.equals("provider_request")) {
+            HttpHeaders headers = new HttpHeaders(); headers.set("x-request-id", "req-provider-test");
+            when(client.completeStructured(anyString(), any(), anyMap())).thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED,
+                    "sk-test-secret-never-log", headers, "private user prompt".getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8));
+        } else if (stage.equals("provider_response")) {
+            when(client.completeStructured(anyString(), any(), anyMap())).thenThrow(new IllegalStateException("private user prompt"));
+        } else when(client.completeStructured(anyString(), any(), anyMap())).thenReturn(body.toString());
+        LlmFeedbackProperties properties = new LlmFeedbackProperties(); properties.setEnabled(true);
+        properties.setApiKey("sk-test-secret-never-log"); properties.setBaseUrl("https://api.openai.com/v1");
+        properties.setModel("gpt-4o-mini"); properties.setTimeoutMs(1000);
+        Logger logger = (Logger) LoggerFactory.getLogger(OpenAiWorkspaceFeedbackInterpreter.class);
+        ListAppender<ILoggingEvent> capture = new ListAppender<>(); capture.start(); logger.addAppender(capture);
+        RequestIdContext.set("audit-request-test");
+        try (var factory = mockStatic(OpenAiCompatibleLlmClient.class)) {
+            factory.when(() -> OpenAiCompatibleLlmClient.forFeedback(any(), any())).thenReturn(client);
+            var live = new OpenAiWorkspaceFeedbackInterpreter(properties, mapper);
+            var request = WorkspaceFeedbackPreviewServiceTest.request(List.of(WorkspaceFeedbackPreviewServiceTest.desk("desk-1", 2, 2)), List.of());
+            var room = new Room(1L, 6, 6, 2.7, "m", List.of(), furniture);
+            assertThatThrownBy(() -> live.interpret(request, room, furniture)).isInstanceOfSatisfying(CustomException.class,
+                    error -> assertThat(error.getErrorCode()).isEqualTo(ErrorCode.FEEDBACK_LLM_FAILED));
+            String message = capture.list.getLast().getFormattedMessage();
+            assertThat(message).contains("requestId=audit-request-test", "stage=" + stage);
+            assertThat(message).doesNotContain("sk-test-secret-never-log", "private user prompt", body.toString());
+            assertThat(capture.list.getLast().getThrowableProxy()).isNull();
+            if (stage.equals("provider_request")) assertThat(message).contains("providerStatus=401", "providerRequestId=req-provider-test");
+        } finally { RequestIdContext.clear(); logger.detachAppender(capture); capture.stop(); }
     }
 
     @Test
