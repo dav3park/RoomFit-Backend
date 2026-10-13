@@ -195,6 +195,50 @@ class OpenAiWorkspaceFeedbackInterpreterTest {
         assertThat(new OpenAiWorkspaceFeedbackInterpreter(properties, mapper).isAvailable()).isFalse();
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"NEAR_WINDOW", "NEAR_WALL", "CENTER"})
+    void supportedDestinationsUseTheSameClosedPlanContract(String relation) throws Exception {
+        ObjectNode root = move();
+        root.withArray("operations").get(0).withObject("placement").put("relation", relation);
+        assertThat(interpreter.parse(root.toString(), "책상을 창가로 옮겨줘", furniture).plan().operations()).hasSize(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"QUARTER_TURN_CW", "QUARTER_TURN_CCW", "HALF_TURN", "ALIGN_WITH_WALL"})
+    void supportedRotationsRequireOnlyAnOrientation(String orientation) throws Exception {
+        ObjectNode root = move(); ObjectNode op = (ObjectNode)root.path("operations").get(0);
+        op.put("type", "ROTATE");
+        op.withObject("placement").putNull("relation").putNull("magnitude").put("orientation", orientation);
+        assertThat(interpreter.parse(root.toString(), "책상을 회전해줘", furniture).plan().operations().getFirst().type()).isEqualTo(FeedbackOperationType.ROTATE);
+        op.withObject("placement").put("relation", "NEAR_WALL");
+        assertThatThrownBy(() -> interpreter.parse(root.toString(), "책상을 회전해줘", furniture)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void moveAndDeletionCompositeHasNoExtraneousDeletionFields() throws Exception {
+        ObjectNode root = move(); root.put("requestKind", "COMPOSITE");
+        Furniture bed = new Furniture("bed-1", "bed", "침대", 1.4, 2, .5, new Position(1, 4), 0, FurnitureStatus.EXISTING);
+        ObjectNode remove = root.withArray("operations").addObject();
+        remove.put("operationId", "op-2").put("type", "REMOVE_FURNITURE");
+        remove.set("target", mapper.readTree("{\"furnitureId\":\"bed-1\",\"furnitureType\":\"bed\",\"labelKeyword\":\"\",\"locationHint\":null,\"ordinal\":null}"));
+        for (String key : List.of("referenceTarget", "placement", "constraints", "productRequirements", "replacementRequirements")) remove.putNull(key);
+        remove.putArray("dependsOn");
+        assertThat(interpreter.parse(root.toString(), "책상을 이동하고 침대를 삭제해줘", List.of(furniture.getFirst(), bed)).plan().operations()).hasSize(2);
+    }
+
+    @Test
+    void additionAndLargerReplacementHaveDistinctRequirements() throws Exception {
+        ObjectNode root = move(); ObjectNode op = (ObjectNode)root.path("operations").get(0);
+        op.put("type", "REPLACE_PRODUCT").putNull("placement");
+        op.set("constraints", mapper.readTree("{\"furnitureType\":\"desk\",\"largerThanCurrent\":true,\"smallerThanCurrent\":false,\"minWidth\":null,\"requiredStyleTags\":[],\"requiredLifestyleTags\":[],\"storagePreferred\":false}"));
+        assertThat(interpreter.parse(root.toString(), "책상을 더 큰 상품으로 교체해줘", furniture).plan().operations()).hasSize(1);
+        op.put("type", "ADD_FURNITURE").putNull("constraints");
+        op.withObject("target").put("furnitureId", "").put("furnitureType", "mood_lamp");
+        op.set("productRequirements", mapper.readTree("{\"furnitureType\":\"mood_lamp\",\"sizePreference\":\"ANY\",\"storagePreferred\":false,\"styleKeywords\":[]}"));
+        op.set("placement", mapper.readTree("{\"relation\":\"NEAR_WALL\",\"magnitude\":null,\"orientation\":null,\"side\":null}"));
+        assertThat(interpreter.parse(root.toString(), "무드등 하나 추가해줘", furniture).plan().operations()).hasSize(1);
+    }
+
     private ObjectNode move() throws Exception {
         return (ObjectNode)mapper.readTree("""
                 {"version":"2.0","requestKind":"DIRECT","operations":[{"operationId":"op-1","type":"MOVE",

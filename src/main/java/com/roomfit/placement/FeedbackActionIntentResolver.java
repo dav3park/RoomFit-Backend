@@ -5,7 +5,7 @@ import java.util.List;
 /** Shared, conservative action intent policy for rule and provider feedback plans. */
 final class FeedbackActionIntentResolver {
 
-    private static final List<String> MOVE_TERMS = List.of("옮겨", "옮기", "이동", "당겨", "밀어", "앞으로", "뒤로");
+    private static final List<String> MOVE_TERMS = List.of("옮겨", "옮기", "이동", "당겨", "밀어", "앞으로", "뒤로", "붙여", "가져다");
     private static final List<String> ROTATE_TERMS = List.of(
             "회전", "돌려", "돌리", "90도", "180도", "반대로", "벽과 평행");
     private static final List<String> PLACEMENT_TERMS = List.of("배치", "넣어", "놓아", "놔", "두어");

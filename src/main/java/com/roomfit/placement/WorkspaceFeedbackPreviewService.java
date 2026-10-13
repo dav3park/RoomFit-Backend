@@ -93,7 +93,10 @@ public class WorkspaceFeedbackPreviewService {
     private static WorkspaceFeedbackPreviewResponse guardedResponse(WorkspaceFeedbackPreviewRequest request,
             WorkspaceFeedbackIntentGuard.Issue issue, List<Furniture> original, ValidationResult validation, String source) {
         var question = issue.status() == FeedbackStatus.NEEDS_CLARIFICATION
-                ? new FeedbackClarificationResponse(issue.code(), issue.message(), null, issue.requiredField(), List.of()) : null;
+                ? new FeedbackClarificationResponse(issue.code(), issue.message(), null, issue.requiredField(), "targetFurnitureId".equals(issue.requiredField())
+                        ? original.stream().filter(item -> item.getStatus() != FurnitureStatus.DELETED)
+                            .map(item -> new FeedbackClarificationResponse.Candidate(item.getId(), item.getType(), item.getLabel())).toList()
+                        : List.of()) : null;
         return new WorkspaceFeedbackPreviewResponse(request.revision(), issue.status(), source, issue.code(), issue.message(),
                 original, List.of(), question, validation);
     }

@@ -16,15 +16,15 @@ final class WorkspaceFeedbackIntentGuard {
     private static final Pattern NEGATIVE = Pattern.compile("(옮기|움직이|이동|돌리|회전|삭제|제거|없애|치우|추가|교체|바꾸|변경|건드리|건들|손대)(?:(?:하지|시키지|지)(?:말|마|않)|금지|말고|안(?:해|하))");
     private static final Pattern UNKNOWN_NEGATIVE = Pattern.compile("(?:하지|지)(?:말|마|않)|금지|제외|말고|안(?:옮|움직|이동|회전|돌|삭제|제거|추가|교체|바꾸)");
     private static final Pattern KEEP = Pattern.compile("그대로|유지(?:해|하|한|할)|고정(?:해|하|한|할)|건드리지|건들지");
-    private static final Pattern CLAUSE = Pattern.compile("(?<=말고)|(?<=않고)|(?<=두고)|(?<=유지하고)|(?<=고정하고)|(?<=옮기고)|(?<=이동하고)|(?<=옮겨줘)|(?<=회전하고)|(?<=삭제하고)|(?<=추가하고)|[,;!?]|\\.(?!\\d)");
+    private static final Pattern CLAUSE = Pattern.compile("(?<=말고)|(?<=않고)|(?<=두고)|(?<=유지하고)|(?<=고정하고)|(?<=옮기고)|(?<=이동하고)|(?<=옮겨줘)|(?<=회전하고)|(?<=삭제하고)|(?<=추가하고)|(?<=돌리고)|(?<=회전해줘)|[,;!?]|\\.(?!\\d)");
 
     record Issue(FeedbackStatus status, String code, String message, String requiredField) {}
     record Rules(Map<String, Set<String>> preserve, Map<String, Set<FeedbackOperationType>> forbidden,
-                 Set<String> forbiddenAddTypes, List<String> positiveClauses, FeedbackOrientation rotation,
+                 Set<String> forbiddenAddTypes, List<String> positiveClauses, Map<String, FeedbackOrientation> rotations,
                  int angleCount, Issue issue) {
         Issue check(FeedbackPlan plan, List<Furniture> furniture) {
             if (issue != null || plan.needsClarification()) return issue;
-            if (rotation != null && plan.operations().stream().filter(op -> op.type() == FeedbackOperationType.ROTATE).count() != angleCount)
+            if (!rotations.isEmpty() && plan.operations().stream().filter(op -> op.type() == FeedbackOperationType.ROTATE).count() != angleCount)
                 return failure("ANGLE_MISMATCH", "요청한 회전을 모두 정확하게 해석하지 못해 후보를 만들지 않았습니다.");
             for (FeedbackOperation operation : plan.operations()) {
                 List<Furniture> targets = targets(operation.target(), furniture);
@@ -46,8 +46,9 @@ final class WorkspaceFeedbackIntentGuard {
                         && positiveClauses.stream().noneMatch(clause -> clause.contains("방기준") || clause.contains("방을기준") || clause.contains("방좌표"))) {
                     return question("AMBIGUOUS_DIRECTION_FRAME", "방 기준 이동인지 확인해 주세요. 예: 책상을 방 기준 오른쪽으로 조금 옮겨줘.", "directionFrame");
                 }
-                if (operation.type() == FeedbackOperationType.ROTATE && rotation != null) {
-                    if (operation.placement().orientation() != rotation) return failure("ANGLE_MISMATCH", "요청한 회전각·방향과 다른 계획이라 후보를 만들지 않았습니다.");
+                if (operation.type() == FeedbackOperationType.ROTATE && !rotations.isEmpty()) {
+                    FeedbackOrientation expected = targets.stream().map(item -> rotations.getOrDefault(item.getType(), rotations.get("*"))).filter(Objects::nonNull).findFirst().orElse(null);
+                    if (expected != null && operation.placement().orientation() != expected) return failure("ANGLE_MISMATCH", "요청한 회전각·방향과 다른 계획이라 후보를 만들지 않았습니다.");
                 }
             }
             return null;
@@ -113,9 +114,39 @@ final class WorkspaceFeedbackIntentGuard {
                 forbidden.computeIfAbsent(item.getId(), key -> new LinkedHashSet<>()).addAll(bans);
             }
         }
-        FeedbackOrientation rotation = null;
+        Map<String, FeedbackOrientation> rotations = new LinkedHashMap<>();
         int angles = 0;
-        for (String clause : positive) {
+        for (String rawClause : positive) {
+            String clause = normalizeAngles(rawClause);
+            if ((clause.contains("색깔") || clause.contains("색상") || clause.contains("색만"))
+                    && (clause.contains("바꿔") || clause.contains("변경") || clause.contains("바꾸"))) {
+                issue = failure("UNSUPPORTED_COLOR_CHANGE", "가구 색상만 변경하는 기능은 아직 지원하지 않습니다. 복합 요청도 적용하지 않습니다."); break;
+            }
+            var intent = FeedbackActionIntentResolver.resolveFurnitureActionIntent(clause);
+            Set<String> mentioned = types(clause);
+            if (intent != FeedbackActionIntentResolver.ActionIntent.ADD && intent != FeedbackActionIntentResolver.ActionIntent.UNSPECIFIED) {
+                for (String type : mentioned) if (furniture.stream().noneMatch(item -> item.getStatus() != FurnitureStatus.DELETED && type.equals(item.getType()))) {
+                    issue = question("FURNITURE_NOT_FOUND", "요청의 대상 또는 기준 가구가 현재 방에 없습니다. 다른 가구를 명시해 주세요.", "request"); break;
+                }
+                if (issue != null) break;
+                boolean selected = furniture.stream().anyMatch(item -> item.getStatus() != FurnitureStatus.DELETED && item.getId().equals(request.selectedFurnitureId()));
+                boolean answered = request.clarificationSelections() != null && request.clarificationSelections().stream().anyMatch(answer ->
+                        answer.requiredField().equals("targetFurnitureId") && answer.feedback().equals(request.feedback()) && answer.revision().equals(request.revision())
+                        && furniture.stream().anyMatch(item -> item.getStatus() != FurnitureStatus.DELETED && item.getId().equals(answer.furnitureId())));
+                if (mentioned.isEmpty() && !selected && !answered && forbidden.values().stream().anyMatch(bans -> bans.stream().anyMatch(banned -> actionMatches(clause, banned)))) {
+                    issue = question("CONFLICTING_REQUIREMENTS", "유지·금지 조건과 변경 요청이 충돌합니다. 유지할지 변경할지 명시해 주세요.", "request"); break;
+                }
+                if ((mentioned.isEmpty() || clause.matches("^(?:그리고)?(?:이거|저거|그거|이가구|저가구|그가구).*$")) && !selected && !answered) {
+                    issue = question("TARGET_NOT_SPECIFIED", "어떤 가구를 변경할까요? 가구를 선택하거나 이름을 명시해 주세요.", "targetFurnitureId"); break;
+                }
+                for (Furniture item : furniture) if (mentioned.contains(item.getType()) || (mentioned.isEmpty() && (selected ? item.getId().equals(request.selectedFurnitureId()) : forbidden.containsKey(item.getId())))) {
+                    for (FeedbackOperationType banned : forbidden.getOrDefault(item.getId(), Set.of())) if (actionMatches(clause, banned)) {
+                        issue = question("CONFLICTING_REQUIREMENTS", "유지·금지 조건과 변경 요청이 충돌합니다. 유지할지 변경할지 명시해 주세요.", "request"); break;
+                    }
+                    if (issue != null) break;
+                }
+                if (issue != null) break;
+            }
             if (LENGTH.matcher(clause).find()) {
                 issue = failure("UNSUPPORTED_DISTANCE", "명시한 거리·치수는 아직 지원하지 않습니다. 요청값을 다른 값으로 근사하지 않고 현재 배치를 유지합니다."); break;
             }
@@ -126,20 +157,34 @@ final class WorkspaceFeedbackIntentGuard {
                 boolean ccw = clause.contains("반시계") || clause.contains("시계반대");
                 boolean cw = !ccw && clause.contains("시계방향");
                 if (value == 90 && !cw && !ccw) { issue = question("AMBIGUOUS_ROTATION", "90° 회전의 시계 방향 또는 반시계 방향을 명시해 주세요.", "action"); break; }
-                if (clause.substring(angle.end()).startsWith("로")) { issue = question("AMBIGUOUS_ROTATION", "현재 방향에서 얼마나 회전할지 명시해 주세요. 절대 방향 각도는 아직 지원하지 않습니다.", "action"); break; }
+                if (clause.substring(angle.end()).startsWith("로") && !cw && !ccw) { issue = question("AMBIGUOUS_ROTATION", "현재 방향에서 얼마나 회전할지 명시해 주세요. 절대 방향 각도는 아직 지원하지 않습니다.", "action"); break; }
                 FeedbackOrientation expected = value == 180 ? FeedbackOrientation.HALF_TURN
                         : ccw ? FeedbackOrientation.QUARTER_TURN_CCW : FeedbackOrientation.QUARTER_TURN_CW;
-                if (rotation != null && rotation != expected) { issue = question("AMBIGUOUS_ROTATION", "서로 다른 회전 조건은 가구별로 나누어 요청해 주세요.", "action"); break; }
-                rotation = expected; angles++;
+                Set<String> rotationTypes = types(clause);
+                for (String type : rotationTypes.isEmpty() ? Set.of("*") : rotationTypes) {
+                    if (rotations.containsKey(type) && rotations.get(type) != expected) {
+                        issue = question("AMBIGUOUS_ROTATION", "같은 가구에 서로 다른 회전 조건이 있습니다. 가구별 회전을 명시해 주세요.", "action"); break;
+                    }
+                    rotations.put(type, expected);
+                }
+                angles++;
             }
-            String remaining = ANGLE.matcher(clause).replaceAll("");
+            String remaining = ANGLE.matcher(clause).replaceAll("").replaceAll("\\d{4}년(?:\\d{1,2}월)?(?:\\d{1,2}일)?", "");
             for (Furniture item : furniture) remaining = remaining.replace(compact(item.getLabel()), "");
             if (issue == null && Pattern.compile("\\d|[일이삼사오육칠팔구십백천]+도").matcher(remaining).find())
                 issue = question("UNSPECIFIED_NUMBER", "수치의 단위와 의미를 명시해 주세요. 정확한 거리·치수 입력은 아직 지원하지 않습니다.", "request");
             if (issue != null) break;
         }
+        if (issue == null && positive.stream().filter(clause -> FeedbackActionIntentResolver.resolveFurnitureActionIntent(clause) != FeedbackActionIntentResolver.ActionIntent.UNSPECIFIED).count() > 4)
+            issue = failure("TOO_MANY_OPERATIONS", "한 요청에서는 최대 4개의 변경만 처리할 수 있습니다. 요청을 나눠 주세요.");
+        if (issue == null && !positive.isEmpty() && positive.stream().allMatch(clause -> FeedbackActionIntentResolver.resolveFurnitureActionIntent(clause) == FeedbackActionIntentResolver.ActionIntent.UNSPECIFIED))
+            issue = failure("UNSUPPORTED_OPERATION", "구체적인 가구 이동·회전·교체·추가·삭제를 요청해 주세요. 전체 동선 개선과 일반 대화는 아직 지원하지 않습니다.");
         if (issue == null && positive.isEmpty()) issue = question("NO_CHANGE_REQUEST", "금지·유지 조건에 따라 현재 배치를 유지합니다. 추가 변경이 필요하면 원하는 작업을 명시해 주세요.", "request");
-        return new Rules(preserve, forbidden, noAdd, List.copyOf(positive), rotation, angles, issue);
+        return new Rules(preserve, forbidden, noAdd, List.copyOf(positive), Map.copyOf(rotations), angles, issue);
+    }
+
+    private static String normalizeAngles(String clause) {
+        return clause.replace("백팔십도", "180도").replace("구십도", "90도").replace("사십오도", "45도").replace("이백칠십도", "270도");
     }
 
     private static List<Furniture> targets(FeedbackTargetSelector selector, List<Furniture> furniture) {

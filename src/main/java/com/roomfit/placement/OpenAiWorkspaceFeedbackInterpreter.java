@@ -199,6 +199,8 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             Use supplied active furniture IDs/types/labels. Canonical types include bed, bookshelf, curtain_blind,
             desk, desk_chair, drawer_chest, full_length_mirror, hanger, media_console, monitor, mood_lamp,
             multi_table, nightstand, partition_shelf, plant, rug, side_table, sofa, sofa_bed, tv, wardrobe.
+            When furnitureId is supplied, locationHint and ordinal MUST be null. labelKeyword should be
+            empty unless an exact supplied label is required. Do not populate selector filters by default.
             No addition without an explicit request to add one item. Placing an existing item is MOVE.
             An absent item, duplicate target/reference, conflicting requirements or an ambiguous action
             requires a short Korean question with no operations. selectedFurnitureId resolves only an
@@ -231,6 +233,24 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             styleKeywords. REMOVE_FURNITURE has no placement or requirements. Unused objects are null.
             DIRECT is one operation; COMPOSITE is two to four in sentence order. dependsOn references only
             earlier operation IDs. Preserve clauses do not count as operations. Never execute a partial plan.
+            Field examples (other unused objects are null):
+            창가/창문 근처: MOVE placement={relation:NEAR_WINDOW,magnitude:SMALL,orientation:null,side:null}.
+            벽에 붙여줘: MOVE placement={relation:NEAR_WALL,magnitude:SMALL,orientation:null,side:null}.
+            한가운데: MOVE placement={relation:CENTER,magnitude:SMALL,orientation:null,side:null}.
+            책상 앞으로 의자 이동: MOVE target=chair, referenceTarget=desk,
+            placement={relation:NEXT_TO,magnitude:null,orientation:null,side:FRONT}.
+            시계 방향 90도/90도로/구십 도: ROTATE placement={relation:null,magnitude:null,
+            orientation:QUARTER_TURN_CW,side:null}. 반시계 uses QUARTER_TURN_CCW; 180도 uses HALF_TURN.
+            벽과 평행: ROTATE placement={relation:null,magnitude:null,orientation:ALIGN_WITH_WALL,side:null}.
+            더 큰 상품: REPLACE_PRODUCT constraints={furnitureType:target type,largerThanCurrent:true,
+            smallerThanCurrent:false,minWidth:null,requiredStyleTags:[],requiredLifestyleTags:[],storagePreferred:false}.
+            무드등 하나 추가: ADD_FURNITURE target={furnitureId:"",furnitureType:mood_lamp,
+            labelKeyword:"",locationHint:null,ordinal:null}, productRequirements={furnitureType:mood_lamp,
+            sizePreference:ANY,storagePreferred:false,styleKeywords:[]},
+            placement={relation:NEAR_WALL,magnitude:null,orientation:null,side:null}.
+            Movement followed by deletion is COMPOSITE with a MOVE and a REMOVE_FURNITURE operation;
+            deleting a desk_chair does not mean deleting its associated desk.
+            If unsupportedReason is present, it must be a schema enum; never invent a new reason value.
             Return CLARIFICATION for a missing target/reference or a request requiring more detail.
             candidateFurnitureIds contains only eligible supplied IDs; do not guess from an ambiguous type.
             unsupportedReason is null for supported plans/questions. It is non-null only for an unsupported

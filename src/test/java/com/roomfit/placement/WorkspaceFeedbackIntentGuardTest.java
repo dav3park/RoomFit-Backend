@@ -168,6 +168,103 @@ class WorkspaceFeedbackIntentGuardTest {
         assertThat(result.furniture()).extracting(Furniture::getId).containsExactly("desk-1");
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"이거 방 기준 왼쪽으로 조금 옮겨줘", "저거를 돌려줘", "이 가구를 책상 옆으로 옮겨줘"})
+    void unselectedPronounsAskBeforeCallingProvider(String text) {
+        var result = service.preview(request(text));
+        assertThat(result.reasonCode()).isEqualTo("TARGET_NOT_SPECIFIED");
+        assertThat(result.clarification().candidates()).hasSize(2);
+        assertUnchanged(result); verifyNoInteractions(interpreter);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"책상은 그대로 두고 책상을 방 기준 왼쪽으로 옮겨줘", "책상은 옮기지 말고 방 기준 오른쪽으로 옮겨줘"})
+    void sourceConflictTakesPriorityOverModelQuestions(String text) {
+        var result = service.preview(request(text));
+        assertThat(result.reasonCode()).isEqualTo("CONFLICTING_REQUIREMENTS");
+        assertUnchanged(result); verifyNoInteractions(interpreter);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"책상 색깔만 흰색으로 바꿔줘", "책상을 방 기준 오른쪽으로 조금 옮기고 색깔만 흰색으로 바꿔줘"})
+    void unsupportedColourIsExplainedBeforeAnyPartialExecution(String text) {
+        var result = service.preview(request(text));
+        assertThat(result.reasonCode()).isEqualTo("UNSUPPORTED_COLOR_CHANGE");
+        assertUnchanged(result); verifyNoInteractions(interpreter);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"소파를 창가로 옮겨줘", "책상을 소파 옆으로 옮겨줘"})
+    void absentTargetOrReferenceAsksWithoutProviderFailure(String text) {
+        var result = service.preview(request(text));
+        assertThat(result.reasonCode()).isEqualTo("FURNITURE_NOT_FOUND");
+        assertUnchanged(result); verifyNoInteractions(interpreter);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"책상을 시계 방향으로 구십 도 돌려줘", "책상을 시계 방향으로 90도로 돌려줘"})
+    void ordinaryQuarterTurnExpressionsAreAccepted(String text) {
+        plan(rotate(FeedbackOrientation.QUARTER_TURN_CW));
+        assertThat(service.preview(request(text)).status()).isEqualTo(FeedbackStatus.SUCCESS);
+    }
+
+    @Test
+    void koreanUnsupportedAngleHasSpecificReason() {
+        assertThat(service.preview(request("책상을 시계 방향으로 사십오 도 돌려줘")).reasonCode()).isEqualTo("UNSUPPORTED_ANGLE");
+        verifyNoInteractions(interpreter);
+    }
+
+    @Test
+    void unrelatedYearDoesNotBlockMovement() {
+        plan(move("desk-1"));
+        assertThat(service.preview(request("책상을 방 기준 오른쪽으로 조금 옮겨줘. 오늘은 2026년이야")).status()).isEqualTo(FeedbackStatus.SUCCESS);
+    }
+
+    @Test
+    void distinctFurnitureRotationsAreCheckedIndependently() {
+        var bedRotation = new FeedbackOperation("bed-rotation", FeedbackOperationType.ROTATE,
+                new FeedbackTargetSelector("bed-1", "bed", ""), new FeedbackPlacement(null, null, FeedbackOrientation.QUARTER_TURN_CCW), null, List.of());
+        plan(rotate(FeedbackOrientation.QUARTER_TURN_CW), bedRotation);
+        var result = service.preview(request("책상은 시계 방향으로 90도, 침대는 반시계 방향으로 90도 돌려줘"));
+        var rules = WorkspaceFeedbackIntentGuard.analyze(request("책상은 시계 방향으로 90도, 침대는 반시계 방향으로 90도 돌려줘"), result.furniture());
+        assertThat(rules.issue()).isNull();
+        var parsed = new FeedbackPlan("2.0", FeedbackRequestKind.COMPOSITE,
+                List.of(rotate(FeedbackOrientation.QUARTER_TURN_CW), bedRotation), List.of(), null, "test", FeedbackSource.LLM, false);
+        assertThat(rules.check(parsed, result.furniture())).isNull();
+        assertThat(result.reasonCode()).isEqualTo("UNREQUESTED_CHANGE");
+        verify(interpreter).interpret(any(), any(), anyList());
+    }
+
+    @Test
+    void wrongDirectionForSecondFurnitureIsRejected() {
+        var bedRotation = new FeedbackOperation("bed-rotation", FeedbackOperationType.ROTATE,
+                new FeedbackTargetSelector("bed-1", "bed", ""), new FeedbackPlacement(null, null, FeedbackOrientation.QUARTER_TURN_CW), null, List.of());
+        plan(rotate(FeedbackOrientation.QUARTER_TURN_CW), bedRotation);
+        var result = service.preview(request("책상은 시계 방향으로 90도, 침대는 반시계 방향으로 90도 돌려줘"));
+        assertThat(result.reasonCode()).isEqualTo("ANGLE_MISMATCH"); assertUnchanged(result);
+    }
+
+    @Test
+    void selectedPronounStillMovesOnlySelectedFurniture() {
+        var original = request("이거 방 기준 오른쪽으로 조금 옮겨줘");
+        var selected = new WorkspaceFeedbackPreviewRequest(original.roomId(), original.revision(), original.feedback(),
+                original.roomDimensions(), original.furniture(), original.lockedFurnitureIds(), "desk-1", original.preferences());
+        plan(move("desk-1"));
+        assertThat(service.preview(selected).status()).isEqualTo(FeedbackStatus.SUCCESS);
+    }
+
+    @Test
+    void unsupportedConversationDoesNotReachProvider() {
+        var result = service.preview(request("오늘 날씨 어때?"));
+        assertThat(result.reasonCode()).isEqualTo("UNSUPPORTED_OPERATION"); assertUnchanged(result); verifyNoInteractions(interpreter);
+    }
+
+    @Test
+    void moreThanFourExplicitActionsHasAConcreteReason() {
+        var result = service.preview(request("책상을 방 기준 오른쪽으로 조금 옮기고 침대를 방 기준 왼쪽으로 조금 옮기고 책상을 시계 방향으로 90도 회전하고 침대를 시계 방향으로 90도 회전하고 무드등을 하나 추가해줘"));
+        assertThat(result.reasonCode()).isEqualTo("TOO_MANY_OPERATIONS"); assertUnchanged(result); verifyNoInteractions(interpreter);
+    }
+
     private WorkspaceFeedbackPreviewRequest request(String text) {
         when(access.findReadableRoom(1L)).thenReturn(room);
         return new WorkspaceFeedbackPreviewRequest(1L, "audit-revision", text,

@@ -257,7 +257,7 @@ class WorkspaceFeedbackPreviewServiceTest {
                 new WorkspaceFeedbackPreviewRequest.PositionSnapshot(x, z), 0, FurnitureStatus.EXISTING, "desk-compact-01", "desk-compact", List.of("minimal"));
     }
     static WorkspaceFeedbackPreviewRequest request(List<WorkspaceFeedbackPreviewRequest.FurnitureSnapshot> furniture, List<String> locks) {
-        return new WorkspaceFeedbackPreviewRequest(1L, "draft-7", "방 기준 오른쪽으로 조금 이동", new WorkspaceFeedbackPreviewRequest.RoomDimensions(6, 6, 2.7),
+        return new WorkspaceFeedbackPreviewRequest(1L, "draft-7", "책상을 방 기준 오른쪽으로 조금 이동", new WorkspaceFeedbackPreviewRequest.RoomDimensions(6, 6, 2.7),
                 furniture, locks, null, new WorkspaceFeedbackPreviewRequest.Preferences("업무 / 공부", "minimal", "auto"));
     }
 }
