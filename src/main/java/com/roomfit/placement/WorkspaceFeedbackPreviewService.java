@@ -101,6 +101,12 @@ public class WorkspaceFeedbackPreviewService {
         if (active.size() > 12 || !active.containsAll(request.lockedFurnitureIds())
                 || new HashSet<>(request.lockedFurnitureIds()).size() != request.lockedFurnitureIds().size()
                 || (request.selectedFurnitureId() != null && !active.contains(request.selectedFurnitureId()))) invalid();
+        Set<String> answeredFields = new HashSet<>();
+        if (request.clarificationSelections() != null) for (var answer : request.clarificationSelections()) {
+            if (!Objects.equals(answer.revision(), request.revision()) || !Objects.equals(answer.feedback(), request.feedback())
+                    || !active.contains(answer.furnitureId()) || !answeredFields.add(answer.requiredField())
+                    || !Set.of("targetFurnitureId", "referenceFurnitureId").contains(answer.requiredField())) invalid();
+        }
         domainPolicy.validateFinalState(items);
         return List.copyOf(items);
     }

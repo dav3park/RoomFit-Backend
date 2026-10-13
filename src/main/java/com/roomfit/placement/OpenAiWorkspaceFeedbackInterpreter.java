@@ -40,13 +40,15 @@ public class OpenAiWorkspaceFeedbackInterpreter {
         try {
             Map<String, Object> input = new LinkedHashMap<>();
             input.put("feedback", request.feedback());
+            input.put("revision", request.revision());
             input.put("selectedFurnitureId", request.selectedFurnitureId());
             input.put("preferences", request.preferences());
             input.put("lockedFurnitureIds", request.lockedFurnitureIds());
+            input.put("clarificationSelections", request.clarificationSelections());
             input.put("room", Map.of("width", room.getWidth(), "depth", room.getDepth(),
                     "height", room.getHeight(), "walls", room.getWalls(), "openings", room.getOpenings()));
             input.put("furniture", furniture.stream().filter(item -> item.getStatus() != FurnitureStatus.DELETED).toList());
-            return parse(client.completeStructured(INSTRUCTIONS, input, WorkspaceFeedbackSchema.SCHEMA), request.feedback(), furniture);
+            return parse(client.completeStructured(INSTRUCTIONS, input, WorkspaceFeedbackSchema.SCHEMA), request.feedback(), furniture, request.clarificationSelections());
         } catch (RuntimeException e) {
             throw new CustomException(ErrorCode.FEEDBACK_LLM_FAILED);
         } finally {
@@ -55,6 +57,11 @@ public class OpenAiWorkspaceFeedbackInterpreter {
     }
 
     WorkspaceFeedbackPlan parse(String response, String feedback, List<Furniture> furniture) {
+        return parse(response, feedback, furniture, null);
+    }
+
+    WorkspaceFeedbackPlan parse(String response, String feedback, List<Furniture> furniture,
+                                List<WorkspaceFeedbackPreviewRequest.ClarificationSelection> selections) {
         try {
             JsonNode root = mapper.readTree(response);
             WorkspaceFeedbackSchema.validate(root);
@@ -86,6 +93,23 @@ public class OpenAiWorkspaceFeedbackInterpreter {
                     if (FeedbackVocabularyNormalizer.normalizeCanonicalType(operation.target().furnitureType()).isBlank()) invalid();
                 } else validateSelector(operation.target(), active);
                 if (operation.referenceTarget() != null) validateSelector(operation.referenceTarget(), active);
+            }
+            if (!plan.needsClarification() && selections != null) for (var selection : selections) {
+                Furniture chosen = active.get(selection.furnitureId());
+                if (chosen == null || !selection.feedback().equals(feedback)) invalid();
+                boolean honored = false;
+                for (FeedbackOperation operation : plan.operations()) {
+                    FeedbackTargetSelector selector = selection.requiredField().equals("targetFurnitureId")
+                            ? (operation.type() == FeedbackOperationType.ADD_FURNITURE ? null : operation.target()) : operation.referenceTarget();
+                    if (selector == null) continue;
+                    Furniture identified = active.get(selector.furnitureId());
+                    String type = identified == null ? selector.furnitureType() : identified.getType();
+                    if (type.equals(chosen.getType()) && chosen.getLabel().contains(selector.labelKeyword())) {
+                        if (!selector.furnitureId().equals(chosen.getId())) invalid();
+                        honored = true;
+                    }
+                }
+                if (!honored) invalid();
             }
             String unsupported = root.path("unsupportedReason").isNull() ? null : root.path("unsupportedReason").asText();
             if (unsupported != null && !plan.needsClarification()) invalid();
@@ -148,6 +172,10 @@ public class OpenAiWorkspaceFeedbackInterpreter {
             An absent item, duplicate target/reference, conflicting requirements or an ambiguous action
             requires a short Korean question with no operations. selectedFurnitureId resolves only an
             unqualified target or pronoun; never override an explicit name or a reference.
+            clarificationSelections are the user's explicit answers for this feedback and revision.
+            An answer with requiredField=targetFurnitureId selects the action target only; an answer with
+            requiredField=referenceFurnitureId selects the reference only. Use that supplied ID to resolve
+            the corresponding ambiguous type, without changing the requested action or keep/lock constraints.
             Preserve unmentioned furniture. Extract explicit keep/negation clauses into preserve fields:
             PRODUCT, DIMENSIONS, POSITION, ORIENTATION, APPEARANCE. Keep-all protects all five.
             Toolbar locks protect product/dimensions/position/orientation. Do not silently unlock them.

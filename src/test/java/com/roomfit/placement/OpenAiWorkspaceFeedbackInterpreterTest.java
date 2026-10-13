@@ -29,6 +29,35 @@ class OpenAiWorkspaceFeedbackInterpreterTest {
         assertThat(parsed.preserve().get("desk-1")).containsExactly("DIMENSIONS");
     }
 
+    @Test
+    void explicitTargetSelectionMustBeHonoredWithoutChangingRequestedOperation() throws Exception {
+        Furniture other = new Furniture("desk-2", "desk", "책상 2", 1.2, .6, .72, new Position(4, 4), 0, FurnitureStatus.EXISTING);
+        var selection = new com.roomfit.placement.dto.WorkspaceFeedbackPreviewRequest.ClarificationSelection("r", "책상 이동", "targetFurnitureId", "desk-2");
+        ObjectNode root = move();
+        assertThatThrownBy(() -> interpreter.parse(root.toString(), "책상 이동", List.of(furniture.getFirst(), other), List.of(selection)))
+                .isInstanceOf(IllegalArgumentException.class);
+        root.withArray("operations").get(0).withObject("target").put("furnitureId", "desk-2");
+        WorkspaceFeedbackPlan result = interpreter.parse(root.toString(), "책상 이동", List.of(furniture.getFirst(), other), List.of(selection));
+        assertThat(result.plan().operations().getFirst().target().furnitureId()).isEqualTo("desk-2");
+        assertThat(result.plan().operations().getFirst().type()).isEqualTo(FeedbackOperationType.MOVE);
+    }
+
+    @Test
+    void targetAndReferenceSelectionsHaveSeparateRoles() throws Exception {
+        Furniture other = new Furniture("desk-2", "desk", "책상 2", 1.2, .6, .72, new Position(4, 4), 0, FurnitureStatus.EXISTING);
+        ObjectNode root = move();
+        ObjectNode operation = (ObjectNode) root.path("operations").get(0);
+        operation.set("referenceTarget", mapper.readTree("{\"furnitureId\":\"desk-2\",\"furnitureType\":\"desk\",\"labelKeyword\":\"\",\"locationHint\":null,\"ordinal\":null}"));
+        operation.withObject("placement").put("relation", "NEXT_TO").putNull("magnitude");
+        var target = new com.roomfit.placement.dto.WorkspaceFeedbackPreviewRequest.ClarificationSelection("r", "옆으로 이동", "targetFurnitureId", "desk-1");
+        var reference = new com.roomfit.placement.dto.WorkspaceFeedbackPreviewRequest.ClarificationSelection("r", "옆으로 이동", "referenceFurnitureId", "desk-2");
+        WorkspaceFeedbackPlan result = interpreter.parse(root.toString(), "옆으로 이동", List.of(furniture.getFirst(), other), List.of(target, reference));
+        assertThat(result.plan().operations().getFirst().target().furnitureId()).isEqualTo("desk-1");
+        assertThat(result.plan().operations().getFirst().referenceTarget().furnitureId()).isEqualTo("desk-2");
+        assertThatThrownBy(() -> interpreter.parse(root.toString(), "다른 요청", List.of(furniture.getFirst(), other), List.of(target, reference)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"unknown-id", "deleted-id"})
     void unknownTargetIdsAreRejected(String id) throws Exception {

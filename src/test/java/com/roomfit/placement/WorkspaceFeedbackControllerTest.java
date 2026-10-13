@@ -117,4 +117,24 @@ class WorkspaceFeedbackControllerTest {
         return new WorkspaceFeedbackPreviewRequest(room.getId(), base.revision(), base.feedback(), base.roomDimensions(),
                 base.furniture(), base.lockedFurnitureIds(), base.selectedFurnitureId(), base.preferences());
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"revision", "feedback", "id", "role", "duplicate-role"})
+    void clarificationAnswerMustBelongToCurrentRequestAndKnownFurniture(String kind) throws Exception {
+        ObjectNode json = mapper.valueToTree(request());
+        ObjectNode answer = json.putArray("clarificationSelections").addObject();
+        answer.put("revision", json.path("revision").asText()).put("feedback", json.path("feedback").asText())
+                .put("requiredField", "targetFurnitureId").put("furnitureId", "desk-1");
+        switch (kind) {
+            case "revision" -> answer.put("revision", "previous");
+            case "feedback" -> answer.put("feedback", "다른 명령");
+            case "id" -> answer.put("furnitureId", "not-in-room");
+            case "role" -> answer.put("requiredField", "action");
+            case "duplicate-role" -> json.withArray("clarificationSelections").add(answer.deepCopy());
+        }
+        mvc.perform(post("/api/layouts/feedback/preview").header("X-RoomFit-Client-Id", OWNER)
+                        .contentType(MediaType.APPLICATION_JSON).content(json.toString()))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error.code").value("INVALID_REQUEST_BODY"));
+        verifyNoInteractions(interpreter);
+    }
 }

@@ -14,8 +14,20 @@ public record WorkspaceFeedbackPreviewRequest(
         @NotNull @Size(max = 24) List<@NotNull @Valid FurnitureSnapshot> furniture,
         @NotNull @Size(max = 12) List<@NotBlank @Size(max = 128) String> lockedFurnitureIds,
         @Size(max = 128) String selectedFurnitureId,
-        @NotNull @Valid Preferences preferences
+        @NotNull @Valid Preferences preferences,
+        @Size(max = 2) List<@NotNull @Valid ClarificationSelection> clarificationSelections
 ) {
+    public WorkspaceFeedbackPreviewRequest(Long roomId, String revision, String feedback, RoomDimensions roomDimensions,
+            List<FurnitureSnapshot> furniture, List<String> lockedFurnitureIds, String selectedFurnitureId, Preferences preferences) {
+        this(roomId, revision, feedback, roomDimensions, furniture, lockedFurnitureIds, selectedFurnitureId, preferences, null);
+    }
+
+    public record ClarificationSelection(
+            @NotBlank @Size(max = 128) String revision,
+            @NotBlank @Size(max = 2000) String feedback,
+            @NotBlank @Pattern(regexp = "targetFurnitureId|referenceFurnitureId") String requiredField,
+            @NotBlank @Size(max = 128) String furnitureId) {}
+
     public record RoomDimensions(@Positive @DecimalMax("50") double width,
                                  @Positive @DecimalMax("50") double depth,
                                  @Positive @DecimalMax("10") double height) {}
