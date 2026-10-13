@@ -1,0 +1,26 @@
+name: Read-only feedback log audit
+on:
+  push:
+    branches: [codex/feedback-log-audit-20261013]
+permissions:
+  contents: read
+jobs:
+  read-audit-window:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read matching RoomFit request logs
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 2m
+          script: |
+            set -eu
+            # No restart, deploy, DB writes, environment dump, or raw provider content.
+            docker inspect --format 'startedAt={{.State.StartedAt}} image={{.Image}}' roomfit-backend
+            docker logs --timestamps --since '2026-10-13T16:58:00+09:00' --until '2026-10-13T17:16:00+09:00' roomfit-backend 2>&1 | awk '
+              /http_request|workspace_feedback_failure/ && /0aab1a81-b2ff-4da1-a647-13867888776c|bfb7f151-65ae-472e-8b8c-908b296dc590|0adf9e8c-c794-491d-bbb3-0d11a9c887c1|15d785af-3c61-4984-a64f-84b88ff4b486|cd74b187-0590-46c9-9b13-a7353ff0035c|53b726ac-ef9e-4e61-a9ba-55862a2729c8|fdf435f2-0742-4813-83b5-8cf2c3397d92|b2d983c1-6469-42ee-b37a-e22e61ecdf68|52b6e7c5-d890-4552-a986-0effa5eaa3d6|37a0d209-cbd3-4f88-bfa0-b0907e12d95b|5dcff760-6d37-4fb3-b630-0187a9eae445|15dcbfa8-0038-4bd2-a1d3-7fb1707b2a8a|2ee1d994-05bd-4331-a8fc-a0322c32f363|72d3ef96-e5e7-4381-a4f6-ec0b073761ac/ { print; matched++ }
+              END { printf "audit_matched_lines=%d\n", matched }
+            '
