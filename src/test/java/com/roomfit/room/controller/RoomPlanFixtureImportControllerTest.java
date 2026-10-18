@@ -56,6 +56,27 @@ class RoomPlanFixtureImportControllerTest {
     }
 
     @Test
+    void countertopSinkAndStoveOnBaseCabinet_stayInPlace() throws Exception {
+        // RoomPlan은 조리대 아래 수납장(.storage)과 그 위에 박힌 싱크대·가스레인지를 따로 잡는다.
+        // 하부장은 고정설비, 싱크대·가스레인지는 조리대 높이에 떠 있는 물건으로 와야 서로 충돌하지 않는다.
+        mockMvc.perform(post("/api/rooms/upload")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(kitchenScan("""
+                                {"id":"base-1","type":"base_cabinet","width":1.39,"depth":0.63,"height":0.86,
+                                 "position":{"x":0.8,"z":1.6},"rotation":0},
+                                {"id":"stove-1","type":"stove","width":0.74,"depth":0.52,"height":0.05,
+                                 "position":{"x":0.6,"z":1.6},"rotation":0,"mount":"WALL","elevation":0.81},
+                                {"id":"sink-2","type":"sink","width":0.48,"depth":0.39,"height":0.22,
+                                 "position":{"x":1.2,"z":1.6},"rotation":0,"mount":"WALL","elevation":0.64}
+                                """)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'base-1')].label").value("하부장"))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'base-1')].position.x").value(0.8))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'stove-1')].position.x").value(0.6))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'sink-2')].elevation").value(0.64));
+    }
+
+    @Test
     void wallMountWithoutElevation_isRejected() throws Exception {
         mockMvc.perform(post("/api/rooms/upload")
                         .contentType(MediaType.APPLICATION_JSON)
