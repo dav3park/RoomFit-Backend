@@ -1,0 +1,264 @@
+{
+ "furniture": [
+  {
+   "depth": 2.08,
+   "height": 0.54,
+   "id": "bed-1",
+   "label": "침대",
+   "position": {
+    "x": 4.22,
+    "z": 1.06
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "bed",
+   "width": 1.18
+  },
+  {
+   "depth": 0.61,
+   "height": 1.85,
+   "id": "wardrobe-1",
+   "label": "옷장",
+   "position": {
+    "x": 4.28,
+    "z": 3.13
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "wardrobe",
+   "width": 1.06
+  },
+  {
+   "depth": 0.64,
+   "height": 0.39,
+   "id": "multi_table-1",
+   "label": "테이블",
+   "position": {
+    "x": 2.92,
+    "z": 1.56
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "multi_table",
+   "width": 0.75
+  },
+  {
+   "depth": 0.49,
+   "elevation": 0.88,
+   "height": 0.05,
+   "id": "stove-1",
+   "label": "가스레인지",
+   "mount": "WALL",
+   "position": {
+    "x": 0.38,
+    "z": 1.64
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "stove",
+   "width": 0.73
+  },
+  {
+   "depth": 0.64,
+   "height": 1.15,
+   "id": "refrigerator-1",
+   "label": "냉장고",
+   "position": {
+    "x": 1.28,
+    "z": 3.12
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "refrigerator",
+   "width": 0.55
+  },
+  {
+   "depth": 0.63,
+   "height": 0.88,
+   "id": "base_cabinet-1",
+   "label": "하부장",
+   "position": {
+    "x": 0.71,
+    "z": 1.71
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "base_cabinet",
+   "width": 1.39
+  },
+  {
+   "depth": 0.39,
+   "elevation": 1.46,
+   "height": 0.63,
+   "id": "upper_cabinet-1",
+   "label": "상부장",
+   "mount": "WALL",
+   "position": {
+    "x": 0.72,
+    "z": 1.59
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "upper_cabinet",
+   "width": 1.41
+  },
+  {
+   "depth": 0.51,
+   "height": 0.72,
+   "id": "desk_chair-1",
+   "label": "의자",
+   "position": {
+    "x": 2.88,
+    "z": 0.64
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "desk_chair",
+   "width": 0.45
+  },
+  {
+   "depth": 0.7,
+   "height": 0.72,
+   "id": "desk-1",
+   "label": "책상",
+   "position": {
+    "x": 2.88,
+    "z": 0.37
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "desk",
+   "width": 1.34
+  },
+  {
+   "depth": 0.48,
+   "elevation": 0.66,
+   "height": 0.22,
+   "id": "sink-1",
+   "label": "싱크대",
+   "mount": "WALL",
+   "position": {
+    "x": 1.11,
+    "z": 1.66
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "sink",
+   "width": 0.47
+  }
+ ],
+ "openings": [
+  {
+   "height": 1.99,
+   "id": "F3EF4A51-5205-4AED-B0B2-2F2DF62F9C2F",
+   "offset": 0.47,
+   "type": "door",
+   "wall": "6E1ED32B-94A7-4E19-99C5-6E587D941C93",
+   "width": 0.86
+  },
+  {
+   "height": 2.12,
+   "id": "D33043C5-BA39-46FB-B5C1-B0FA76D3CA1A",
+   "offset": 0.93,
+   "type": "door",
+   "wall": "39EBE77D-B3FC-4EF5-8F0F-EA67F7E358E6",
+   "width": 0.74
+  },
+  {
+   "height": 1.83,
+   "id": "7884EC2C-4964-4E68-A669-4181F89DB354",
+   "offset": 1.66,
+   "sillHeight": 0.43,
+   "type": "window",
+   "wall": "8B3C1EBA-32AB-44F5-9049-9EBE2D5728AE",
+   "width": 1.95
+  }
+ ],
+ "room": {
+  "depth": 3.45,
+  "height": 2.29,
+  "unit": "meter",
+  "width": 4.82
+ },
+ "walls": [
+  {
+   "end": {
+    "x": 0.01,
+    "z": 3.44
+   },
+   "height": 2.29,
+   "id": "77F90172-7FAC-4B04-9E6F-11DE6182962C",
+   "start": {
+    "x": 4.82,
+    "z": 3.44
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 0.01,
+    "z": 1.39
+   },
+   "height": 2.29,
+   "id": "6E1ED32B-94A7-4E19-99C5-6E587D941C93",
+   "start": {
+    "x": 0.01,
+    "z": 3.44
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 1.47,
+    "z": 1.39
+   },
+   "height": 2.29,
+   "id": "E6673D9D-7DF7-4A99-A729-F6C9053C4691",
+   "start": {
+    "x": 0.01,
+    "z": 1.39
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 1.47,
+    "z": 0.02
+   },
+   "height": 2.29,
+   "id": "39EBE77D-B3FC-4EF5-8F0F-EA67F7E358E6",
+   "start": {
+    "x": 1.47,
+    "z": 1.39
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 4.82,
+    "z": 0.02
+   },
+   "height": 2.29,
+   "id": "548D66A6-B4CC-41CA-8418-A2D792909E7B",
+   "start": {
+    "x": 1.47,
+    "z": 0.02
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 4.82,
+    "z": 3.44
+   },
+   "height": 2.29,
+   "id": "8B3C1EBA-32AB-44F5-9049-9EBE2D5728AE",
+   "start": {
+    "x": 4.82,
+    "z": 0.02
+   },
+   "thickness": 0
+  }
+ ],
+ "name": "studio desk by door scan"
+}

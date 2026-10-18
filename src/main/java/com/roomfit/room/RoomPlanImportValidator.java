@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-/** Strict-safe, finite normalization used exclusively by RoomPlan upload. */
+/** RoomPlan 업로드 전용 정규화: 겹침·방 범위 오차만 바로잡고 스캔된 배치를 최대한 그대로 둔다. */
 @Component
 public class RoomPlanImportValidator {
 
@@ -30,57 +30,55 @@ public class RoomPlanImportValidator {
         validateWallGeometry(room);
         List<RoomImportWarning> warnings = new ArrayList<>();
         addWallWarnings(room, warnings);
-        // 고정설비는 스캔 위치가 곧 사실이라 옮기지 않는다. 주방처럼 고정설비끼리 이미 동선·문 앞을
-        // 막고 있어도 그건 방의 원래 상태라서, 일반 가구는 고정설비 위에 "새로 만든 위반"만 검사한다.
+        // 업로드는 "지금 방에 가구가 어떻게 놓여 있는지"를 그대로 보여주는 게 목적이다. 그래서 문/창 앞
+        // 여유 공간·동선 같은 배치 권장 규칙은 보지 않고, 다른 가구와 겹치는지와 방 안에 들어가는지만
+        // 검사해 스캔 오차만 바로잡는다. 붙박이 설비는 스캔 위치 그대로 두고 그 위에 일반 가구를 검사한다.
         List<Furniture> fixtures = Fixtures.only(room.getFurniture());
         List<Furniture> placed = new ArrayList<>(fixtures);
-        // 이미 방에 있던 상태로 받아들인 항목(고정설비 + 문/창 앞·동선만 어긋난 가구). 이후 가구는
-        // 이 위에 새로 만든 위반만 검사한다.
-        List<Furniture> baseline = new ArrayList<>(fixtures);
 
         for (Furniture original : Fixtures.withoutFixtures(List.copyOf(room.getFurniture()))) {
-            Optional<Furniture> normalized = findPlacement(room, placed, baseline, original, true);
-            if (normalized.isPresent()) {
-                Furniture result = normalized.get();
-                placed.add(result);
-                addRepositionWarningIfNeeded(original, result, warnings);
-                continue;
-            }
-            // 창문 아래 침대처럼 실제 방은 문/창 앞·동선 규칙을 어기고 있을 수 있다. 그런 가구를 통째로
-            // 빼면 스캔과 다른 방이 되므로, 충돌·방 범위만 지키면 경고와 함께 받아들인다.
-            Optional<Furniture> relaxed = findPlacement(room, placed, baseline, original, false);
-            if (relaxed.isPresent()) {
-                Furniture result = relaxed.get();
-                placed.add(result);
-                baseline.add(result);
-                addRepositionWarningIfNeeded(original, result, warnings);
-                warnings.add(warning("FURNITURE_CLEARANCE_ACCEPTED", result,
-                        "문/창문 앞 공간 또는 동선을 가리지만 스캔된 실제 배치라서 그대로 받아들였습니다.",
-                        null, original.getPosition(), result.getPosition(), original.getRotation(), result.getRotation()));
-            } else {
+            Optional<Furniture> result = placeKeepingScan(room, placed, fixtures, original);
+            if (result.isEmpty()) {
                 warnings.add(warning("FURNITURE_UNPLACED", original,
                         "어떤 위치·90도 회전에서도 다른 가구와 겹치지 않고 방 안에 들어가는 배치를 찾지 못해 제외했습니다.",
                         null, original.getPosition(), null, original.getRotation(), null));
+                continue;
             }
+            Furniture placedItem = result.get();
+            placed.add(placedItem);
+            addRepositionWarningIfNeeded(original, placedItem, warnings);
         }
 
         room.setFurniture(placed);
-        if (!strictSafe(room, baseline, placed)) {
-            throw new IllegalStateException("RoomPlan import must persist only strict-safe furniture");
+        if (!physicallySafe(room, fixtures, placed)) {
+            throw new IllegalStateException("RoomPlan import must persist only non-overlapping, in-bounds furniture");
         }
         room.setImportMetadata(warnings.isEmpty() ? RoomImportStatus.ACCEPTED : RoomImportStatus.ACCEPTED_WITH_WARNINGS,
                 warnings);
     }
 
-    private Optional<Furniture> findPlacement(Room room, List<Furniture> placed, List<Furniture> baseline,
-                                              Furniture original, boolean strict) {
-        List<Double> rotations = rotationOrder(original.getRotation());
+    /**
+     * 스캔된 가구는 실제 위치라서 원래 방향으로 겹치지 않고 방 안에 들어가는 가장 가까운 자리에 둔다.
+     * 원래 방향으로 둘 곳이 없을 때만 다른 방향까지 찾는다.
+     */
+    private Optional<Furniture> placeKeepingScan(Room room, List<Furniture> placed, List<Furniture> fixtures,
+                                                 Furniture original) {
+        return findPlacement(room, placed, fixtures, original, List.of(original.getRotation()))
+                .or(() -> findPlacement(room, placed, fixtures, original, rotationOrder(original.getRotation())));
+    }
+
+    private Optional<Furniture> findPlacement(Room room, List<Furniture> placed, List<Furniture> fixtures,
+                                              Furniture original, List<Double> rotations) {
+        Position origin = original.getPosition();
         for (double rotation : rotations) {
-            Furniture rotated = copy(original, original.getPosition(), rotation);
-            for (Position candidate : candidatePositions(room, rotated, original.getPosition())) {
+            Furniture rotated = copy(original, origin, rotation);
+            List<Position> candidates = candidatePositions(room, rotated, origin).stream()
+                    .sorted(java.util.Comparator.comparingDouble(candidate -> distance(candidate, origin)))
+                    .toList();
+            for (Position candidate : candidates) {
                 Furniture proposal = copy(original, candidate, rotation);
                 List<Furniture> next = append(placed, proposal);
-                if (strict ? strictSafe(room, baseline, next) : physicallySafe(room, baseline, next)) {
+                if (physicallySafe(room, fixtures, next)) {
                     return Optional.of(proposal);
                 }
             }
@@ -127,6 +125,10 @@ public class RoomPlanImportValidator {
         return List.copyOf(candidates);
     }
 
+    private static double distance(Position a, Position b) {
+        return Math.hypot(a.getX() - b.getX(), a.getZ() - b.getZ());
+    }
+
     private List<Double> rotationOrder(double original) {
         List<Double> result = new ArrayList<>(List.of(original));
         for (double candidate : List.of(0.0, 90.0, 180.0, 270.0)) {
@@ -139,12 +141,6 @@ public class RoomPlanImportValidator {
         return baseline.isEmpty()
                 ? validationService.validate(room, furniture)
                 : validationService.validateChange(room, baseline, furniture);
-    }
-
-    private boolean strictSafe(Room room, List<Furniture> baseline, List<Furniture> furniture) {
-        ValidationResult result = validateAgainst(room, baseline, furniture);
-        return result.isCollisionFree() && result.isBoundaryValid() && result.isDoorClearance()
-                && result.isWindowClearance() && result.isPathSecured();
     }
 
     private boolean physicallySafe(Room room, List<Furniture> baseline, List<Furniture> furniture) {
@@ -170,7 +166,7 @@ public class RoomPlanImportValidator {
         boolean rotated = Math.abs(normalized.getRotation() - original.getRotation()) > FurnitureBoundary.EPSILON;
         if (movement > FurnitureBoundary.EPSILON || rotated) {
             warnings.add(warning(rotated ? "FURNITURE_ROTATED_AND_REPOSITIONED" : "FURNITURE_REPOSITIONED", original,
-                    "RoomPlan 가구를 strict-safe 위치로 결정론적으로 재배치했습니다.", movement,
+                    "RoomPlan 가구가 다른 가구와 겹치거나 방 밖으로 나와 가장 가까운 위치로 옮겼습니다.", movement,
                     original.getPosition(), normalized.getPosition(), original.getRotation(), normalized.getRotation()));
         }
     }
