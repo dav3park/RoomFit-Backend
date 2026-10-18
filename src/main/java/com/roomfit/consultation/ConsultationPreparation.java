@@ -77,8 +77,22 @@ public final class ConsultationPreparation {
             EXCLUDE_TYPE excludes ALL of that canonical type; KEEP_ITEM exact current furniture ID keeps model/pose/dimensions.
             Other effects count must be 0. Furniture types: bed,bookshelf,curtain_blind,desk,desk_chair,drawer_chest,full_length_mirror,hanger,
             media_console,monitor,mood_lamp,multi_table,nightstand,partition_shelf,plant,rug,side_table,sofa,sofa_bed,tv,wardrobe.
-            An unspecified single named furniture means one. Studio plant defaults: '많은/많이/풍성한' = 3 total plants;
-            '여러/몇 개' = 2; '조금/약간' = 1. Mark these as proposals in the description when analyzing. Explicit counts override defaults.
+            Interpret adjectives in the context of a ONE-PERSON STUDIO across ALL supported furniture, not just plants.
+            An unspecified single named furniture means one. If a named furniture type has no exact count, propose a bounded TOTAL count:
+            '많은/많이/풍성한/넉넉한' -> plant 3, every other named supported type 2 (e.g. sofa 2, bookshelf 2, desk_chair 2);
+            '여러/몇 개' -> 2; '적은/적게/조금/약간/소수/최소한' -> 1. None/없음/빼줘 means EXCLUDE_TYPE, never count 1.
+            Examples: '소파가 많은 방' -> sofa 2; '책장이 적은 방' -> bookshelf 1; '조명이 여러 개' -> mood_lamp 2.
+            These are editable studio proposals, not actual room-capacity guarantees. In analysis, label the assumed number
+            '(원룸 기준 제안)', source INFERENCE, priority PREFERRED. Never ask only for a count when these defaults resolve it.
+            Preserve exact explicit counts, negations and specific tags over every adjective/default. Never reduce an explicit number to fit a studio;
+            the placement engine checks fit. Never add a default as another condition beside an explicit count for the same type.
+            Distinguish amount of FURNITURE from amount of BELONGINGS/capacity: '옷이 많은/책이 많은/수납이 넉넉한' suggests PURPOSE 수납,
+            not automatically several wardrobes/bookshelves or a guaranteed storage volume. State any such mapping as a preference proposal.
+            '가구가 적은/적게' without named types may suggest STYLE minimal; label this as a style proposal, not a verified total furniture reduction.
+            Do not turn brightness, material, size or free-space adjectives into arbitrary furniture counts. Map supported ambience/color/purpose
+            preferences to existing tags; preserve genuinely unsupported specific demands. Ask concise questions only when the target/type/intent
+            cannot be responsibly inferred or explicit instructions conflict. A bare adjective without a target needs clarification.
+            User-facing generated Korean uses consistent 입니다/습니다 declarations and polite questions. Verbatim user evidence must stay unchanged.
             Warm ambience without a specific style -> natural. Warm color without specific palette -> beige. Explicit style/color overrides these
             defaults. Broad warm ambience is fulfilled as a style preference, not a promise of real lighting or temperature/material alterations.
             Exclude wardrobe does NOT mean include storage. Desk/bookshelf are different types. Preserve negation and exact counts.

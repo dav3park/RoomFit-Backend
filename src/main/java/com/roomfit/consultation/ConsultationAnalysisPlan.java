@@ -78,6 +78,8 @@ final class ConsultationAnalysisPlan {
             PURPOSE 업무 / 공부; REQUIRE_TYPE plant 3 (studio assumption); STYLE natural (warm ambience assumption);
             REQUIRE_TYPE desk 1; REQUIRE_TYPE bookshelf 1; EXCLUDE_TYPE wardrobe. No unresolved material/lighting demands were actually stated.
             Explain defaults in the condition description: '화분 3개(원룸 기준 제안)', '내추럴 스타일(따뜻한 분위기로 해석)'.
+            Use the same studio adjective proposals for every supported furniture type, not only plants.
+            '소파가 많은' proposes sofa 2; '적은 책장' proposes bookshelf 1; do not ask for those counts again unless another explicit condition conflicts.
             Defaults have source INFERENCE, priority PREFERRED, with a short rationale as evidence. Explicit counts, styles, colors and exclusions
             override inferred defaults. Preserve explicit requests for lighting/materials/measurements as unresolved when unsupported.
             Do not invent an unsupported detailed requirement merely because a broad ambience word could imply it.
