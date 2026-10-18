@@ -18,12 +18,12 @@ final class ConsultationAnalysisPlan {
     static DesignConsultationResult parse(String json,DesignConsultationRequest request,int imageCount,DesignConsultationService service,ObjectMapper mapper)throws Exception {
         var root=mapper.readTree(json);
         if(!root.isObject()||root.size()!=3||!root.has("summary")||!root.has("requirements")||!root.has("questions")||!root.get("requirements").isArray()||root.get("requirements").size()>12)
-            throw new IllegalArgumentException("Invalid analysis plan envelope");
+            throw new ConsultationValidationException("PLAN_FIELDS");
         var legacy=(ObjectNode)root.deepCopy();var legacyItems=mapper.createArrayNode();
         var preparedItems=mapper.createArrayNode();var inputs=new ArrayList<ConsultationPreparation.Input>();int index=0;
         for(var item:root.get("requirements")){
             var keys=Set.of("description","source","evidence","imageIndex","priority","effects","unresolved");
-            if(!item.isObject()||item.size()!=keys.size()||keys.stream().anyMatch(key->!item.has(key)))throw new IllegalArgumentException("Invalid analysis condition");
+            if(!item.isObject()||item.size()!=keys.size()||keys.stream().anyMatch(key->!item.has(key)))throw new ConsultationValidationException("PLAN_CONDITION_FIELDS");
             String id=String.valueOf(index++);var old=(ObjectNode)item.deepCopy();old.remove(List.of("effects","unresolved"));
             String kind="OTHER",value="";var effects=item.get("effects");
             if(effects.isArray()&&effects.size()==1){
@@ -43,7 +43,7 @@ final class ConsultationAnalysisPlan {
         var seen=new HashMap<String,Integer>();
         for(int i=0;i<analysis.requirements().size();i++){
             var requirement=analysis.requirements().get(i);var condition=preparation.conditions().get(i);
-            if(!requirement.source().equals("USER_TEXT")&&condition.effects().stream().anyMatch(effect->effect.kind().equals("KEEP_ITEM")))throw new IllegalArgumentException("Untrusted furniture identity");
+            if(!requirement.source().equals("USER_TEXT")&&condition.effects().stream().anyMatch(effect->effect.kind().equals("KEEP_ITEM")))throw new ConsultationValidationException("UNTRUSTED_KEEP_SOURCE");
             // A direct user choice wins over a generated default for the same dimension.
             if(!requirement.source().equals("USER_TEXT")&&condition.unresolved().isEmpty()&&condition.effects().stream().allMatch(effect->{
                 for(int j=0;j<analysis.requirements().size();j++){

@@ -23,28 +23,28 @@ public final class ConsultationPreparation {
     static Result parse(String json, Request request, ObjectMapper mapper) throws Exception {
         var root=mapper.readTree(json); fields(root, Set.of("conditions"));
         var nodes=root.get("conditions");
-        if(!nodes.isArray()||nodes.size()!=request.conditions().size()) invalid();
+        if(!nodes.isArray()||nodes.size()!=request.conditions().size()) invalid("PREPARATION_SIZE");
         var ids=new HashSet<String>(); var results=new ArrayList<Condition>();
         for(var node:nodes) {
             fields(node,Set.of("id","effects","unresolved"));
             String id=text(node.get("id"),32);
-            if(!ids.add(id)||request.conditions().stream().noneMatch(item->item.id().equals(id))) invalid();
+            if(!ids.add(id)||request.conditions().stream().noneMatch(item->item.id().equals(id))) invalid("PREPARATION_ID");
             var effects=node.get("effects"); var unresolved=node.get("unresolved");
-            if(!effects.isArray()||effects.size()>8||!unresolved.isArray()||unresolved.size()>4||effects.isEmpty()&&unresolved.isEmpty()) invalid();
+            if(!effects.isArray()||effects.size()>8||!unresolved.isArray()||unresolved.size()>4||effects.isEmpty()&&unresolved.isEmpty()) invalid("PREPARATION_COLLECTION_LIMIT");
             var actions=new ArrayList<Effect>(); var questions=new ArrayList<String>();
             for(var effect:effects) {
                 fields(effect,Set.of("kind","value","count"));
                 String kind=text(effect.get("kind"),32),value=text(effect.get("value"),128);
-                if(!effect.get("count").isIntegralNumber()||!effect.get("count").canConvertToInt()) invalid();
+                if(!effect.get("count").isIntegralNumber()||!effect.get("count").canConvertToInt()) invalid("PREPARATION_COUNT_TYPE");
                 int count=effect.get("count").intValue();
-                if(kind.equals("REQUIRE_TYPE") ? count<1||count>24 : count!=0) invalid();
+                if(kind.equals("REQUIRE_TYPE") ? count<1||count>24 : count!=0) invalid("PREPARATION_COUNT");
                 if(DesignConsultationService.VALUES.containsKey(kind)) {
-                    if(!DesignConsultationService.VALUES.get(kind).contains(value)) invalid();
+                    if(!DesignConsultationService.VALUES.get(kind).contains(value)) invalid("PREPARATION_TAG");
                 } else if(kind.equals("REQUIRE_TYPE")||kind.equals("EXCLUDE_TYPE")) {
-                    if(!value.equals(FeedbackVocabularyNormalizer.normalizeCanonicalType(value))) invalid();
+                    if(!value.equals(FeedbackVocabularyNormalizer.normalizeCanonicalType(value))) invalid("PREPARATION_FURNITURE_TYPE");
                 } else if(kind.equals("KEEP_ITEM")) {
-                    if(request.furniture().stream().noneMatch(item->item.id().equals(value))) invalid();
-                } else invalid();
+                    if(request.furniture().stream().noneMatch(item->item.id().equals(value))) invalid("PREPARATION_KEEP_ID");
+                } else invalid("PREPARATION_EFFECT_KIND");
                 actions.add(new Effect(kind,value,count));
             }
             for(var question:unresolved) questions.add(text(question,300));
@@ -53,14 +53,14 @@ public final class ConsultationPreparation {
         return new Result(request.revision(),List.copyOf(results));
     }
     private static void fields(JsonNode node,Set<String> keys) {
-        if(node==null||!node.isObject()||node.size()!=keys.size()) invalid();
-        for(var key:keys) if(!node.has(key)) invalid();
+        if(node==null||!node.isObject()||node.size()!=keys.size()) invalid("PREPARATION_FIELDS");
+        for(var key:keys) if(!node.has(key)) invalid("PREPARATION_FIELDS");
     }
     private static String text(JsonNode node,int max) {
-        if(node==null||!node.isTextual()||node.asText().isBlank()||node.asText().length()>max) invalid();
+        if(node==null||!node.isTextual()||node.asText().isBlank()||node.asText().length()>max) invalid("PREPARATION_TEXT");
         return node.asText();
     }
-    private static void invalid(){throw new IllegalArgumentException("Invalid consultation preparation");}
+    private static void invalid(String rule){throw new ConsultationValidationException(rule);}
     static Map<String,Object> object(Map<String,Object> properties){return Map.of("type","object","properties",properties,"required",properties.keySet().stream().sorted().toList(),"additionalProperties",false);}
     static Map<String,Object> effectSchema(){
         return object(Map.of("kind",Map.of("type","string","enum",List.of("PURPOSE","STYLE","PALETTE","REQUIRE_TYPE","EXCLUDE_TYPE","KEEP_ITEM")),"value",Map.of("type","string"),"count",Map.of("type","integer")));

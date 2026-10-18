@@ -63,9 +63,9 @@ public class DesignConsultationService {
                     ? http.getResponseHeaders().getFirst("x-request-id") : null;
             if (providerId == null || !providerId.matches("[A-Za-z0-9_-]{1,128}")) providerId = "unavailable";
             // Exceptions may contain user text, pixels or credentials; log only bounded metadata.
-            LoggerFactory.getLogger(getClass()).warn("design_consultation_failure requestId={} stage={} exception={} providerStatus={} providerRequestId={}",
-                    RequestIdContext.get(), stage, e.getClass().getSimpleName(), status, providerId);
-            throw new CustomException(ErrorCode.CONSULTATION_FAILED);
+            LoggerFactory.getLogger(getClass()).warn("design_consultation_failure requestId={} stage={} exception={} providerStatus={} providerRequestId={} rule={}",
+                    RequestIdContext.get(), stage, e.getClass().getSimpleName(), status, providerId, validationRule(e));
+            throw new CustomException(stage.equals("response_validation") ? ErrorCode.CONSULTATION_RESPONSE_INVALID : ErrorCode.CONSULTATION_FAILED);
         } finally { release(); }
     }
 
@@ -82,9 +82,9 @@ public class DesignConsultationService {
             stage = "preparation_validation";
             return ConsultationPreparation.parse(response, request, mapper);
         } catch (Exception error) {
-            LoggerFactory.getLogger(getClass()).warn("design_consultation_failure requestId={} stage={} exception={}",
-                    RequestIdContext.get(), stage, error.getClass().getSimpleName());
-            throw new CustomException(ErrorCode.CONSULTATION_FAILED);
+            LoggerFactory.getLogger(getClass()).warn("design_consultation_failure requestId={} stage={} exception={} rule={}",
+                    RequestIdContext.get(), stage, error.getClass().getSimpleName(), validationRule(error));
+            throw new CustomException(stage.equals("preparation_validation") ? ErrorCode.CONSULTATION_RESPONSE_INVALID : ErrorCode.CONSULTATION_FAILED);
         } finally { release(); }
     }
 
@@ -101,7 +101,7 @@ public class DesignConsultationService {
         fields(root, Set.of("summary", "requirements", "questions"));
         String summary = text(root, "summary", 800, false);
         JsonNode items = root.get("requirements"), questions = root.get("questions");
-        if (!items.isArray() || items.size() > 12 || !questions.isArray() || questions.size() > 4) invalid();
+        if (!items.isArray() || items.size() > 12 || !questions.isArray() || questions.size() > 4) invalid("ANALYSIS_COLLECTION_LIMIT");
         var result = new ArrayList<DesignConsultationResult.Requirement>();
         for (JsonNode item : items) {
             fields(item, Set.of("kind", "value", "description", "source", "evidence", "imageIndex", "priority"));
@@ -109,28 +109,29 @@ public class DesignConsultationService {
             String description = text(item, "description", 300, false), source = text(item, "source", 32, false);
             String evidence = text(item, "evidence", 300, false);
             String priority = text(item, "priority", 16, false);
-            if (!Set.of("REQUIRED", "PREFERRED").contains(priority) || (!source.equals("USER_TEXT") && !priority.equals("PREFERRED"))) invalid();
+            if (!Set.of("REQUIRED", "PREFERRED").contains(priority)) invalid("INVALID_PRIORITY");
+            if (!source.equals("USER_TEXT") && !priority.equals("PREFERRED")) invalid("INFERRED_PRIORITY");
             if (!Set.of("PURPOSE", "STYLE", "PALETTE", "KEEP_FURNITURE", "OTHER").contains(kind)
-                    || !Set.of("USER_TEXT", "REFERENCE_IMAGE", "INFERENCE").contains(source)) invalid();
+                    || !Set.of("USER_TEXT", "REFERENCE_IMAGE", "INFERENCE").contains(source)) invalid("INVALID_KIND_OR_SOURCE");
             JsonNode index = item.get("imageIndex"); Integer imageIndex = null;
             if (!index.isNull()) {
-                if (!index.isIntegralNumber() || !index.canConvertToInt()) invalid();
+                if (!index.isIntegralNumber() || !index.canConvertToInt()) invalid("IMAGE_INDEX_TYPE");
                 imageIndex = index.intValue();
-                if (imageIndex < 1 || imageIndex > imageCount) invalid();
+                if (imageIndex < 1 || imageIndex > imageCount) invalid("IMAGE_INDEX_RANGE");
             }
             if (source.equals("REFERENCE_IMAGE") && imageIndex == null
-                    || !source.equals("REFERENCE_IMAGE") && imageIndex != null
-                    || source.equals("USER_TEXT") && !request.description().contains(evidence)
-                    || source.equals("INFERENCE") && request.description().isBlank() && imageCount == 0) invalid();
+                    || !source.equals("REFERENCE_IMAGE") && imageIndex != null) invalid("IMAGE_PROVENANCE");
+            if (source.equals("USER_TEXT") && !request.description().contains(evidence)) invalid("EVIDENCE_NOT_IN_INPUT");
+            if (source.equals("INFERENCE") && request.description().isBlank() && imageCount == 0) invalid("INFERENCE_WITHOUT_INPUT");
             String support = "NEEDS_ENGINE_SUPPORT";
             if (VALUES.containsKey(kind)) {
-                if (!VALUES.get(kind).contains(value)) invalid();
+                if (!VALUES.get(kind).contains(value)) invalid("UNKNOWN_TAG");
                 support = "SUPPORTED";
             } else if (kind.equals("KEEP_FURNITURE")) {
-                if (!source.equals("USER_TEXT")) invalid();
-                if (!value.isEmpty() && request.furniture().stream().noneMatch(furniture -> furniture.id().equals(value))) invalid();
+                if (!source.equals("USER_TEXT")) invalid("KEEP_SOURCE");
+                if (!value.isEmpty() && request.furniture().stream().noneMatch(furniture -> furniture.id().equals(value))) invalid("UNKNOWN_KEEP_ID");
                 support = value.isEmpty() ? "NEEDS_CLARIFICATION" : "SUPPORTED";
-            } else if (!value.isEmpty()) invalid();
+            } else if (!value.isEmpty()) invalid("OTHER_VALUE");
             result.add(new DesignConsultationResult.Requirement(kind, value, description, source, evidence, imageIndex, priority, support));
         }
         // The current engine accepts one purpose/style/palette. Preserve competing wishes instead of silently choosing.
@@ -142,22 +143,25 @@ public class DesignConsultationService {
         }
         var followups = new ArrayList<String>();
         for (JsonNode question : questions) {
-            if (!question.isTextual() || question.asText().isBlank() || question.asText().length() > 300) invalid();
+            if (!question.isTextual() || question.asText().isBlank() || question.asText().length() > 300) invalid("INVALID_QUESTION");
             followups.add(question.asText());
         }
-        if (result.isEmpty() && followups.isEmpty()) invalid();
+        if (result.isEmpty() && followups.isEmpty()) invalid("EMPTY_ANALYSIS");
         return new DesignConsultationResult(request.revision(), "LLM", summary, List.copyOf(result), List.copyOf(followups));
     }
     private static void fields(JsonNode node, Set<String> expected) {
-        if (node == null || !node.isObject() || node.size() != expected.size()) invalid();
-        for (String key : expected) if (!node.has(key)) invalid();
+        if (node == null || !node.isObject() || node.size() != expected.size()) invalid("RESPONSE_FIELDS");
+        for (String key : expected) if (!node.has(key)) invalid("RESPONSE_FIELDS");
     }
     private static String text(JsonNode node, String key, int max, boolean empty) {
         JsonNode value = node.get(key);
-        if (!value.isTextual() || value.asText().length() > max || !empty && value.asText().isBlank()) invalid();
+        if (value == null || !value.isTextual() || value.asText().length() > max || !empty && value.asText().isBlank()) invalid("TEXT_" + key);
         return value.asText();
     }
-    private static void invalid() { throw new IllegalArgumentException("Invalid consultation response"); }
+    private static void invalid(String rule) { throw new ConsultationValidationException(rule); }
+    private static String validationRule(Exception error) {
+        return error instanceof ConsultationValidationException ? error.getMessage() : "UNCLASSIFIED";
+    }
     private static Map<String, Object> object(Map<String, Object> properties) {
         return Map.of("type", "object", "properties", properties, "required", properties.keySet().stream().sorted().toList(), "additionalProperties", false);
     }

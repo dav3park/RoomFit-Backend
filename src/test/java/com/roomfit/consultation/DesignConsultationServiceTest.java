@@ -101,6 +101,16 @@ class DesignConsultationServiceTest {
         assertThatThrownBy(() -> disabled.analyze(request, List.of())).isInstanceOfSatisfying(CustomException.class,
                 error -> assertThat(error.getErrorCode()).isEqualTo(ErrorCode.CONSULTATION_NOT_CONFIGURED));
     }
+    @Test void identifiesInvalidEvidenceWithoutLoggingItsContent() throws Exception {
+        var invalid = item("STYLE", "natural", "내추럴", "USER_TEXT", "private fabricated quote", null);
+        assertThatThrownBy(() -> service.parse(response(List.of(invalid)), request, 0))
+                .isInstanceOf(IllegalArgumentException.class).hasMessage("EVIDENCE_NOT_IN_INPUT");
+    }
+    @Test void separatesInvalidModelResponseFromProviderConnectionFailure() throws Exception {
+        provider(response(List.of(item("STYLE", "natural", "내추럴", "USER_TEXT", "fabricated", null))));
+        assertThatThrownBy(() -> service.analyze(request, List.of())).isInstanceOfSatisfying(CustomException.class,
+                error -> assertThat(error.getErrorCode().name()).isEqualTo("CONSULTATION_RESPONSE_INVALID"));
+    }
     @Test void limitsProviderCallsAcrossAllClientIds() throws Exception {
         provider(response(List.of(work())));
         for (int i = 0; i < 20; i++) service.analyze(request, List.of());

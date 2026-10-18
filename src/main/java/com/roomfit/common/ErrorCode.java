@@ -30,6 +30,7 @@ public enum ErrorCode {
     FEEDBACK_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "AI 피드백 요청이 많습니다. 잠시 후 다시 시도해 주세요."),
     CONSULTATION_NOT_CONFIGURED(HttpStatus.SERVICE_UNAVAILABLE, "AI 디자인 상담 연결이 설정되지 않았습니다. 입력 내용은 유지됩니다."),
     CONSULTATION_FAILED(HttpStatus.BAD_GATEWAY, "취향 분석을 완료하지 못했습니다. 입력 내용을 유지했으니 잠시 후 다시 시도해 주세요."),
+    CONSULTATION_RESPONSE_INVALID(HttpStatus.BAD_GATEWAY, "AI 분석 결과를 확인하지 못했습니다. 입력은 유지됩니다. 다시 분석해 주세요."),
     CONSULTATION_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "취향 분석 요청이 많습니다. 잠시 후 다시 시도해 주세요."),
     INVALID_CONSULTATION_IMAGE(HttpStatus.BAD_REQUEST, "첨부 사진을 읽을 수 없습니다. JPG·PNG 사진과 용량을 확인해 주세요."),
     CONSULTATION_UPLOAD_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "첨부 용량이 너무 큽니다. 사진 한 장은 5 MB, 전체는 3장 이내로 줄여 주세요."),
