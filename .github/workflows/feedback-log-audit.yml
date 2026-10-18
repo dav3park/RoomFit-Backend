@@ -20,7 +20,7 @@ jobs:
             set -eu
             # Read bounded metadata only. No deployment, restart, DB writes or environment/provider-content dump.
             docker inspect --format 'startedAt={{.State.StartedAt}}' roomfit-backend
-            docker logs --timestamps --since '2026-10-18T16:58:00+09:00' --until '2026-10-18T17:30:00+09:00' roomfit-backend 2>&1 | awk '
-              /http_request|design_consultation_failure/ && /28659d64-3616-4f3b-973c-da3f25200554|0dfa780d-e683-4d94-a8d0-42ec73bfc09b/ { print; matched++ }
+            docker logs --timestamps --since '2026-10-18T17:25:00+09:00' --until '2026-10-18T18:30:00+09:00' roomfit-backend 2>&1 | awk '
+              /design_consultation_failure/ || /http_request/ && /consultation-fix-20261018/ { print; matched++ }
               END { printf "audit_matched_lines=%d\n", matched }
             '
