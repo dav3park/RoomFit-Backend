@@ -52,6 +52,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(clientScopeInterceptor)
-                .addPathPatterns("/api/rooms/**", "/api/layouts/**", "/api/agent/**", "/api/clients/**");
+                .addPathPatterns("/api/rooms/**", "/api/layouts/**", "/api/agent/**", "/api/clients/**", "/api/design-consultation/**");
     }
 }

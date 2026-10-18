@@ -221,6 +221,22 @@ class OpenAiCompatibleLlmClientTest {
         server.verify();
     }
 
+    @Test
+    void multimodalStructuredContentSendsPixelsWithItsOwnSchemaName() {
+        RestClient.Builder builder = RestClient.builder();
+        var server = MockRestServiceServer.bindTo(builder).build();
+        var client = new OpenAiCompatibleLlmClient(properties("https://api.openai.com/v1", "test-key", "gpt-6-luna"), builder, new ObjectMapper());
+        server.expect(requestTo("https://api.openai.com/v1/chat/completions"))
+                .andExpect(content().string(containsString("data:image/jpeg;base64,abc")))
+                .andExpect(content().string(containsString("roomfit_design_consultation")))
+                .andExpect(content().string(containsString("\"strict\":true")))
+                .andRespond(withSuccess("{\"choices\":[{\"finish_reason\":\"stop\",\"message\":{\"content\":\"{}\"}}]}", MediaType.APPLICATION_JSON));
+        assertThat(client.completeStructuredContent("instructions", java.util.List.of(
+                Map.of("type", "text", "text", "brief"), Map.of("type", "image_url", "image_url", Map.of("url", "data:image/jpeg;base64,abc"))),
+                Map.of("type", "object"), "roomfit_design_consultation")).isEqualTo("{}");
+        server.verify();
+    }
+
     private LlmFeedbackProperties properties(String baseUrl, String apiKey, String model) {
         LlmFeedbackProperties properties = new LlmFeedbackProperties();
         properties.setBaseUrl(baseUrl);

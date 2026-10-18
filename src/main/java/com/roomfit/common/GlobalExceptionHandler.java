@@ -6,9 +6,16 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<CommonResponse<Void>> handleUploadSize(MaxUploadSizeExceededException e) {
+        return ResponseEntity.status(413).body(CommonResponse.fail(ErrorCode.CONSULTATION_UPLOAD_TOO_LARGE));
+    }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CommonResponse<Void>> handleCustomException(CustomException e) {
@@ -20,6 +27,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             HttpMessageNotReadableException.class,
+            MissingServletRequestPartException.class,
             MethodArgumentTypeMismatchException.class,
             MethodArgumentNotValidException.class
     })

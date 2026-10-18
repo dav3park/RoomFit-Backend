@@ -1,6 +1,10 @@
 spring:
   application:
     name: roomfit-backend
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 16MB
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:h2:file:./data/roomfit;AUTO_SERVER=TRUE}
     username: ${SPRING_DATASOURCE_USERNAME:sa}

@@ -68,12 +68,21 @@ public class OpenAiCompatibleLlmClient implements LlmClient {
     /** The workspace preview has a separate schema; legacy feedback/placement requests stay unchanged. */
     public String completeStructured(String instructions, Object input, Map<String, Object> schema) {
         try {
+            return completeStructuredContent(instructions, objectMapper.writeValueAsString(input), schema, "roomfit_workspace_feedback");
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Invalid workspace feedback request");
+        }
+    }
+
+    /** Multimodal content stays separate from the legacy text-only interpreter. */
+    public String completeStructuredContent(String instructions, Object content, Map<String, Object> schema, String name) {
+        try {
             Map<String, Object> body = Map.of(
                     "model", model,
                     "messages", List.of(Map.of("role", model.startsWith("gpt-4o") ? "system" : "developer", "content", instructions),
-                            Map.of("role", "user", "content", objectMapper.writeValueAsString(input))),
+                            Map.of("role", "user", "content", content)),
                     "response_format", Map.of("type", "json_schema", "json_schema", Map.of(
-                            "name", "roomfit_workspace_feedback", "strict", true, "schema", schema)),
+                            "name", name, "strict", true, "schema", schema)),
                     "max_completion_tokens", 4096);
             String response = restClient.post().uri(endpoint).body(body).retrieve().body(String.class);
             JsonNode choice = objectMapper.readTree(response).path("choices").path(0);
@@ -83,11 +92,11 @@ public class OpenAiCompatibleLlmClient implements LlmClient {
                     || !message.path("content").isTextual()) {
                 throw new IllegalStateException("Incomplete or refused workspace feedback");
             }
-            String content = message.path("content").asText();
-            if (content.length() > 32_000 || !objectMapper.readTree(content).isObject()) {
+            String answer = message.path("content").asText();
+            if (answer.length() > 32_000 || !objectMapper.readTree(answer).isObject()) {
                 throw new IllegalStateException("Invalid workspace feedback response");
             }
-            return content;
+            return answer;
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Invalid workspace feedback response");
         }
