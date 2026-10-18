@@ -33,6 +33,21 @@ class DesignConsultationControllerTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.data.source").value("LLM"))
                 .andExpect(jsonPath("$.data.requirements[0].imageIndex").value(1));
     }
+    @Test void optInAnalysisReturnsCanonicalEffectsWithOneProviderCall() throws Exception {
+        when(client.completeStructuredContent(anyString(), any(), anyMap(), eq("roomfit_design_consultation"))).thenReturn("""
+            {"summary":"책장 한 개와 옷장 제외","requirements":[
+              {"description":"책장 1개","source":"USER_TEXT","evidence":"책장 필요","imageIndex":null,"priority":"REQUIRED","effects":[{"kind":"REQUIRE_TYPE","value":"bookshelf","count":1}],"unresolved":[]},
+              {"description":"옷장 제외","source":"USER_TEXT","evidence":"옷장 제외","imageIndex":null,"priority":"REQUIRED","effects":[{"kind":"EXCLUDE_TYPE","value":"wardrobe","count":0}],"unresolved":[]}],"questions":[]}
+            """);
+        var input=new MockMultipartFile("brief","brief.json","application/json",mapper.writeValueAsBytes(Map.of(
+                "revision","r","description","책장 필요, 옷장 제외","furniture",List.of(),"recommendationReady",true)));
+        mvc.perform(multipart("/api/design-consultation/analyze").file(input)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.preparation.revision").value("r"))
+                .andExpect(jsonPath("$.data.preparation.conditions[0].effects[0].value").value("bookshelf"))
+                .andExpect(jsonPath("$.data.preparation.conditions[1].effects[0].kind").value("EXCLUDE_TYPE"));
+        verify(client,times(1)).completeStructuredContent(eq(ConsultationAnalysisPlan.INSTRUCTIONS),any(),eq(ConsultationAnalysisPlan.schema()),eq("roomfit_design_consultation"));
+        verifyNoMoreInteractions(client);
+    }
     @Test void validatesDescriptionBeforeProvider() throws Exception {
         mvc.perform(multipart("/api/design-consultation/analyze").file(brief("x".repeat(2001))))
                 .andExpect(status().isBadRequest()); verifyNoInteractions(client);

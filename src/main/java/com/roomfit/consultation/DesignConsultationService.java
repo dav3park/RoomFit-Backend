@@ -53,9 +53,9 @@ public class DesignConsultationService {
             for (MultipartFile image : images) content.add(Map.of("type", "image_url", "image_url",
                     Map.of("url", ConsultationImage.dataUrl(image), "detail", "auto")));
             stage = "provider_request";
-            String response = client.completeStructuredContent(INSTRUCTIONS, content, schema(), "roomfit_design_consultation");
+            String response = client.completeStructuredContent(request.recommendationReady()?ConsultationAnalysisPlan.INSTRUCTIONS:INSTRUCTIONS, content, request.recommendationReady()?ConsultationAnalysisPlan.schema():schema(), "roomfit_design_consultation");
             stage = "response_validation";
-            return parse(response, request, images.size());
+            return request.recommendationReady()?ConsultationAnalysisPlan.parse(response,request,images.size(),this,mapper):parse(response, request, images.size());
         } catch (CustomException e) { throw e; }
         catch (Exception e) {
             int status = e instanceof RestClientResponseException http ? http.getStatusCode().value() : 0;
