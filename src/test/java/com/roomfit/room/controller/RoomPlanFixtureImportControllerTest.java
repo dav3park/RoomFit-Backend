@@ -78,7 +78,7 @@ class RoomPlanFixtureImportControllerTest {
 
     @Test
     void realStudioScan_keepsKitchenInPlaceAndBedUnderWindow() throws Exception {
-        // 실기기 스캔(벽 6개 L자 원룸): 침대가 창문 앞을 일부 가리지만 실제 배치라서 빠지면 안 된다.
+        // 실기기 스캔(벽 6개 L자 원룸): 침대가 창문 앞을 일부 가리지만 실제 배치라서 빠지거나 옮겨지면 안 된다.
         String scan = new String(getClass().getResourceAsStream("/roomplan/studio-kitchen-scan.json").readAllBytes(),
                 java.nio.charset.StandardCharsets.UTF_8);
         mockMvc.perform(post("/api/rooms/upload")
@@ -87,13 +87,32 @@ class RoomPlanFixtureImportControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.furniture.length()").value(10))
                 .andExpect(jsonPath("$.data.furniture[?(@.id == 'bed-1')].type").value("bed"))
-                .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_CLEARANCE_ACCEPTED')].entityId")
-                        .value("bed-1"))
                 .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_UNPLACED')]").isEmpty())
                 // 냉장고는 옮길 수 있는 가전이라 일반 가구처럼 벽 안쪽으로 몇 mm 보정될 수 있다
                 .andExpect(jsonPath("$.data.furniture[?(@.id == 'refrigerator-1')].position.x",
                         org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.closeTo(1.29, 0.02))))
                 .andExpect(jsonPath("$.data.furniture[?(@.id == 'base_cabinet-1')].position.x").value(0.73));
+    }
+
+    @Test
+    void deskThatSlightlyBlocksDoorClearance_staysWithItsChair() throws Exception {
+        // 실기기 스캔: 책상이 벽 밖으로 2cm 나와 있고 문 앞 여유 공간을 살짝 가린다. 예전엔 문 앞을
+        // 비우는 자리를 방 전체에서 찾아 책상만 2m 떨어진 곳으로 옮겼다(의자는 제자리).
+        String scan = new String(getClass().getResourceAsStream("/roomplan/studio-desk-by-door-scan.json").readAllBytes(),
+                java.nio.charset.StandardCharsets.UTF_8);
+        mockMvc.perform(post("/api/rooms/upload")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scan))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'desk-1')].position.x",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.closeTo(2.88, 0.05))))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'desk-1')].position.z",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.closeTo(0.42, 0.05))))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'desk_chair-1')].position.x",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.closeTo(2.88, 0.05))))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'bed-1')].position.x",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.closeTo(4.22, 0.05))))
+                .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_UNPLACED')]").isEmpty());
     }
 
     @Test

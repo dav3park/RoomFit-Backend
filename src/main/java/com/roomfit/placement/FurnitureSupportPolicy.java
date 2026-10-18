@@ -43,9 +43,12 @@ final class FurnitureSupportPolicy {
         return isDeskChairPair(firstType, secondType);
     }
 
+    // 의자는 책상·테이블 아래로 밀어 넣어 두는 게 보통이라 일부 겹쳐도 충돌이 아니다.
+    private static final java.util.Set<String> CHAIR_TUCK_SURFACES = java.util.Set.of("desk", "multi_table");
+
     private static boolean isDeskChairPair(String firstType, String secondType) {
-        return ("desk".equals(firstType) && "desk_chair".equals(secondType))
-                || ("desk_chair".equals(firstType) && "desk".equals(secondType));
+        return ("desk_chair".equals(secondType) && CHAIR_TUCK_SURFACES.contains(firstType))
+                || ("desk_chair".equals(firstType) && CHAIR_TUCK_SURFACES.contains(secondType));
     }
 
     private static boolean active(Furniture furniture) {

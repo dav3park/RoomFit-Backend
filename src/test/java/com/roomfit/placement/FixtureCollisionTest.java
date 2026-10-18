@@ -57,4 +57,14 @@ class FixtureCollisionTest {
         assertThat(Fixtures.keptOnDiscard(List.of(baseCabinet, fridge, item("bed-1", "bed", 2, 2, 1, 2, 0.5))))
                 .extracting(Furniture::getId).containsExactly("base-1", "fridge-1");
     }
+
+    @Test
+    void chairTuckedUnderTable_isNotACollision() {
+        Furniture table = item("table-1", "multi_table", 2.0, 2.0, 0.8, 0.8, 0.45);
+        Furniture chair = item("chair-1", "desk_chair", 2.0, 2.4, 0.45, 0.5, 0.75);
+
+        ValidationResult result = validationService.validate(room, List.of(table, chair));
+
+        assertThat(result.isCollisionFree()).isTrue();
+    }
 }
