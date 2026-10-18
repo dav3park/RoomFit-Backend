@@ -19,4 +19,8 @@ public class DesignConsultationController {
             @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         return CommonResponse.ok(service.analyze(request, images == null ? List.of() : images));
     }
+    @PostMapping(value = "/prepare", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public CommonResponse<ConsultationPreparation.Result> prepare(@Valid @RequestBody ConsultationPreparation.Request request) {
+        return CommonResponse.ok(service.prepare(request));
+    }
 }

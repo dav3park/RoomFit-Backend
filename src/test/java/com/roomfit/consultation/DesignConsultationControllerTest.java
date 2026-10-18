@@ -11,6 +11,7 @@ import java.util.Map;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class DesignConsultationControllerTest {
@@ -49,4 +50,24 @@ class DesignConsultationControllerTest {
                 .andExpect(status().isBadRequest()); verifyNoInteractions(client);
     }
 
+    @Test void preparesConfirmedConditionsThroughTheRealService() throws Exception {
+        when(client.completeStructuredContent(anyString(), any(), anyMap(), eq("roomfit_consultation_preparation"))).thenReturn("""
+            {"conditions":[{"id":"0","effects":[{"kind":"REQUIRE_TYPE","value":"desk","count":2}],"unresolved":[]}]}
+            """);
+        mvc.perform(post("/api/design-consultation/prepare").contentType("application/json").content("""
+            {"revision":"r","conditions":[{"id":"0","description":"책상 두 개 필요","priority":"REQUIRED"}],"furniture":[]}
+            """))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.revision").value("r"))
+            .andExpect(jsonPath("$.data.conditions[0].effects[0].count").value(2));
+    }
+    @Test void rejectsInvalidOrDuplicateConfirmedConditionsBeforeProvider() throws Exception {
+        for(String conditions:List.of("[]", "[{\"id\":\"0\",\"description\":\"\",\"priority\":\"REQUIRED\"}]",
+                "[{\"id\":\"0\",\"description\":\"책상\",\"priority\":\"FAKE\"}]",
+                "[{\"id\":\"0\",\"description\":\"책상\",\"priority\":\"REQUIRED\"},{\"id\":\"0\",\"description\":\"책장\",\"priority\":\"REQUIRED\"}]")) {
+            mvc.perform(post("/api/design-consultation/prepare").contentType("application/json")
+                    .content("{\"revision\":\"r\",\"conditions\":"+conditions+",\"furniture\":[]}"))
+                    .andExpect(status().isBadRequest());
+        }
+        verifyNoInteractions(client);
+    }
 }

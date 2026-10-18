@@ -69,6 +69,25 @@ public class DesignConsultationService {
         } finally { release(); }
     }
 
+    public ConsultationPreparation.Result prepare(ConsultationPreparation.Request request) {
+        if (request.conditions().stream().map(ConsultationPreparation.Input::id).distinct().count() != request.conditions().size()
+                || request.furniture().stream().map(DesignConsultationRequest.Item::id).distinct().count() != request.furniture().size())
+            throw new CustomException(ErrorCode.INVALID_REQUEST_BODY);
+        if (client == null) throw new CustomException(ErrorCode.CONSULTATION_NOT_CONFIGURED);
+        acquire();
+        String stage = "preparation_provider";
+        try {
+            String response = client.completeStructuredContent(ConsultationPreparation.INSTRUCTIONS,
+                    mapper.writeValueAsString(request), ConsultationPreparation.schema(), "roomfit_consultation_preparation");
+            stage = "preparation_validation";
+            return ConsultationPreparation.parse(response, request, mapper);
+        } catch (Exception error) {
+            LoggerFactory.getLogger(getClass()).warn("design_consultation_failure requestId={} stage={} exception={}",
+                    RequestIdContext.get(), stage, error.getClass().getSimpleName());
+            throw new CustomException(ErrorCode.CONSULTATION_FAILED);
+        } finally { release(); }
+    }
+
     private synchronized void acquire() {
         long now = System.nanoTime();
         if (now - window > 60_000_000_000L) { window = now; requests = 0; }

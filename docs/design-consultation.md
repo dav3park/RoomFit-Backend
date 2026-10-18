@@ -23,3 +23,12 @@ Room/Layout/AgentContext 저장소 의존성이 없고, 사용자 입력과 첨�
 실제 OpenAI 호출은 배포 환경의 키로 별도 검증해야 한다. 현재 검증은 모의 제공자 응답을 사용한 계약/입력 검증이다.
 
 공식 규격: https://developers.openai.com/api/docs/guides/images-vision · https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=chat
+
+
+## 3단계 조건 준비 API (2026-10-18 구현)
+
+`POST /api/design-consultation/prepare` JSON: revision, conditions[{id,description,priority}], furniture[{id,name,type}]. 이미지 재전송과 DB 쓰기 없이 확인된 문장을 기존 OpenAI 클라이언트로 정리한다. 각 조건마다 typed effects와 unresolved 설명을 반환한다. 총 조건 12개/문장 300자/가구 24개, 응답은 모든 조건 ID를 정확히 한 번씩 포함한다.
+
+효과: PURPOSE/STYLE/PALETTE, REQUIRE_TYPE(카탈로그 종류·총 개수 1–24), EXCLUDE_TYPE(전부 제외), KEEP_ITEM(현재 ID). 나머지 효과의 count는 0이다. 활동 공간 수치·재질·이동 등 미지원 상세 조건은 unresolved에 남긴다. 기존 분석 API의 키·모델·25–60초 타임아웃·호출 제한을 공유하고, 제공자/검증 실패는 상세 본문을 노출하지 않는 502다.
+
+필수 여부·충돌·공간 배치 가능성은 브라우저 컴파일러와 실제 배치 엔진이 결정한다. 준비 API의 응답만으로 추천 성공/배치 가능을 주장하지 않는다. 구현 시점 검증은 모의 제공자 기반이며 실제 OpenAI 호출·배포 결과는 별도 QA 기록으로 구분한다.
