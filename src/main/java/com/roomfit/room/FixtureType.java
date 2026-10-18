@@ -21,7 +21,9 @@ public enum FixtureType {
     FIREPLACE("fireplace", "벽난로"),
     STAIRS("stairs", "계단"),
     // 벽에 붙은 붙박이 상부장(찬장). RoomPlan .storage 중 바닥에서 떠 있는 것.
-    UPPER_CABINET("upper_cabinet", "상부장");
+    UPPER_CABINET("upper_cabinet", "상부장"),
+    // 싱크대·가스레인지가 얹힌 붙박이 하부장(조리대). RoomPlan .storage 중 위에 조리기구가 있는 것.
+    BASE_CABINET("base_cabinet", "하부장");
 
     private final String code;
     private final String label;

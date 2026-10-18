@@ -1,0 +1,264 @@
+{
+ "furniture": [
+  {
+   "depth": 0.63,
+   "height": 0.86,
+   "id": "base_cabinet-1",
+   "label": "하부장",
+   "position": {
+    "x": 0.73,
+    "z": 1.78
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "base_cabinet",
+   "width": 1.39
+  },
+  {
+   "depth": 0.59,
+   "height": 1.09,
+   "id": "refrigerator-1",
+   "label": "냉장고",
+   "position": {
+    "x": 1.29,
+    "z": 3.16
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "refrigerator",
+   "width": 0.61
+  },
+  {
+   "depth": 0.62,
+   "height": 0.41,
+   "id": "multi_table-1",
+   "label": "테이블",
+   "position": {
+    "x": 2.89,
+    "z": 1.62
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "multi_table",
+   "width": 0.89
+  },
+  {
+   "depth": 0.38,
+   "elevation": 1.45,
+   "height": 0.81,
+   "id": "upper_cabinet-1",
+   "label": "상부장",
+   "mount": "WALL",
+   "position": {
+    "x": 0.9,
+    "z": 1.65
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "upper_cabinet",
+   "width": 1.27
+  },
+  {
+   "depth": 0.52,
+   "height": 0.05,
+   "id": "stove-1",
+   "label": "가스레인지",
+   "position": {
+    "x": 0.69,
+    "z": 1.72
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "stove",
+   "width": 0.74,
+   "mount": "WALL",
+   "elevation": 0.81
+  },
+  {
+   "depth": 0.49,
+   "height": 0.68,
+   "id": "desk_chair-1",
+   "label": "의자",
+   "position": {
+    "x": 2.96,
+    "z": 0.63
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "desk_chair",
+   "width": 0.45
+  },
+  {
+   "depth": 0.39,
+   "height": 0.22,
+   "id": "sink-1",
+   "label": "싱크대",
+   "position": {
+    "x": 1.12,
+    "z": 1.77
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "sink",
+   "width": 0.48,
+   "mount": "WALL",
+   "elevation": 0.64
+  },
+  {
+   "depth": 0.69,
+   "height": 1.86,
+   "id": "wardrobe-1",
+   "label": "옷장",
+   "position": {
+    "x": 3.55,
+    "z": 3.11
+   },
+   "rotation": 180,
+   "status": "EXISTING",
+   "type": "wardrobe",
+   "width": 2.61
+  },
+  {
+   "depth": 2.11,
+   "height": 0.54,
+   "id": "bed-1",
+   "label": "침대",
+   "position": {
+    "x": 4.24,
+    "z": 1.09
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "bed",
+   "width": 1.23
+  },
+  {
+   "depth": 0.66,
+   "height": 0.72,
+   "id": "desk-1",
+   "label": "책상",
+   "position": {
+    "x": 2.96,
+    "z": 0.37
+   },
+   "rotation": 0,
+   "status": "EXISTING",
+   "type": "desk",
+   "width": 1.25
+  }
+ ],
+ "openings": [
+  {
+   "height": 2.11,
+   "id": "FE46361F-4CC6-4680-8AF4-7C6116EB8CA3",
+   "offset": 0.96,
+   "type": "door",
+   "wall": "8B24EEB6-11BA-4788-A239-DA5321B63323",
+   "width": 0.72
+  },
+  {
+   "height": 1.95,
+   "id": "C09FDD1B-89FD-452B-9267-02BB78B5FC75",
+   "offset": 0.42,
+   "type": "door",
+   "wall": "8FDF543F-65D5-4B0D-BD51-3AD55DAACF67",
+   "width": 0.79
+  },
+  {
+   "height": 1.72,
+   "id": "F955DC77-18BA-44D6-BE6D-E651158B1A4E",
+   "offset": 1.41,
+   "sillHeight": 0.49,
+   "type": "window",
+   "wall": "483EF71D-ED89-4522-A41B-98AD98147FA6",
+   "width": 1.24
+  }
+ ],
+ "room": {
+  "depth": 3.51,
+  "height": 2.3,
+  "unit": "meter",
+  "width": 4.86
+ },
+ "walls": [
+  {
+   "end": {
+    "x": 0.04,
+    "z": 3.45
+   },
+   "height": 2.3,
+   "id": "AFBD5B07-3F7F-4322-8702-E7A66DE26565",
+   "start": {
+    "x": 4.86,
+    "z": 3.45
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 0.04,
+    "z": 1.46
+   },
+   "height": 2.3,
+   "id": "8FDF543F-65D5-4B0D-BD51-3AD55DAACF67",
+   "start": {
+    "x": 0.04,
+    "z": 3.45
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 1.5,
+    "z": 1.46
+   },
+   "height": 2.3,
+   "id": "E5ABAA8F-F0D0-4091-B92A-848896005497",
+   "start": {
+    "x": 0.04,
+    "z": 1.46
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 1.5,
+    "z": 0.04
+   },
+   "height": 2.3,
+   "id": "8B24EEB6-11BA-4788-A239-DA5321B63323",
+   "start": {
+    "x": 1.5,
+    "z": 1.46
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 4.86,
+    "z": 0.04
+   },
+   "height": 2.3,
+   "id": "E0546B39-DC51-4D1B-9572-EF5C02E93D57",
+   "start": {
+    "x": 1.5,
+    "z": 0.04
+   },
+   "thickness": 0
+  },
+  {
+   "end": {
+    "x": 4.86,
+    "z": 3.45
+   },
+   "height": 2.3,
+   "id": "483EF71D-ED89-4522-A41B-98AD98147FA6",
+   "start": {
+    "x": 4.86,
+    "z": 0.04
+   },
+   "thickness": 0
+  }
+ ],
+ "name": "studio with kitchen scan"
+}
