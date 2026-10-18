@@ -9,6 +9,10 @@ final class FurnitureInstallationPolicy {
     record Installation(boolean valid,String reason,String supportId,String openingId,double minY,double maxY) {}
     record Frame(double x,double z,double nx,double nz,double rotation) {}
     static FurniturePlacementPolicy policy(Furniture item) {
+        // 스캔된 벽걸이 가구(상부장 등)는 카탈로그 policy 대신 스캔한 높이를 그대로 쓴다 —
+        // minY/maxY가 바닥 가구와 겹치지 않으면 installationExempt로 충돌에서 빠진다.
+        if(item.isWallMounted()&&item.getElevation()!=null)
+            return new FurniturePlacementPolicy("WALL",List.of(),List.of(),null,item.getElevation(),null,null);
         return GeneratedFurnitureCatalog.get().placementPolicy(item.getVariantId()).orElseGet(()->FurniturePlacementPolicy.legacy(GeneratedFurnitureCatalog.get().normalizeType(item.getType())));
     }
     static Position supportPosition(Furniture support) {
@@ -48,7 +52,7 @@ final class FurnitureInstallationPolicy {
                     else {supportId=support.getId();var sp=policy(support);double ratio=sp.sourceDimensions()==null?1:support.getHeight()/sp.sourceDimensions().height();
                         bottom=("WALL".equals(sp.installation())&&sp.mountBottom()!=null?sp.mountBottom():0)+(sp.surface()==null?support.getHeight():sp.surface().height()*ratio);}
                 }
-                case "WALL" -> {bottom=p.mountBottom()==null?0:p.mountBottom();if(!nearWall(room,item))reason="벽에 설치할 위치가 필요합니다.";}
+                case "WALL" -> {bottom=p.mountBottom()==null?0:p.mountBottom();if(!item.isWallMounted()&&!nearWall(room,item))reason="벽에 설치할 위치가 필요합니다.";}
                 case "WINDOW" -> {
                     for(var opening:room.getOpenings().stream().filter(o->"window".equals(o.getType())&&!used.contains(o.getId())).sorted(Comparator.comparing(Opening::getId)).toList()){
                         var target=windowCandidate(room,item,opening);if(target==null)continue;
@@ -91,7 +95,7 @@ final class FurnitureInstallationPolicy {
         if(p.sourceDimensions()!=null&&(width/p.sourceDimensions().width()<.5||width/p.sourceDimensions().width()>2||height/p.sourceDimensions().height()<.5||height/p.sourceDimensions().height()>2))return null;
         double thickness=room.getWalls().stream().filter(w->w.getId().equals(opening.getWall())).mapToDouble(Wall::getThickness).findFirst().orElse(.12);
         double offset=item.getDepth()/2+thickness/2+.03;
-        return new Furniture(item.getId(),item.getType(),item.getLabel(),width,item.getDepth(),height,new Position(frame.x()+frame.nx()*offset+ax*shift,frame.z()+frame.nz()*offset+az*shift),frame.rotation(),item.getStatus(),item.getProductId(),item.getStyleTags(),item.getVariantId());
+        return new Furniture(item.getId(),item.getType(),item.getLabel(),width,item.getDepth(),height,new Position(frame.x()+frame.nx()*offset+ax*shift,frame.z()+frame.nz()*offset+az*shift),frame.rotation(),item.getStatus(),item.getProductId(),item.getStyleTags(),item.getVariantId()).copyMountFrom(item);
     }
     static boolean withinBoundary(Room room,Furniture item){
         if(!"WINDOW".equals(policy(item).installation()))return FurnitureBoundary.isInside(room,item);

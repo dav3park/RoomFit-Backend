@@ -147,7 +147,7 @@ public class RoomService {
         return source.stream().map(item -> new Furniture(item.getId(), item.getType(), item.getLabel(),
                 item.getWidth(), item.getDepth(), item.getHeight(),
                 new Position(item.getPosition().getX(), item.getPosition().getZ()), item.getRotation(),
-                item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId())).toList();
+                item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId()).copyMountFrom(item)).toList();
     }
 
     private void validateUploadRequest(RoomUploadRequest request) {
@@ -215,22 +215,45 @@ public class RoomService {
             throw new CustomException(ErrorCode.INVALID_REQUEST_BODY);
         }
 
-        String canonicalType = GeneratedFurnitureCatalog.get().normalizeType(furniture.getType());
-        boolean supportedType = GeneratedFurnitureCatalog.get().products().stream()
-                .map(com.roomfit.product.domain.MockProduct::getType)
-                .anyMatch(canonicalType::equals) || "storage".equals(canonicalType);
-        if (!supportedType) {
-            throw new CustomException(ErrorCode.INVALID_FURNITURE_TYPE);
+        // 고정설비(싱크대·냉장고·상부장 등)는 카탈로그 상품이 아니라 옮길 수 없는 장애물이라
+        // 카탈로그 타입 검사를 건너뛰고 canonical 코드(소문자)로 저장한다.
+        FixtureType fixtureType = FixtureType.fromCode(furniture.getType()).orElse(null);
+        String type = fixtureType == null ? furniture.getType() : fixtureType.code();
+        if (fixtureType == null) {
+            String canonicalType = GeneratedFurnitureCatalog.get().normalizeType(furniture.getType());
+            boolean supportedType = GeneratedFurnitureCatalog.get().products().stream()
+                    .map(com.roomfit.product.domain.MockProduct::getType)
+                    .anyMatch(canonicalType::equals) || "storage".equals(canonicalType);
+            if (!supportedType) {
+                throw new CustomException(ErrorCode.INVALID_FURNITURE_TYPE);
+            }
+        }
+
+        FurnitureMount mount = parseMount(furniture.getMount());
+        Double elevation = furniture.getElevation();
+        if (mount == FurnitureMount.WALL && (elevation == null || !finite(elevation) || elevation < 0)) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST_BODY);
         }
 
         FurnitureStatus status = parseStatus(defaultIfBlank(furniture.getStatus(), FurnitureStatus.EXISTING.name()));
         double rotation = RotationUtils.snapToRightAngle(furniture.getRotation() == null ? 0 : furniture.getRotation());
-        String label = defaultIfBlank(furniture.getLabel(), furniture.getType());
+        String label = defaultIfBlank(furniture.getLabel(), fixtureType == null ? furniture.getType() : fixtureType.label());
 
-        return new Furniture(furniture.getId(), furniture.getType(), label, furniture.getWidth(),
+        return new Furniture(furniture.getId(), type, label, furniture.getWidth(),
                 furniture.getDepth(), furniture.getHeight(),
                 new Position(furniture.getPosition().getX(), furniture.getPosition().getZ()),
-                rotation, status);
+                rotation, status).withMount(mount, elevation);
+    }
+
+    private FurnitureMount parseMount(String rawMount) {
+        if (isBlank(rawMount)) {
+            return FurnitureMount.FLOOR;
+        }
+        try {
+            return FurnitureMount.valueOf(rawMount.trim().toUpperCase(java.util.Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.INVALID_REQUEST_BODY);
+        }
     }
 
     private void validateFurnitureWithinRoom(Room room) {

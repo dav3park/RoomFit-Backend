@@ -8,6 +8,7 @@ import com.roomfit.placement.dto.*;
 import com.roomfit.product.catalog.GeneratedFurnitureCatalog;
 import com.roomfit.product.domain.MockProduct;
 import com.roomfit.product.repository.MockProductRepository;
+import com.roomfit.room.Fixtures;
 import com.roomfit.room.Furniture;
 import com.roomfit.room.FurnitureBoundary;
 import com.roomfit.room.FurnitureStatus;
@@ -152,17 +153,19 @@ public class LayoutService {
         // is a detached copy used only as read-only input to the placement
         // engine (which only reads geometry/furniture off it) — the real `room`
         // (and its confirmed furniture) is untouched either way.
+        // 고정설비(싱크대·냉장고 등)는 "기존 가구 버리기"에서도 남는다 — 방의 일부라서.
         Room placementRoom = request.isDiscardExisting() ? withoutFurniture(room) : room;
-        List<Furniture> baselineFurniture = request.isDiscardExisting() ? List.of() : room.getFurniture();
+        List<Furniture> baselineFurniture = request.isDiscardExisting() ? Fixtures.only(room.getFurniture()) : room.getFurniture();
 
-        PlacementResult placementResult;
+        PlacementResult rawPlacementResult;
         try {
-            placementResult = placementService.recommend(context, placementRoom);
+            rawPlacementResult = placementService.recommend(context, placementRoom);
         } catch (Exception e) {
             // TODO: AI Agent 호출 실패 시 규칙 기반 fallback 로직으로 재시도.
             // 지금은 스켈레톤이라 바로 예외 처리.
             throw new CustomException(ErrorCode.RECOMMENDATION_FAILED);
         }
+        PlacementResult placementResult = withPinnedFixtures(rawPlacementResult, baselineFurniture);
 
         furnitureDomainPolicy.validateFinalState(placementResult.getRecommendedFurniture());
         ValidationResult changeValidationResult = validationService.validateChange(
@@ -196,6 +199,13 @@ public class LayoutService {
         return LayoutResponse.ofRecommendation(layout, scoredPlacementResult, validationResult);
     }
 
+    private PlacementResult withPinnedFixtures(PlacementResult result, List<Furniture> baseline) {
+        return new PlacementResult(result.getStatus(), Fixtures.pin(baseline, result.getRecommendedFurniture()),
+                result.getScoreSummary(), result.getRequestedFurnitureCount(), result.getPlacedFurnitureCount(),
+                result.getUnplacedFurniture(), result.getRecommendationStatus(), result.getWarningCode(),
+                result.getMessage());
+    }
+
     private boolean isHardValid(ValidationResult result) {
         return result.isCollisionFree() && result.isBoundaryValid() && result.isDoorClearance()
                 && result.isWindowClearance() && result.isPathSecured();
@@ -209,7 +219,7 @@ public class LayoutService {
      */
     private Room withoutFurniture(Room room) {
         return new Room(room.getId(), room.getName(), room.getWidth(), room.getDepth(), room.getHeight(),
-                room.getUnit(), room.getWalls(), room.getOpenings(), List.of(),
+                room.getUnit(), room.getWalls(), room.getOpenings(), Fixtures.only(room.getFurniture()),
                 room.getSource(), room.getCreatedAt(), room.getClientScope());
     }
 
@@ -333,7 +343,7 @@ public class LayoutService {
                     FurnitureAdditionPolicy.MAX_NEW_ADDITIONS);
             FeedbackOperationExecution operationResult = execution.operationResults().stream().findFirst().orElse(null);
             if (operationResult != null && operationResult.status() == FeedbackOperationExecution.Status.APPLIED) {
-                updated = deepCopyFurniture(execution.furniture());
+                updated = deepCopyFurniture(Fixtures.pin(baseline, execution.furniture()));
                 placedCount++;
             } else {
                 String reasonCode = operationResult == null || operationResult.reasonCode() == null
@@ -439,7 +449,9 @@ public class LayoutService {
 
         FeedbackPlan plan = feedbackPlanInterpreter.interpret(request.getFeedback(), room, baseLayout.getFurniture(), context,
                 request.getSelectedFurnitureId());
-        FeedbackExecution execution = feedbackExecutor.execute(plan, room, baseLayout.getFurniture(), context);
+        FeedbackExecution rawExecution = feedbackExecutor.execute(plan, room, baseLayout.getFurniture(), context);
+        FeedbackExecution execution = new FeedbackExecution(
+                Fixtures.pin(baseLayout.getFurniture(), rawExecution.furniture()), rawExecution.result(), rawExecution.operationResults());
         furnitureDomainPolicy.validateFinalState(execution.furniture());
         ValidationResult validationResult = validationService.validate(room, execution.furniture());
         ScoreSummary scoreSummary = scoreService.calculate(context, execution.furniture(), validationResult);
@@ -783,6 +795,11 @@ public class LayoutService {
 
         return base.stream().map(f -> {
             FurniturePositionDto override = overrideById.get(f.getId());
+            if (f.isFixture()) {
+                // 고정설비는 옮길 수 없다 — 상태(숨기기)만 반영한다.
+                return copyFurniture(f, f.getPosition(), f.getRotation(), f.getWidth(), f.getDepth(), f.getHeight(),
+                        parseFurnitureStatus(override.getStatus(), f.getStatus()));
+            }
             validateRotation(override.getRotation());
             validatePosition(room, f, override);
             return copyWithOverride(f, override);
@@ -849,7 +866,7 @@ public class LayoutService {
                 furniture.getProductId(),
                 furniture.getStyleTags(),
                 furniture.getVariantId()
-        );
+        ).copyMountFrom(furniture);
     }
 
     private FurnitureStatus parseFurnitureStatus(String rawStatus, FurnitureStatus fallback) {
@@ -950,7 +967,7 @@ public class LayoutService {
                 furniture.getProductId(),
                 furniture.getStyleTags(),
                 furniture.getVariantId()
-        );
+        ).copyMountFrom(furniture);
     }
 
 }

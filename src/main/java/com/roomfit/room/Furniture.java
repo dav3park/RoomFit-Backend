@@ -1,5 +1,6 @@
 package com.roomfit.room;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.roomfit.common.VariantIdValidator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
@@ -50,6 +51,13 @@ public class Furniture {
     @Column(length = 1000)
     @Schema(description = "추천/스타일 계산에 사용되는 태그. 기존 가구는 빈 배열 허용")
     private List<String> styleTags = List.of();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mount", nullable = true)
+    @Schema(description = "설치 방식. null이면 FLOOR. WALL이면 elevation만큼 바닥에서 떠 있습니다.", example = "WALL", nullable = true)
+    private FurnitureMount mount;
+    @Column(name = "elevation", nullable = true)
+    @Schema(description = "바닥에서 가구 밑면까지 높이(meter). mount=WALL일 때만 의미가 있습니다.", example = "1.45", nullable = true)
+    private Double elevation;
 
     protected Furniture() {
         // JSON 역직렬화용
@@ -142,5 +150,36 @@ public class Furniture {
 
     public List<String> getStyleTags() {
         return styleTags;
+    }
+
+    public FurnitureMount getMount() {
+        return mount;
+    }
+
+    public Double getElevation() {
+        return elevation;
+    }
+
+    /** mount/elevation을 설정하고 자기 자신을 반환한다. WALL이 아니면 elevation은 버린다. */
+    public Furniture withMount(FurnitureMount mount, Double elevation) {
+        this.mount = mount == FurnitureMount.FLOOR ? null : mount;
+        this.elevation = mount == FurnitureMount.WALL ? elevation : null;
+        return this;
+    }
+
+    /** 위치/크기만 바꾼 복사본을 만들 때 원본의 설치 방식을 이어받는다. */
+    public Furniture copyMountFrom(Furniture source) {
+        return source == null ? this : withMount(source.mount, source.elevation);
+    }
+
+    @JsonIgnore
+    public boolean isWallMounted() {
+        return mount == FurnitureMount.WALL;
+    }
+
+    /** 싱크대·냉장고 같은 옮길 수 없는 고정설비인지. */
+    @JsonIgnore
+    public boolean isFixture() {
+        return FixtureType.isFixture(type);
     }
 }
