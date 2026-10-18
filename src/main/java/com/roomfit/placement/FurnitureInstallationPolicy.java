@@ -80,11 +80,23 @@ final class FurnitureInstallationPolicy {
     }
     static Furniture windowCandidate(Room room,Furniture item,Opening opening){
         Frame frame=openingFrame(room,opening);if(frame==null)return null;var p=policy(item);boolean blind="BLIND".equals(p.windowTreatment());
-        double bottom=windowBottom(room,opening),width=opening.getWidth()+(blind?0:.2),height=blind?opening.getHeight():Math.min(room.getHeight(),bottom+opening.getHeight()+.1);
+        var wall=room.getWalls().stream().filter(w->w.getId().equals(opening.getWall())).findFirst().orElse(null);
+        double ax=wall==null?(Set.of("east","west").contains(opening.getWall())?0:1):wall.getEnd().getX()-wall.getStart().getX();
+        double az=wall==null?(Set.of("east","west").contains(opening.getWall())?1:0):wall.getEnd().getZ()-wall.getStart().getZ();
+        double length=wall==null?(ax==0?room.getDepth():room.getWidth()):Math.hypot(ax,az),direction=Math.hypot(ax,az);
+        if(direction<1e-6)return null;ax/=direction;az/=direction;
+        double left=blind?0:Math.min(.1,Math.max(0,opening.getOffset()));
+        double right=blind?0:Math.min(.1,Math.max(0,length-opening.getOffset()-opening.getWidth())),shift=(right-left)/2;
+        double bottom=windowBottom(room,opening),width=opening.getWidth()+left+right,height=blind?opening.getHeight():Math.min(room.getHeight(),bottom+opening.getHeight()+.1);
         if(p.sourceDimensions()!=null&&(width/p.sourceDimensions().width()<.5||width/p.sourceDimensions().width()>2||height/p.sourceDimensions().height()<.5||height/p.sourceDimensions().height()>2))return null;
         double thickness=room.getWalls().stream().filter(w->w.getId().equals(opening.getWall())).mapToDouble(Wall::getThickness).findFirst().orElse(.12);
         double offset=item.getDepth()/2+thickness/2+.03;
-        return new Furniture(item.getId(),item.getType(),item.getLabel(),width,item.getDepth(),height,new Position(frame.x()+frame.nx()*offset,frame.z()+frame.nz()*offset),frame.rotation(),item.getStatus(),item.getProductId(),item.getStyleTags(),item.getVariantId());
+        return new Furniture(item.getId(),item.getType(),item.getLabel(),width,item.getDepth(),height,new Position(frame.x()+frame.nx()*offset+ax*shift,frame.z()+frame.nz()*offset+az*shift),frame.rotation(),item.getStatus(),item.getProductId(),item.getStyleTags(),item.getVariantId());
+    }
+    static boolean withinBoundary(Room room,Furniture item){
+        if(!"WINDOW".equals(policy(item).installation()))return FurnitureBoundary.isInside(room,item);
+        return FurnitureBoundary.footprint(item).corners().stream().allMatch(p->FurnitureBoundary.containsPoint(room,
+                item.getPosition().getX()+p.x()*(1-1e-7),item.getPosition().getZ()+p.z()*(1-1e-7)));
     }
     static double windowBottom(Room room,Opening opening){
         double preferred=opening.getSillHeight()==null?1.45:opening.getSillHeight()+opening.getHeight()/2;

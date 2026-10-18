@@ -7,11 +7,25 @@ import com.roomfit.product.service.*;
 import com.roomfit.room.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import java.util.*;
 import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ExpandedFurniturePlacementTest {
+    @ParameterizedTest @ValueSource(strings={"curtain-fabric","blind-wood"})
+    void explicitlySelectedCornerWindowTreatmentKeepsItsInstallationPose(String variant) {
+        var catalog=GeneratedFurnitureCatalog.get();
+        var product=catalog.products().stream().filter(p->variant.equals(p.getVariantId())).findFirst().orElseThrow();
+        var repo=new MockProductRepository();
+        var service=new RuleBasedPlacementService(new MockProductService(repo,new PurchaseUrlHealthCheckService(repo)),new ProductRecommendationService(repo));
+        var room=new Room(null,6,6,2.7,"meter",List.of(new Opening("corner","window","north",0,2,1.2,.9)),List.of());
+        var context=new AgentContext(1L,LifestyleGoal.RELAX_FOCUSED,List.of(DesignStyle.MODERN),List.of(product.getType()),List.of(),List.of(),List.of(product.getProductId()),List.of());
+        var result=service.recommend(context,room);
+        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendedFurniture()).anyMatch(f->variant.equals(f.getVariantId()));
+        assertThat(new ValidationService().validate(room,result.getRecommendedFurniture()).isBoundaryValid()).isTrue();
+    }
     static Stream<String> models() {return GeneratedFurnitureCatalog.get().products().stream().map(p->p.getVariantId()).filter(id->id.startsWith("expansion-"));}
     @ParameterizedTest @MethodSource("models")
     void explicitlySelectedNewModelHasAValidInstallation(String variant) {

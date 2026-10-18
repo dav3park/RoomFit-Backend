@@ -7,6 +7,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FurnitureInstallationPolicyTest {
  private Furniture item(String variant,String id){var p=GeneratedFurnitureCatalog.get().products().stream().filter(v->v.getVariantId().equals(variant)).findFirst().orElseThrow();return new Furniture(id,p.getType(),p.getName(),p.getWidth(),p.getDepth(),p.getHeight(),new Position(3,3),0,FurnitureStatus.RECOMMENDED,p.getProductId(),p.getStyleTags(),variant);}
  private Room room(){return new Room(null,6,6,2.7,"meter",List.of(),List.of());}
+ @Test void cornerWindowTreatmentsFitWithoutFloorFurnitureInset(){
+  var r=new Room(null,6,6,2.7,"meter",List.of(new Opening("corner","window","north",0,2,1.2,.9)),List.of());
+  for(var variant:List.of("curtain-fabric","blind-wood")){
+   var installed=FurnitureInstallationPolicy.windowCandidate(r,item(variant,"treatment"),r.getOpenings().getFirst());
+   assertThat(installed).isNotNull();
+   assertThat(installed.getWidth()).isCloseTo(variant.equals("curtain-fabric")?2.1:2,org.assertj.core.data.Offset.offset(1e-6));
+   assertThat(new ValidationService().validate(r,List.of(installed)).isBoundaryValid()).isTrue();
+   installed.setPosition(new Position(-1,installed.getPosition().getZ()));
+   assertThat(new ValidationService().validate(r,List.of(installed)).isBoundaryValid()).isFalse();
+  }
+ }
  @Test void tabletopLampRequiresARealSurface(){var lamp=item("lamp-table","lamp");var desk=item("desk-compact","desk");
   assertThat(FurnitureInstallationPolicy.resolve(room(),List.of(lamp)).get("lamp").valid()).isFalse();
   var installed=FurnitureInstallationPolicy.resolve(room(),List.of(desk,lamp)).get("lamp");

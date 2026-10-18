@@ -234,7 +234,7 @@ public class ValidationService {
 
     private boolean checkBoundaryValid(Room room, List<Furniture> furniture, List<String> warnings) {
         for (Furniture item : furniture) {
-            if (!FurnitureBoundary.isInside(room, item)) {
+            if (!FurnitureInstallationPolicy.withinBoundary(room, item)) {
                 warnings.add("방 범위를 벗어난 가구가 있습니다.");
                 return false;
             }
@@ -388,7 +388,7 @@ public class ValidationService {
     private List<ValidationIssue> boundaryIssues(Room room, List<Furniture> furniture) {
         List<ValidationIssue> issues = new ArrayList<>();
         for (Furniture item : furniture) {
-            if (!FurnitureBoundary.isInside(room, item)) {
+            if (!FurnitureInstallationPolicy.withinBoundary(room, item)) {
                 issues.add(new ValidationIssue(item.getId(), null, ValidationIssue.Type.OUT_OF_BOUNDS,
                         ValidationIssue.Severity.ERROR, "가구가 방 범위를 벗어났습니다."));
             }

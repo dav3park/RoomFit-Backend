@@ -44,6 +44,21 @@ class DesignConsultationServiceTest {
         assertThat(result.revision()).isEqualTo("revision-1"); assertThat(result.source()).isEqualTo("LLM");
         assertThat(result.requirements()).extracting(DesignConsultationResult.Requirement::support).containsExactly("SUPPORTED", "NEEDS_ENGINE_SUPPORT");
     }
+    @Test void recordsStageTimingsWithoutLoggingTheBriefPhotosOrResponse() throws Exception {
+        var logger = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(DesignConsultationService.class);
+        var logs = new ch.qos.logback.core.read.ListAppender<ch.qos.logback.classic.spi.ILoggingEvent>();
+        logs.start(); logger.addAppender(logs);
+        try {
+            provider(response(List.of(work())));
+            service.analyze(request, List.of(photo("private-photo.png")));
+            assertThat(logs.list).anySatisfy(event -> {
+                String message = event.getFormattedMessage();
+                assertThat(message).contains("design_consultation_timing", "operation=analyze", "imageCount=1", "attempts=1",
+                        "imageMs=", "providerMs=", "validationMs=", "totalMs=", "outcome=success");
+                assertThat(message).doesNotContain(request.description(), "private-photo", "data:image", "생활 조건", "업무 공간");
+            });
+        } finally { logger.detachAppender(logs); logs.stop(); }
+    }
     @Test void sendsActualImageContentAndChecksImageProvenance() throws Exception {
         provider(response(List.of(item("STYLE", "natural", "밝은 목재", "REFERENCE_IMAGE", "사진의 밝은 목재", 1))));
         assertThat(service.analyze(request, List.of(photo("not-a-prompt.png"))).requirements().getFirst().imageIndex()).isEqualTo(1);

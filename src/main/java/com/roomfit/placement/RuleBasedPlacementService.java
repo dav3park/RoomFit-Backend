@@ -238,7 +238,9 @@ public class RuleBasedPlacementService implements PlacementService {
         if("WALL".equals(installation.installation())||"FLOOR_CEILING".equals(installation.installation()))prototypes=wallCandidates(spec,room).stream()
                 .map(pose->createRecommendedFurniture(origin.getId(),spec,pose.position(),pose.rotation())).toList();
         for (Furniture prototype : prototypes) {
-            Position safePosition = FurnitureBoundary.clamp(room, prototype.getPosition(), prototype).orElse(null);
+            Position safePosition = "WINDOW".equals(installation.installation())
+                    ? (FurnitureInstallationPolicy.withinBoundary(room,prototype)?prototype.getPosition():null)
+                    : FurnitureBoundary.clamp(room, prototype.getPosition(), prototype).orElse(null);
             if (safePosition == null) {
                 reasonCounts.merge("NO_VALID_BOUNDARY_PLACEMENT", 1, Integer::sum);
                 continue;

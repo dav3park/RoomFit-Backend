@@ -49,6 +49,9 @@ public class DesignConsultationService {
         if (client == null) throw new CustomException(ErrorCode.CONSULTATION_NOT_CONFIGURED);
         acquire();
         long started = System.nanoTime();
+        long imageMs = 0, providerMs = 0, validationMs = 0;
+        int attempts = 0, outputChars = 0;
+        boolean success = false;
         String stage = "image_validation";
         try {
             var content = new ArrayList<Map<String, Object>>();
@@ -56,19 +59,28 @@ public class DesignConsultationService {
                     "description", request.description(), "furniture", request.furniture(), "imageCount", images.size()))));
             for (MultipartFile image : images) content.add(Map.of("type", "image_url", "image_url",
                     Map.of("url", ConsultationImage.dataUrl(image), "detail", "auto")));
+            imageMs = elapsedMs(started);
             String instructions = request.recommendationReady()?ConsultationAnalysisPlan.INSTRUCTIONS:INSTRUCTIONS;
             for (int attempt = 0; ; attempt++) {
                 stage = "provider_request";
-                String response = client.completeStructuredContent(instructions, content, request.recommendationReady()?ConsultationAnalysisPlan.schema():schema(), "roomfit_design_consultation");
+                long providerStarted = System.nanoTime();
+                attempts++;
+                String response;
+                try { response = client.completeStructuredContent(instructions, content, request.recommendationReady()?ConsultationAnalysisPlan.schema():schema(), "roomfit_design_consultation"); }
+                finally { providerMs += elapsedMs(providerStarted); }
+                outputChars += response.length();
                 stage = "response_validation";
+                long validationStarted = System.nanoTime();
                 try {
-                    return request.recommendationReady()?ConsultationAnalysisPlan.parse(response,request,images.size(),this,mapper):parse(response, request, images.size());
+                    var result = request.recommendationReady()?ConsultationAnalysisPlan.parse(response,request,images.size(),this,mapper):parse(response, request, images.size());
+                    success = true;
+                    return result;
                 } catch (ConsultationValidationException invalid) {
                     if (attempt != 0 || !reserveRepair(started)) throw invalid;
                     LoggerFactory.getLogger(getClass()).info("design_consultation_repair requestId={} rule={}", RequestIdContext.get(), invalid.getMessage());
                     content.add(Map.of("type", "text", "text", mapper.writeValueAsString(Map.of("previousAnswer", response, "validationRule", invalid.getMessage()))));
                     instructions += REPAIR_INSTRUCTIONS;
-                }
+                } finally { validationMs += elapsedMs(validationStarted); }
             }
         } catch (CustomException e) { throw e; }
         catch (Exception e) {
@@ -80,7 +92,12 @@ public class DesignConsultationService {
             LoggerFactory.getLogger(getClass()).warn("design_consultation_failure requestId={} stage={} exception={} providerStatus={} providerRequestId={} rule={}",
                     RequestIdContext.get(), stage, e.getClass().getSimpleName(), status, providerId, validationRule(e));
             throw new CustomException(stage.equals("response_validation") ? ErrorCode.CONSULTATION_RESPONSE_INVALID : ErrorCode.CONSULTATION_FAILED);
-        } finally { release(); }
+        } finally {
+            // Duration/count metadata only; never log the brief, pixels, names or generated answer.
+            LoggerFactory.getLogger(getClass()).info("design_consultation_timing requestId={} operation=analyze imageCount={} attempts={} imageMs={} providerMs={} validationMs={} outputChars={} totalMs={} outcome={}",
+                    RequestIdContext.get(), images.size(), attempts, imageMs, providerMs, validationMs, outputChars, elapsedMs(started), success ? "success" : "failure");
+            release();
+        }
     }
 
     public ConsultationPreparation.Result prepare(ConsultationPreparation.Request request) {
@@ -118,6 +135,7 @@ public class DesignConsultationService {
     private void refreshWindow(long now) {
         if (now - window > 60_000_000_000L) { window = now; requests = 0; }
     }
+    private static long elapsedMs(long started) { return (System.nanoTime() - started) / 1_000_000L; }
 
     private static final String REPAIR_INSTRUCTIONS = """
 
