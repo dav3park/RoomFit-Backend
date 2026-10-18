@@ -149,6 +149,10 @@ public class RoomUploadRequest {
         private Double rotation;
         @Schema(description = "가구 상태. 없으면 EXISTING으로 처리됩니다.", example = "EXISTING")
         private String status;
+        @Schema(description = "설치 방식(FLOOR/WALL). 없으면 FLOOR.", example = "WALL", nullable = true)
+        private String mount;
+        @Schema(description = "바닥에서 가구 밑면까지 높이(meter). mount=WALL이면 필수.", example = "1.45", nullable = true)
+        private Double elevation;
 
         protected FurnitureData() {
             // JSON 역직렬화용
@@ -188,6 +192,14 @@ public class RoomUploadRequest {
 
         public String getStatus() {
             return status;
+        }
+
+        public String getMount() {
+            return mount;
+        }
+
+        public Double getElevation() {
+            return elevation;
         }
     }
 

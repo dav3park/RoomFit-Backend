@@ -246,7 +246,7 @@ public class RuleBasedPlacementService implements PlacementService {
                 continue;
             }
             Furniture candidate = new Furniture(prototype.getId(),prototype.getType(),prototype.getLabel(),prototype.getWidth(),prototype.getDepth(),prototype.getHeight(),
-                    safePosition,prototype.getRotation(),prototype.getStatus(),prototype.getProductId(),prototype.getStyleTags(),prototype.getVariantId());
+                    safePosition,prototype.getRotation(),prototype.getStatus(),prototype.getProductId(),prototype.getStyleTags(),prototype.getVariantId()).copyMountFrom(prototype);
             ValidationResult validation = validationService.validateChange(room, placed, appended(placed, candidate));
             if (isHardValid(validation)) {
                 placed.add(candidate);
@@ -743,7 +743,7 @@ public class RuleBasedPlacementService implements PlacementService {
                 furniture.getProductId(),
                 furniture.getStyleTags(),
                 furniture.getVariantId()
-        );
+        ).copyMountFrom(furniture);
     }
 
     private enum PlacementRelation {

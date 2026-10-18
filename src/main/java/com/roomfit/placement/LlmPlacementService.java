@@ -302,7 +302,7 @@ public class LlmPlacementService implements PlacementService {
                 existing.getProductId(),
                 existing.getStyleTags(),
                 existing.getVariantId()
-        );
+        ).copyMountFrom(existing);
     }
 
     // A catalog match (when the LLM names a real productId) is preferred —

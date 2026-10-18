@@ -276,7 +276,7 @@ public class WorkspaceFeedbackPreviewService {
     private static Furniture canonicalCopy(Furniture item) {
         return new Furniture(item.getId(), FeedbackVocabularyNormalizer.normalizeCanonicalType(item.getType()), item.getLabel(),
                 item.getWidth(), item.getDepth(), item.getHeight(), new Position(item.getPosition().getX(), item.getPosition().getZ()),
-                item.getRotation(), item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId());
+                item.getRotation(), item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId()).copyMountFrom(item);
     }
 
     private static WorkspaceFeedbackPreviewResponse response(WorkspaceFeedbackPreviewRequest request, FeedbackStatus status,

@@ -30,9 +30,12 @@ public class RoomPlanImportValidator {
         validateWallGeometry(room);
         List<RoomImportWarning> warnings = new ArrayList<>();
         addWallWarnings(room, warnings);
-        List<Furniture> placed = new ArrayList<>();
+        // 고정설비는 스캔 위치가 곧 사실이라 옮기지 않는다. 주방처럼 고정설비끼리 이미 동선·문 앞을
+        // 막고 있어도 그건 방의 원래 상태라서, 일반 가구는 고정설비 위에 "새로 만든 위반"만 검사한다.
+        List<Furniture> fixtures = Fixtures.only(room.getFurniture());
+        List<Furniture> placed = new ArrayList<>(fixtures);
 
-        for (Furniture original : List.copyOf(room.getFurniture())) {
+        for (Furniture original : Fixtures.withoutFixtures(List.copyOf(room.getFurniture()))) {
             Optional<Furniture> normalized = findStrictSafePlacement(room, placed, original);
             if (normalized.isPresent()) {
                 Furniture result = normalized.get();
@@ -46,7 +49,7 @@ public class RoomPlanImportValidator {
         }
 
         room.setFurniture(placed);
-        if (!strictSafe(room, placed)) {
+        if (!strictSafe(room, fixtures, placed)) {
             throw new IllegalStateException("RoomPlan import must persist only strict-safe furniture");
         }
         room.setImportMetadata(warnings.isEmpty() ? RoomImportStatus.ACCEPTED : RoomImportStatus.ACCEPTED_WITH_WARNINGS,
@@ -59,7 +62,7 @@ public class RoomPlanImportValidator {
             Furniture rotated = copy(original, original.getPosition(), rotation);
             for (Position candidate : candidatePositions(room, rotated, original.getPosition())) {
                 Furniture proposal = copy(original, candidate, rotation);
-                if (strictSafe(room, append(placed, proposal))) {
+                if (strictSafe(room, fixtures(placed), append(placed, proposal))) {
                     return Optional.of(proposal);
                 }
             }
@@ -114,8 +117,14 @@ public class RoomPlanImportValidator {
         return result;
     }
 
-    private boolean strictSafe(Room room, List<Furniture> furniture) {
-        ValidationResult result = validationService.validate(room, furniture);
+    private List<Furniture> fixtures(List<Furniture> placed) {
+        return placed.stream().filter(Furniture::isFixture).toList();
+    }
+
+    private boolean strictSafe(Room room, List<Furniture> fixtures, List<Furniture> furniture) {
+        ValidationResult result = fixtures.isEmpty()
+                ? validationService.validate(room, furniture)
+                : validationService.validateChange(room, fixtures, furniture);
         return result.isCollisionFree() && result.isBoundaryValid() && result.isDoorClearance()
                 && result.isWindowClearance() && result.isPathSecured();
     }
@@ -128,7 +137,8 @@ public class RoomPlanImportValidator {
 
     private Furniture copy(Furniture item, Position position, double rotation) {
         return new Furniture(item.getId(), item.getType(), item.getLabel(), item.getWidth(), item.getDepth(),
-                item.getHeight(), position, rotation, item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId());
+                item.getHeight(), position, rotation, item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId())
+                .copyMountFrom(item);
     }
 
     private void addRepositionWarningIfNeeded(Furniture original, Furniture normalized, List<RoomImportWarning> warnings) {

@@ -731,7 +731,8 @@ public class DeterministicFeedbackExecutor {
 
     private Furniture copy(Furniture item, Position position, double rotation) {
         return new Furniture(item.getId(), item.getType(), item.getLabel(), item.getWidth(), item.getDepth(), item.getHeight(),
-                position, rotation, item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId());
+                position, rotation, item.getStatus(), item.getProductId(), item.getStyleTags(), item.getVariantId())
+                .copyMountFrom(item);
     }
 
     private boolean samePosition(Furniture first, Furniture second) {
