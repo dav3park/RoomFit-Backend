@@ -153,9 +153,9 @@ public class LayoutService {
         // is a detached copy used only as read-only input to the placement
         // engine (which only reads geometry/furniture off it) — the real `room`
         // (and its confirmed furniture) is untouched either way.
-        // 고정설비(싱크대·냉장고 등)는 "기존 가구 버리기"에서도 남는다 — 방의 일부라서.
+        // 고정설비(싱크대·하부장)와 냉장고는 "기존 가구 버리기"에서도 남는다 — 방의 일부라서.
         Room placementRoom = request.isDiscardExisting() ? withoutFurniture(room) : room;
-        List<Furniture> baselineFurniture = request.isDiscardExisting() ? Fixtures.only(room.getFurniture()) : room.getFurniture();
+        List<Furniture> baselineFurniture = request.isDiscardExisting() ? Fixtures.keptOnDiscard(room.getFurniture()) : room.getFurniture();
 
         PlacementResult rawPlacementResult;
         try {
@@ -219,7 +219,7 @@ public class LayoutService {
      */
     private Room withoutFurniture(Room room) {
         return new Room(room.getId(), room.getName(), room.getWidth(), room.getDepth(), room.getHeight(),
-                room.getUnit(), room.getWalls(), room.getOpenings(), Fixtures.only(room.getFurniture()),
+                room.getUnit(), room.getWalls(), room.getOpenings(), Fixtures.keptOnDiscard(room.getFurniture()),
                 room.getSource(), room.getCreatedAt(), room.getClientScope());
     }
 
@@ -795,7 +795,7 @@ public class LayoutService {
 
         return base.stream().map(f -> {
             FurniturePositionDto override = overrideById.get(f.getId());
-            if (f.isFixture()) {
+            if (f.isImmovableFixture()) {
                 // 고정설비는 옮길 수 없다 — 상태(숨기기)만 반영한다.
                 return copyFurniture(f, f.getPosition(), f.getRotation(), f.getWidth(), f.getDepth(), f.getHeight(),
                         parseFurnitureStatus(override.getStatus(), f.getStatus()));

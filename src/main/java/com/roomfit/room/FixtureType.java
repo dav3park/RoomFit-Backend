@@ -7,13 +7,14 @@ import java.util.Optional;
 /**
  * RoomPlan이 감지하는 "옮길 수 없는 장애물". 카탈로그 상품이 아니라서 가구 타입과 분리한다.
  * 업로드 시 type 필드에 {@link #code()} 값(소문자)이 그대로 들어온다.
- * 고정설비는 배치 엔진·피드백이 이동/삭제하지 않고, 새 가구의 충돌 기준으로만 쓰인다.
+ * 붙박이 설비(싱크대·하부장 등)는 배치 엔진·피드백이 이동/삭제하지 않고, 새 가구의 충돌 기준으로만
+ * 쓰인다. 냉장고처럼 놓기만 한 가전({@link #movable()})은 상품은 아니지만 사용자가 옮길 수 있다.
  */
 public enum FixtureType {
     SINK("sink", "싱크대"),
     STOVE("stove", "가스레인지"),
     OVEN("oven", "오븐"),
-    REFRIGERATOR("refrigerator", "냉장고"),
+    REFRIGERATOR("refrigerator", "냉장고", true),
     DISHWASHER("dishwasher", "식기세척기"),
     WASHER_DRYER("washer_dryer", "세탁기"),
     TOILET("toilet", "변기"),
@@ -27,10 +28,20 @@ public enum FixtureType {
 
     private final String code;
     private final String label;
+    private final boolean movable;
 
     FixtureType(String code, String label) {
+        this(code, label, false);
+    }
+
+    FixtureType(String code, String label, boolean movable) {
         this.code = code;
         this.label = label;
+        this.movable = movable;
+    }
+
+    public boolean movable() {
+        return movable;
     }
 
     public String code() {
@@ -51,5 +62,10 @@ public enum FixtureType {
 
     public static boolean isFixture(String type) {
         return fromCode(type).isPresent();
+    }
+
+    /** 옮길 수 없는 붙박이 설비인지(냉장고 같은 이동 가능 가전은 false). */
+    public static boolean isImmovable(String type) {
+        return fromCode(type).filter(fixture -> !fixture.movable).isPresent();
     }
 }

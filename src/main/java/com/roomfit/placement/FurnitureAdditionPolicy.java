@@ -23,6 +23,6 @@ public class FurnitureAdditionPolicy {
 
     // 고정설비는 방의 일부라서 가구 수 제한에 세지 않는다.
     static boolean active(Furniture furniture) {
-        return furniture.getStatus() != FurnitureStatus.DELETED && !furniture.isFixture();
+        return furniture.getStatus() != FurnitureStatus.DELETED && !furniture.isImmovableFixture();
     }
 }

@@ -35,6 +35,9 @@ final class FurnitureSupportPolicy {
      */
     static boolean isCollisionExempt(Furniture first, Furniture second) {
         if (!active(first) || !active(second)) return false;
+        // 하부장과 거기 박힌 싱크대·가스레인지처럼 붙박이 설비끼리는 원래 한 덩어리다. 둘 다 옮길 수
+        // 없으니 서로 겹쳐도 사용자가 고칠 문제가 아니다.
+        if (first.isImmovableFixture() && second.isImmovableFixture()) return true;
         String firstType = GeneratedFurnitureCatalog.get().normalizeType(first.getType());
         String secondType = GeneratedFurnitureCatalog.get().normalizeType(second.getType());
         return isDeskChairPair(firstType, secondType);
