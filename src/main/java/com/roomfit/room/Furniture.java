@@ -177,9 +177,9 @@ public class Furniture {
         return mount == FurnitureMount.WALL;
     }
 
-    /** 싱크대·냉장고 같은 옮길 수 없는 고정설비인지. */
+    /** 싱크대·하부장 같은 옮길 수 없는 붙박이 설비인지. 냉장고처럼 옮길 수 있는 가전은 false. */
     @JsonIgnore
-    public boolean isFixture() {
-        return FixtureType.isFixture(type);
+    public boolean isImmovableFixture() {
+        return FixtureType.isImmovable(type);
     }
 }

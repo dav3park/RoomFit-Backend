@@ -90,7 +90,9 @@ class RoomPlanFixtureImportControllerTest {
                 .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_CLEARANCE_ACCEPTED')].entityId")
                         .value("bed-1"))
                 .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_UNPLACED')]").isEmpty())
-                .andExpect(jsonPath("$.data.furniture[?(@.id == 'refrigerator-1')].position.x").value(1.29))
+                // 냉장고는 옮길 수 있는 가전이라 일반 가구처럼 벽 안쪽으로 몇 mm 보정될 수 있다
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'refrigerator-1')].position.x",
+                        org.hamcrest.Matchers.hasItem(org.hamcrest.Matchers.closeTo(1.29, 0.02))))
                 .andExpect(jsonPath("$.data.furniture[?(@.id == 'base_cabinet-1')].position.x").value(0.73));
     }
 
