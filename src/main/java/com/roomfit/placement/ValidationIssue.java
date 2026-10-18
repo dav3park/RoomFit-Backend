@@ -22,9 +22,10 @@ public record ValidationIssue(
 ) {
 
     @Schema(description = "이슈 종류", allowableValues = {
-            "BODY_COLLISION", "OUT_OF_BOUNDS", "DOOR_CLEARANCE", "WINDOW_CLEARANCE", "PATH_BLOCKED", "ZONE_INTRUSION"
+            "INSTALLATION_INVALID", "BODY_COLLISION", "OUT_OF_BOUNDS", "DOOR_CLEARANCE", "WINDOW_CLEARANCE", "PATH_BLOCKED", "ZONE_INTRUSION"
     })
     public enum Type {
+        INSTALLATION_INVALID,
         /** 가구 본체(footprint)끼리 겹침. */
         BODY_COLLISION,
         /** 가구 본체가 방 폴리곤/경계 밖으로 나감. */

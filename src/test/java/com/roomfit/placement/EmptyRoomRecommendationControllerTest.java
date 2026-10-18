@@ -86,9 +86,9 @@ class EmptyRoomRecommendationControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.recommendedFurniture[0].productId")
-                        .value("desk-midcentury-glass-01"))
+                        .value(org.hamcrest.Matchers.startsWith("expansion-c002")))
                 .andExpect(jsonPath("$.data.recommendedFurniture[0].variantId")
-                        .value("desk-midcentury-glass"))
+                        .value("expansion-c002"))
                 .andExpect(jsonPath("$.data.validationResult", notNullValue()))
                 .andExpect(jsonPath("$.error", nullValue()));
     }

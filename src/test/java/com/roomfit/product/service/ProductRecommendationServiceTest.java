@@ -1,5 +1,7 @@
 package com.roomfit.product.service;
 
+import com.roomfit.product.catalog.OriginalCatalogFixture;
+
 import com.roomfit.agent.domain.AgentContext;
 import com.roomfit.agent.domain.DesignStyle;
 import com.roomfit.agent.domain.LifestyleGoal;
@@ -21,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ProductRecommendationServiceTest {
 
-    private final ProductRecommendationService service = new ProductRecommendationService(new MockProductRepository());
+    private final ProductRecommendationService service = new ProductRecommendationService(OriginalCatalogFixture.repository());
 
     @Test
     void recommend_singleStyleMatch_picksTheOnlyOverlappingProduct() {

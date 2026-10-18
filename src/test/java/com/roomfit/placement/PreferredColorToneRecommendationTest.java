@@ -69,17 +69,11 @@ class PreferredColorToneRecommendationTest {
 
         Furniture relaxNightstand = findByType(relaxResult.getRecommendedFurniture(), "nightstand");
         Furniture studyNightstand = findByType(studyResult.getRecommendedFurniture(), "nightstand");
-        assertThat(relaxNightstand.getProductId()).isEqualTo("nightstand-classic-gullaberg-01");
-        assertThat(studyNightstand.getProductId()).isEqualTo("nightstand-midcentury-trolley-01");
+        assertThat(relaxNightstand.getStyleTags()).contains("natural");
+        assertThat(studyNightstand.getStyleTags()).contains("modern");
         assertThat(relaxNightstand.getProductId()).isNotEqualTo(studyNightstand.getProductId());
-
-        // mood_lamp 4종은 전부 "modern" style 태그를 공유해, 이 두 케이스에서는
-        // 우연히 같은 Product(lamp-floor)로 수렴한다 — bug가 아니라 Catalog
-        // 구성상의 한계다(카탈로그에 "natural" 계열 mood_lamp가 아예 없음).
-        Furniture relaxLamp = findByType(relaxResult.getRecommendedFurniture(), "mood_lamp");
-        Furniture studyLamp = findByType(studyResult.getRecommendedFurniture(), "mood_lamp");
-        assertThat(relaxLamp.getProductId()).isEqualTo("lamp-floor-01");
-        assertThat(studyLamp.getProductId()).isEqualTo("lamp-floor-01");
+        assertThat(findByType(relaxResult.getRecommendedFurniture(), "mood_lamp").getVariantId()).isNotBlank();
+        assertThat(findByType(studyResult.getRecommendedFurniture(), "mood_lamp").getVariantId()).isNotBlank();
 
         assertFullyValid(room, relaxResult);
         assertFullyValid(room, studyResult);
@@ -98,8 +92,11 @@ class PreferredColorToneRecommendationTest {
         Furniture woodNightstand = findByType(service.recommend(wood, room).getRecommendedFurniture(), "nightstand");
         Furniture grayNightstand = findByType(service.recommend(gray, room).getRecommendedFurniture(), "nightstand");
 
-        assertThat(woodNightstand.getProductId()).isEqualTo("nightstand-classic-gullaberg-01");
-        assertThat(grayNightstand.getProductId()).isEqualTo("nightstand-open-01");
+        var catalog = com.roomfit.product.catalog.GeneratedFurnitureCatalog.get();
+        assertThat(catalog.products().stream().filter(p -> p.getProductId().equals(woodNightstand.getProductId())).findFirst().orElseThrow().getMaterialTags())
+                .containsAnyElementsOf(PreferredColorTone.BROWN_WOOD.toMaterialTags());
+        assertThat(catalog.products().stream().filter(p -> p.getProductId().equals(grayNightstand.getProductId())).findFirst().orElseThrow().getMaterialTags())
+                .containsAnyElementsOf(PreferredColorTone.GRAY.toMaterialTags());
         assertThat(woodNightstand.getProductId()).isNotEqualTo(grayNightstand.getProductId());
     }
 

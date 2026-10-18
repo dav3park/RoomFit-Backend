@@ -61,12 +61,16 @@ public class ProductRecommendationService {
     }
 
     public Optional<MockProduct> recommend(String type, AgentContext context, Room room) {
+        return rankedCandidates(type, context, room).stream().findFirst();
+    }
+
+    public List<MockProduct> rankedCandidates(String type, AgentContext context, Room room) {
         List<MockProduct> candidates = mockProductRepository.findAll().stream()
                 .filter(product -> GeneratedFurnitureCatalog.get().sameType(type, product.getType()))
                 .toList();
 
         if (candidates.isEmpty()) {
-            return Optional.empty();
+            return List.of();
         }
 
         Set<String> normalizedStyleTags = normalizeDesignStyle(context.getDesignStyle());
@@ -95,7 +99,7 @@ public class ProductRecommendationService {
                 .toList();
         List<MockProduct> pool = fittable.isEmpty() ? byPreferenceOrder : fittable;
 
-        return pool.stream().findFirst();
+        return pool;
     }
 
     private Set<String> normalizeDesignStyle(List<DesignStyle> designStyle) {

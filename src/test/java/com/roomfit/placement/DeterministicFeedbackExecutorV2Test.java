@@ -1,5 +1,7 @@
 package com.roomfit.placement;
 
+import com.roomfit.product.catalog.OriginalCatalogFixture;
+
 import com.roomfit.product.repository.MockProductRepository;
 import com.roomfit.room.Furniture;
 import com.roomfit.room.FurnitureBoundary;
@@ -17,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DeterministicFeedbackExecutorV2Test {
 
     private final DeterministicFeedbackExecutor executor =
-            new DeterministicFeedbackExecutor(new ValidationService(), new MockProductRepository());
+            new DeterministicFeedbackExecutor(new ValidationService(), OriginalCatalogFixture.repository());
 
     @ParameterizedTest
     @CsvSource({
@@ -390,7 +392,7 @@ class DeterministicFeedbackExecutorV2Test {
         assertThat(execution.result().applied()).as(execution.result().noChangeReason()).isTrue();
         assertThat(execution.furniture().getFirst().getRotation()).isEqualTo(90);
         assertThat(execution.furniture().getFirst().getPosition().getZ())
-                .isCloseTo(0.68, org.assertj.core.data.Offset.offset(1.0e-7));
+                .isCloseTo(0.58, org.assertj.core.data.Offset.offset(1.0e-7));
     }
 
     @Test

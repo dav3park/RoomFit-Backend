@@ -1,8 +1,8 @@
 {
   "schemaVersion": "1.0",
-  "catalogVersion": "2026-07-18.2",
-  "sourceHash": "sha256:96d726f4a90f3b91d6195f6c63bde17714c92abc9a1f8c41cab3d5faafa30ee1",
-  "variantCount": 93,
+  "catalogVersion": "2026-10-18.1",
+  "sourceHash": "sha256:baaec272a9b749014abbd53865c6173d0c5d8e52a829b28ea2417537678c3bc6",
+  "variantCount": 193,
   "typeAliases": {
     "bed": "bed",
     "BED": "bed",
@@ -102,7 +102,27 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/desk-compact.json"
+      "variantPath": "variants/desk-compact.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.73,
+          "minX": -0.585,
+          "maxX": 0.585,
+          "minZ": -0.285,
+          "maxZ": 0.285
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.6,
+          "height": 0.73
+        },
+        "canonicalType": "desk"
+      }
     },
     {
       "productId": "desk-storage-01",
@@ -141,7 +161,27 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/desk-storage.json"
+      "variantPath": "variants/desk-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.73,
+          "minX": -0.685,
+          "maxX": 0.685,
+          "minZ": -0.295,
+          "maxZ": 0.295
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 1.4,
+          "depth": 0.62,
+          "height": 0.73
+        },
+        "canonicalType": "desk"
+      }
     },
     {
       "productId": "desk-corner-01",
@@ -179,7 +219,27 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/desk-corner.json"
+      "variantPath": "variants/desk-corner.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.755,
+          "minX": -0.3,
+          "maxX": 0.4,
+          "minZ": -0.1,
+          "maxZ": 0.28
+        },
+        "surfacePartId": "corner-desktop",
+        "sourceDimensions": {
+          "width": 1.3,
+          "depth": 1,
+          "height": 1.42
+        },
+        "canonicalType": "desk"
+      }
     },
     {
       "productId": "desk-midcentury-glass-01",
@@ -216,7 +276,27 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/desk-midcentury-glass.json"
+      "variantPath": "variants/desk-midcentury-glass.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.812,
+          "minX": -0.86,
+          "maxX": 0.86,
+          "minZ": -0.355,
+          "maxZ": 0.355
+        },
+        "surfacePartId": "glass-top",
+        "sourceDimensions": {
+          "width": 1.75,
+          "depth": 0.74,
+          "height": 0.812
+        },
+        "canonicalType": "desk"
+      }
     },
     {
       "productId": "bed-classic-idanaes-01",
@@ -254,7 +334,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bed-classic-idanaes.json"
+      "variantPath": "variants/bed-classic-idanaes.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.57,
+          "depth": 2.22,
+          "height": 1.21
+        },
+        "canonicalType": "bed"
+      }
     },
     {
       "productId": "bed-fabric-headboard-01",
@@ -291,7 +383,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bed-fabric-headboard.json"
+      "variantPath": "variants/bed-fabric-headboard.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 0.94,
+          "depth": 2.06,
+          "height": 0.85
+        },
+        "canonicalType": "bed"
+      }
     },
     {
       "productId": "bed-loft-desk-01",
@@ -332,7 +436,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bed-loft-desk.json"
+      "variantPath": "variants/bed-loft-desk.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 2.07,
+          "depth": 1.04,
+          "height": 1.82
+        },
+        "canonicalType": "bed"
+      }
     },
     {
       "productId": "bed-low-platform-01",
@@ -371,7 +487,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bed-low-platform.json"
+      "variantPath": "variants/bed-low-platform.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 0.83,
+          "depth": 2.05,
+          "height": 0.7
+        },
+        "canonicalType": "bed"
+      }
     },
     {
       "productId": "bed-midcentury-teal-01",
@@ -412,7 +540,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bed-midcentury-teal.json"
+      "variantPath": "variants/bed-midcentury-teal.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.8,
+          "depth": 2.31,
+          "height": 1.19
+        },
+        "canonicalType": "bed"
+      }
     },
     {
       "productId": "bed-storage-01",
@@ -451,7 +591,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bed-storage.json"
+      "variantPath": "variants/bed-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 0.96,
+          "depth": 2.06,
+          "height": 0.635
+        },
+        "canonicalType": "bed"
+      }
     },
     {
       "productId": "blind-roller-01",
@@ -489,7 +641,18 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/blind-roller.json"
+      "variantPath": "variants/blind-roller.json",
+      "placement": {
+        "installation": "WINDOW",
+        "roles": [],
+        "windowTreatment": "BLIND",
+        "sourceDimensions": {
+          "width": 1.28,
+          "depth": 0.1,
+          "height": 1.79
+        },
+        "canonicalType": "curtain_blind"
+      }
     },
     {
       "productId": "blind-wood-01",
@@ -527,7 +690,18 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/blind-wood.json"
+      "variantPath": "variants/blind-wood.json",
+      "placement": {
+        "installation": "WINDOW",
+        "roles": [],
+        "windowTreatment": "BLIND",
+        "sourceDimensions": {
+          "width": 1.25,
+          "depth": 0.1,
+          "height": 1.8
+        },
+        "canonicalType": "curtain_blind"
+      }
     },
     {
       "productId": "bookshelf-classic-havsta-01",
@@ -566,7 +740,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bookshelf-classic-havsta.json"
+      "variantPath": "variants/bookshelf-classic-havsta.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.21,
+          "depth": 0.37,
+          "height": 1.34
+        },
+        "canonicalType": "bookshelf"
+      }
     },
     {
       "productId": "bookshelf-double-open-01",
@@ -604,7 +790,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bookshelf-double-open.json"
+      "variantPath": "variants/bookshelf-double-open.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage",
+          "divider"
+        ],
+        "sourceDimensions": {
+          "width": 0.765,
+          "depth": 0.39,
+          "height": 1.465
+        },
+        "canonicalType": "bookshelf"
+      }
     },
     {
       "productId": "bookshelf-high-01",
@@ -642,7 +841,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bookshelf-high.json"
+      "variantPath": "variants/bookshelf-high.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.28,
+          "height": 2.02
+        },
+        "canonicalType": "bookshelf"
+      }
     },
     {
       "productId": "bookshelf-low-01",
@@ -680,7 +891,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bookshelf-low.json"
+      "variantPath": "variants/bookshelf-low.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.28,
+          "height": 1.06
+        },
+        "canonicalType": "bookshelf"
+      }
     },
     {
       "productId": "bookshelf-midcentury-stockholm-01",
@@ -717,7 +940,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/bookshelf-midcentury-stockholm.json"
+      "variantPath": "variants/bookshelf-midcentury-stockholm.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.524,
+          "depth": 0.381,
+          "height": 1.8034
+        },
+        "canonicalType": "bookshelf"
+      }
     },
     {
       "productId": "chair-armrest-01",
@@ -755,7 +990,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/chair-armrest.json"
+      "variantPath": "variants/chair-armrest.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.71,
+          "depth": 0.71,
+          "height": 1.14
+        },
+        "canonicalType": "desk_chair"
+      }
     },
     {
       "productId": "chair-basic-01",
@@ -791,7 +1038,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/chair-basic.json"
+      "variantPath": "variants/chair-basic.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.46,
+          "depth": 0.54,
+          "height": 0.8
+        },
+        "canonicalType": "desk_chair"
+      }
     },
     {
       "productId": "chair-classic-tonstad-01",
@@ -828,7 +1087,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/chair-classic-tonstad.json"
+      "variantPath": "variants/chair-classic-tonstad.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.42,
+          "depth": 0.56,
+          "height": 0.86
+        },
+        "canonicalType": "desk_chair"
+      }
     },
     {
       "productId": "chair-compact-swivel-01",
@@ -866,7 +1137,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/chair-compact-swivel.json"
+      "variantPath": "variants/chair-compact-swivel.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.67,
+          "depth": 0.67,
+          "height": 0.9
+        },
+        "canonicalType": "desk_chair"
+      }
     },
     {
       "productId": "chair-gaming-matchspel-01",
@@ -906,7 +1189,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/chair-gaming-matchspel.json"
+      "variantPath": "variants/chair-gaming-matchspel.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.66,
+          "depth": 0.66,
+          "height": 1.32
+        },
+        "canonicalType": "desk_chair"
+      }
     },
     {
       "productId": "chair-midcentury-shell-01",
@@ -945,7 +1240,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/chair-midcentury-shell.json"
+      "variantPath": "variants/chair-midcentury-shell.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.56,
+          "depth": 0.54,
+          "height": 0.88
+        },
+        "canonicalType": "desk_chair"
+      }
     },
     {
       "productId": "curtain-blackout-01",
@@ -982,7 +1289,18 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/curtain-blackout.json"
+      "variantPath": "variants/curtain-blackout.json",
+      "placement": {
+        "installation": "WINDOW",
+        "roles": [],
+        "windowTreatment": "CURTAIN",
+        "sourceDimensions": {
+          "width": 1.82,
+          "depth": 0.2,
+          "height": 2.4
+        },
+        "canonicalType": "curtain_blind"
+      }
     },
     {
       "productId": "curtain-fabric-01",
@@ -1018,7 +1336,18 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/curtain-fabric.json"
+      "variantPath": "variants/curtain-fabric.json",
+      "placement": {
+        "installation": "WINDOW",
+        "roles": [],
+        "windowTreatment": "CURTAIN",
+        "sourceDimensions": {
+          "width": 2.96,
+          "depth": 0.18,
+          "height": 2.54
+        },
+        "canonicalType": "curtain_blind"
+      }
     },
     {
       "productId": "drawer-chest-bedside-01",
@@ -1056,7 +1385,28 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/drawer-chest-bedside.json"
+      "variantPath": "variants/drawer-chest-bedside.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage",
+          "bedside"
+        ],
+        "surface": {
+          "height": 0.49,
+          "minX": -0.16,
+          "maxX": 0.16,
+          "minZ": -0.185,
+          "maxZ": 0.185
+        },
+        "surfacePartId": "compact-top",
+        "sourceDimensions": {
+          "width": 0.35,
+          "depth": 0.4,
+          "height": 0.49
+        },
+        "canonicalType": "drawer_chest"
+      }
     },
     {
       "productId": "drawer-chest-classic-gullaberg-01",
@@ -1092,7 +1442,27 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/drawer-chest-classic-gullaberg.json"
+      "variantPath": "variants/drawer-chest-classic-gullaberg.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 1.22,
+          "minX": -0.43,
+          "maxX": 0.43,
+          "minZ": -0.225,
+          "maxZ": 0.225
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 0.89,
+          "depth": 0.48,
+          "height": 1.22
+        },
+        "canonicalType": "drawer_chest"
+      }
     },
     {
       "productId": "drawer-chest-low-wide-01",
@@ -1129,7 +1499,27 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/drawer-chest-low-wide.json"
+      "variantPath": "variants/drawer-chest-low-wide.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.72,
+          "minX": -0.685,
+          "maxX": 0.685,
+          "minZ": -0.185,
+          "maxZ": 0.185
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 1.4,
+          "depth": 0.4,
+          "height": 0.72
+        },
+        "canonicalType": "drawer_chest"
+      }
     },
     {
       "productId": "drawer-chest-vertical-01",
@@ -1167,7 +1557,5106 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/drawer-chest-vertical.json"
+      "variantPath": "variants/drawer-chest-vertical.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 1.12,
+          "minX": -0.335,
+          "maxX": 0.335,
+          "minZ": -0.185,
+          "maxZ": 0.185
+        },
+        "surfacePartId": "tall-top",
+        "sourceDimensions": {
+          "width": 0.7,
+          "depth": 0.4,
+          "height": 1.12
+        },
+        "canonicalType": "drawer_chest"
+      }
+    },
+    {
+      "productId": "expansion-c001-01",
+      "variantId": "expansion-c001",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "컴퍼스 다리 책상",
+      "dimensions": {
+        "width": 1.25,
+        "depth": 0.6,
+        "height": 0.7125000004470348
+      },
+      "visualFootprint": {
+        "minX": -0.625,
+        "maxX": 0.625,
+        "minZ": -0.300000012,
+        "maxZ": 0.300000012
+      },
+      "styleTags": [
+        "minimal",
+        "modern",
+        "midcentury"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "woodLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/desks/designer/",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c001.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.7125,
+          "minX": -0.61,
+          "maxX": 0.61,
+          "minZ": -0.285,
+          "maxZ": 0.285
+        },
+        "surfacePartId": "oak-top",
+        "sourceDimensions": {
+          "width": 1.25,
+          "depth": 0.6,
+          "height": 0.7125000004470348
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c002-01",
+      "variantId": "expansion-c002",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "후면 칸막이 홈데스크",
+      "dimensions": {
+        "width": 0.99,
+        "depth": 0.7204999999999999,
+        "height": 0.8728036526347738
+      },
+      "visualFootprint": {
+        "minX": -0.495000005,
+        "maxX": 0.495000005,
+        "minZ": -0.36025,
+        "maxZ": 0.360249989
+      },
+      "styleTags": [
+        "midcentury",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "paintedWhite",
+        "chrome",
+        "woodLight",
+        "woodDark",
+        "mustardPaint",
+        "orangeFabricDark"
+      ],
+      "purchaseUrl": "https://www.vitra.com/nl-nl/product/category/desks",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c002.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.705303653,
+          "minX": -0.48,
+          "maxX": 0.48,
+          "minZ": -0.29775,
+          "maxZ": 0.34525
+        },
+        "surfacePartId": "writing-top",
+        "sourceDimensions": {
+          "width": 0.99,
+          "depth": 0.7204999999999999,
+          "height": 0.8728036526347738
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c003-01",
+      "variantId": "expansion-c003",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "접힌 목재 데스크",
+      "dimensions": {
+        "width": 1.2000000476837158,
+        "depth": 0.7100766897201538,
+        "height": 0.882480800151825
+      },
+      "visualFootprint": {
+        "minX": -0.600000024,
+        "maxX": 0.600000024,
+        "minZ": -0.355038345,
+        "maxZ": 0.355038345
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "woodLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/desks/designer/",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c003.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 1.2000000476837158,
+          "depth": 0.7100766897201538,
+          "height": 0.882480800151825
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c004-01",
+      "variantId": "expansion-c004",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "T자 베이스 홈데스크",
+      "dimensions": {
+        "width": 1.4,
+        "depth": 0.7,
+        "height": 0.74
+      },
+      "visualFootprint": {
+        "minX": -0.699999988,
+        "maxX": 0.699999988,
+        "minZ": -0.349999994,
+        "maxZ": 0.349999994
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "paintedWhite",
+        "metalLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/desks/designer/",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c004.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.74,
+          "minX": -0.685,
+          "maxX": 0.685,
+          "minZ": -0.335,
+          "maxZ": 0.335
+        },
+        "surfacePartId": "desktop",
+        "sourceDimensions": {
+          "width": 1.4,
+          "depth": 0.7,
+          "height": 0.74
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c005-01",
+      "variantId": "expansion-c005",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "비대칭 사선 다리 책상",
+      "dimensions": {
+        "width": 1.3,
+        "depth": 0.65,
+        "height": 0.732983082362842
+      },
+      "visualFootprint": {
+        "minX": -0.649999976,
+        "maxX": 0.649999976,
+        "minZ": -0.324999988,
+        "maxZ": 0.324999988
+      },
+      "styleTags": [
+        "natural",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/tables/desks",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c005.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.732983082,
+          "minX": -0.635,
+          "maxX": 0.635,
+          "minZ": -0.31,
+          "maxZ": 0.31
+        },
+        "surfacePartId": "linoleum-top",
+        "sourceDimensions": {
+          "width": 1.3,
+          "depth": 0.65,
+          "height": 0.732983082362842
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c006-01",
+      "variantId": "expansion-c006",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "가로 보강 프레임 책상",
+      "dimensions": {
+        "width": 1.4,
+        "depth": 0.65,
+        "height": 0.74
+      },
+      "visualFootprint": {
+        "minX": -0.699999988,
+        "maxX": 0.699999988,
+        "minZ": -0.324999988,
+        "maxZ": 0.324999988
+      },
+      "styleTags": [
+        "natural",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "woodLight",
+        "metal",
+        "woodDark"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/tables/desks",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c006.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.74,
+          "minX": -0.685,
+          "maxX": 0.685,
+          "minZ": -0.31,
+          "maxZ": 0.31
+        },
+        "surfacePartId": "oak-top",
+        "sourceDimensions": {
+          "width": 1.4,
+          "depth": 0.65,
+          "height": 0.74
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c007-01",
+      "variantId": "expansion-c007",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "절곡 스틸 다리 책상",
+      "dimensions": {
+        "width": 1.4,
+        "depth": 0.7,
+        "height": 0.7309095456108491
+      },
+      "visualFootprint": {
+        "minX": -0.699999988,
+        "maxX": 0.699999988,
+        "minZ": -0.349999994,
+        "maxZ": 0.349999994
+      },
+      "styleTags": [
+        "midcentury",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "woodLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/tables/desks",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c007.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "surface": {
+          "height": 0.730909546,
+          "minX": -0.685,
+          "maxX": 0.685,
+          "minZ": -0.335,
+          "maxZ": 0.335
+        },
+        "surfacePartId": "oak-writing-top",
+        "sourceDimensions": {
+          "width": 1.4,
+          "depth": 0.7,
+          "height": 0.7309095456108491
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c008-01",
+      "variantId": "expansion-c008",
+      "furnitureType": "desk",
+      "furnitureTypeCode": "DESK",
+      "label": "말아 올린 곡면 책상",
+      "dimensions": {
+        "width": 1.190000057220459,
+        "depth": 0.6708513498306274,
+        "height": 0.8129388689994812
+      },
+      "visualFootprint": {
+        "minX": -0.595000029,
+        "maxX": 0.595000029,
+        "minZ": -0.335425675,
+        "maxZ": 0.335425675
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "woodLight",
+        "chrome"
+      ],
+      "purchaseUrl": "https://www.kartell.com/us/en/ktus/shop/product/earl-of-wood/kar04927nn",
+      "requiredClearance": {
+        "front": 0.6,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c008.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 1.190000057220459,
+          "depth": 0.6708513498306274,
+          "height": 0.8129388689994812
+        },
+        "canonicalType": "desk"
+      }
+    },
+    {
+      "productId": "expansion-c009-01",
+      "variantId": "expansion-c009",
+      "furnitureType": "bed",
+      "furnitureTypeCode": "BED",
+      "label": "드레이프 헤드 침대",
+      "dimensions": {
+        "width": 1.636,
+        "depth": 2.1064953341484074,
+        "height": 1.0282706022262573
+      },
+      "visualFootprint": {
+        "minX": -0.818,
+        "maxX": 0.818,
+        "minZ": -1.05324769,
+        "maxZ": 1.053247643
+      },
+      "styleTags": [
+        "natural",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "fabricDark",
+        "woodLight",
+        "fabricLight",
+        "paintedWhite",
+        "fabric"
+      ],
+      "purchaseUrl": "https://www.hay.com/news/news-2022/tamoto-bed",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c009.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.636,
+          "depth": 2.1064953341484074,
+          "height": 1.0282706022262573
+        },
+        "canonicalType": "bed"
+      }
+    },
+    {
+      "productId": "expansion-c010-01",
+      "variantId": "expansion-c010",
+      "furnitureType": "bed",
+      "furnitureTypeCode": "BED",
+      "label": "노출 조인트 메탈 침대",
+      "dimensions": {
+        "width": 1.6540000000000001,
+        "depth": 2.12,
+        "height": 0.7050000000000001
+      },
+      "visualFootprint": {
+        "minX": -0.827,
+        "maxX": 0.827,
+        "minZ": -1.06,
+        "maxZ": 1.06
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "chrome",
+        "woodLight",
+        "fabricLight",
+        "paintedWhite",
+        "fabric"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/bed/connect-bed",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c010.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.6540000000000001,
+          "depth": 2.12,
+          "height": 0.7050000000000001
+        },
+        "canonicalType": "bed"
+      }
+    },
+    {
+      "productId": "expansion-c011-01",
+      "variantId": "expansion-c011",
+      "furnitureType": "bed",
+      "furnitureTypeCode": "BED",
+      "label": "스핀들 헤드 침대",
+      "dimensions": {
+        "width": 1.652,
+        "depth": 2.1519999790191653,
+        "height": 1.0404337644577026
+      },
+      "visualFootprint": {
+        "minX": -0.826000001,
+        "maxX": 0.826000001,
+        "minZ": -1.075999975,
+        "maxZ": 1.075999947
+      },
+      "styleTags": [
+        "natural",
+        "classic"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "fabricLight",
+        "paintedWhite",
+        "fabric"
+      ],
+      "purchaseUrl": "https://inspiration.ethnicraft.com/hubfs/2.%20WEBSITE%20CATALOGUES/Commercial%20catalogue.pdf",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c011.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.652,
+          "depth": 2.1519999790191653,
+          "height": 1.0404337644577026
+        },
+        "canonicalType": "bed"
+      }
+    },
+    {
+      "productId": "expansion-c012-01",
+      "variantId": "expansion-c012",
+      "furnitureType": "bed",
+      "furnitureTypeCode": "BED",
+      "label": "스틸 루프 헤드 침대",
+      "dimensions": {
+        "width": 1.63,
+        "depth": 2.105,
+        "height": 0.98
+      },
+      "visualFootprint": {
+        "minX": -0.815,
+        "maxX": 0.815,
+        "minZ": -1.0525,
+        "maxZ": 1.0525
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "fabricLight",
+        "woodLight",
+        "paintedWhite",
+        "fabric"
+      ],
+      "purchaseUrl": "https://www.zanotta.com/en-us/products/beds",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c012.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.63,
+          "depth": 2.105,
+          "height": 0.98
+        },
+        "canonicalType": "bed"
+      }
+    },
+    {
+      "productId": "expansion-c013-01",
+      "variantId": "expansion-c013",
+      "furnitureType": "bed",
+      "furnitureTypeCode": "BED",
+      "label": "테이퍼 캐노피 침대",
+      "dimensions": {
+        "width": 1.932,
+        "depth": 2.172,
+        "height": 2.1260000000000003
+      },
+      "visualFootprint": {
+        "minX": -0.966000001,
+        "maxX": 0.966000001,
+        "minZ": -1.086000001,
+        "maxZ": 1.086000001
+      },
+      "styleTags": [
+        "natural",
+        "classic"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodDark",
+        "fabricLight",
+        "woodLight",
+        "paintedWhite",
+        "fabric"
+      ],
+      "purchaseUrl": "https://www.poltronafrau.com/gb/en/products/volare-bed.html",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c013.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.932,
+          "depth": 2.172,
+          "height": 2.1260000000000003
+        },
+        "canonicalType": "bed"
+      }
+    },
+    {
+      "productId": "expansion-c014-01",
+      "variantId": "expansion-c014",
+      "furnitureType": "bed",
+      "furnitureTypeCode": "BED",
+      "label": "라운드 목재 프레임 침대",
+      "dimensions": {
+        "width": 1.65,
+        "depth": 2.138092546463013,
+        "height": 0.8031929135322571
+      },
+      "visualFootprint": {
+        "minX": -0.825000001,
+        "maxX": 0.825000001,
+        "minZ": -1.069046259,
+        "maxZ": 1.069046289
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "metalLight",
+        "fabricLight",
+        "paintedWhite",
+        "fabric"
+      ],
+      "purchaseUrl": "https://configurator.auping.com/",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c014.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep"
+        ],
+        "sourceDimensions": {
+          "width": 1.65,
+          "depth": 2.138092546463013,
+          "height": 0.8031929135322571
+        },
+        "canonicalType": "bed"
+      }
+    },
+    {
+      "productId": "expansion-c015-01",
+      "variantId": "expansion-c015",
+      "furnitureType": "sofa_bed",
+      "furnitureTypeCode": "SOFA_BED",
+      "label": "전방 전개 소파베드",
+      "dimensions": {
+        "width": 1.48,
+        "depth": 0.9327613417778173,
+        "height": 0.7820437320646108
+      },
+      "visualFootprint": {
+        "minX": -0.74,
+        "maxX": 0.74,
+        "minZ": -0.466380671,
+        "maxZ": 0.466380671
+      },
+      "styleTags": [
+        "minimal",
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "fabricLight",
+        "metalLight",
+        "screenFrame"
+      ],
+      "purchaseUrl": "https://www.innovationliving.com/products/detachable-cover/product-details/cubed-140-alu-sofa-bed",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c015.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.48,
+          "depth": 0.9327613417778173,
+          "height": 0.7820437320646108
+        },
+        "canonicalType": "sofa_bed"
+      }
+    },
+    {
+      "productId": "expansion-c016-01",
+      "variantId": "expansion-c016",
+      "furnitureType": "sofa_bed",
+      "furnitureTypeCode": "SOFA_BED",
+      "label": "분할 등받이 우드암 소파베드",
+      "dimensions": {
+        "width": 2.225,
+        "depth": 0.9116109169571653,
+        "height": 0.9540763692389864
+      },
+      "visualFootprint": {
+        "minX": -1.112499999,
+        "maxX": 1.112499999,
+        "minZ": -0.45580546,
+        "maxZ": 0.455805462
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "metal",
+        "fabricLight"
+      ],
+      "purchaseUrl": "https://www.innovationliving.com/inspiration/color-splash/stylegroups",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c016.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.225,
+          "depth": 0.9116109169571653,
+          "height": 0.9540763692389864
+        },
+        "canonicalType": "sofa_bed"
+      }
+    },
+    {
+      "productId": "expansion-c017-01",
+      "variantId": "expansion-c017",
+      "furnitureType": "sofa_bed",
+      "furnitureTypeCode": "SOFA_BED",
+      "label": "양끝 조절 데이베드",
+      "dimensions": {
+        "width": 2.08,
+        "depth": 0.8675,
+        "height": 0.9070359471456493
+      },
+      "visualFootprint": {
+        "minX": -1.040000006,
+        "maxX": 1.040000006,
+        "minZ": -0.43375,
+        "maxZ": 0.433750007
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "metal",
+        "fabricDark"
+      ],
+      "purchaseUrl": "https://www.innovationliving.com/products/by-type/daybeds-single-double/product-details/rollo-stem-daybed-classic-with-cover",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c017.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.08,
+          "depth": 0.8675,
+          "height": 0.9070359471456493
+        },
+        "canonicalType": "sofa_bed"
+      }
+    },
+    {
+      "productId": "expansion-c018-01",
+      "variantId": "expansion-c018",
+      "furnitureType": "sofa_bed",
+      "furnitureTypeCode": "SOFA_BED",
+      "label": "로우 후톤 소파베드",
+      "dimensions": {
+        "width": 1.46,
+        "depth": 1.1308674331207293,
+        "height": 0.8713335730220085
+      },
+      "visualFootprint": {
+        "minX": -0.730000019,
+        "maxX": 0.730000019,
+        "minZ": -0.565433716,
+        "maxZ": 0.565433705
+      },
+      "styleTags": [
+        "minimal",
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "fabric"
+      ],
+      "purchaseUrl": "https://karupdesign.com/en-dk/products/roots-sofa-bed-raw-pine-khaki-green-mattress-140-x-200?variant=53837166674261",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c018.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.46,
+          "depth": 1.1308674331207293,
+          "height": 0.8713335730220085
+        },
+        "canonicalType": "sofa_bed"
+      }
+    },
+    {
+      "productId": "expansion-c019-01",
+      "variantId": "expansion-c019",
+      "furnitureType": "sofa_bed",
+      "furnitureTypeCode": "SOFA_BED",
+      "label": "벨트 쿠션 소파베드",
+      "dimensions": {
+        "width": 1.4313654899597168,
+        "depth": 1.0327614360509283,
+        "height": 0.6778026571708919
+      },
+      "visualFootprint": {
+        "minX": -0.715682745,
+        "maxX": 0.715682745,
+        "minZ": -0.516380719,
+        "maxZ": 0.516380728
+      },
+      "styleTags": [
+        "natural",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "fabricDark"
+      ],
+      "purchaseUrl": "https://karupdesign.com/en-dk/products/hippo-sofa-natural",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c019.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.4313654899597168,
+          "depth": 1.0327614360509283,
+          "height": 0.6778026571708919
+        },
+        "canonicalType": "sofa_bed"
+      }
+    },
+    {
+      "productId": "expansion-c020-01",
+      "variantId": "expansion-c020",
+      "furnitureType": "nightstand",
+      "furnitureTypeCode": "NIGHTSTAND",
+      "label": "다면 도어 이동 협탁",
+      "dimensions": {
+        "width": 0.3878050523238433,
+        "depth": 0.3878050523238433,
+        "height": 0.49
+      },
+      "visualFootprint": {
+        "minX": -0.193902526,
+        "maxX": 0.193902526,
+        "minZ": -0.193902526,
+        "maxZ": 0.193902526
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "paintedWhite",
+        "screenFrame",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/storage/cabinet/facet-cabinet-20-incl-feet-and-castors-two-doors-eggshell",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c020.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.3878050523238433,
+          "depth": 0.3878050523238433,
+          "height": 0.49
+        },
+        "canonicalType": "nightstand"
+      }
+    },
+    {
+      "productId": "expansion-c021-01",
+      "variantId": "expansion-c021",
+      "furnitureType": "nightstand",
+      "furnitureTypeCode": "NIGHTSTAND",
+      "label": "모듈 적층 협탁",
+      "dimensions": {
+        "width": 0.436,
+        "depth": 0.358,
+        "height": 0.61
+      },
+      "visualFootprint": {
+        "minX": -0.218,
+        "maxX": 0.218,
+        "minZ": -0.179,
+        "maxZ": 0.179
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://www.muuto.com/products/shop-by-family/stacked-storage-system/",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c021.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "surface": {
+          "height": 0.61,
+          "minX": -0.203,
+          "maxX": 0.203,
+          "minZ": -0.164,
+          "maxZ": 0.156
+        },
+        "surfacePartId": "module-1-top",
+        "sourceDimensions": {
+          "width": 0.436,
+          "depth": 0.358,
+          "height": 0.61
+        },
+        "canonicalType": "nightstand"
+      }
+    },
+    {
+      "productId": "expansion-c022-01",
+      "variantId": "expansion-c022",
+      "furnitureType": "nightstand",
+      "furnitureTypeCode": "NIGHTSTAND",
+      "label": "곡면 서랍 벽걸이 협탁",
+      "dimensions": {
+        "width": 0.3,
+        "depth": 0.16449999999999998,
+        "height": 0.21
+      },
+      "visualFootprint": {
+        "minX": -0.150000006,
+        "maxX": 0.150000006,
+        "minZ": -0.08225,
+        "maxZ": 0.082249997
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "woodDark"
+      ],
+      "purchaseUrl": "https://woud.dk/products/wallie-hylde-sort",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c022.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "bedside"
+        ],
+        "mountBottom": 0.55,
+        "sourceDimensions": {
+          "width": 0.3,
+          "depth": 0.16449999999999998,
+          "height": 0.21
+        },
+        "canonicalType": "nightstand"
+      }
+    },
+    {
+      "productId": "expansion-c023-01",
+      "variantId": "expansion-c023",
+      "furnitureType": "nightstand",
+      "furnitureTypeCode": "NIGHTSTAND",
+      "label": "삼발 핸들 협탁",
+      "dimensions": {
+        "width": 0.38,
+        "depth": 0.38,
+        "height": 0.6408805847167969
+      },
+      "visualFootprint": {
+        "minX": -0.189999998,
+        "maxX": 0.189999998,
+        "minZ": -0.189999998,
+        "maxZ": 0.189999998
+      },
+      "styleTags": [
+        "midcentury",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "paintedWhite"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/tables/side-table/dlm",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c023.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.38,
+          "depth": 0.38,
+          "height": 0.6408805847167969
+        },
+        "canonicalType": "nightstand"
+      }
+    },
+    {
+      "productId": "expansion-c024-01",
+      "variantId": "expansion-c024",
+      "furnitureType": "nightstand",
+      "furnitureTypeCode": "NIGHTSTAND",
+      "label": "벽걸이 오픈 협탁",
+      "dimensions": {
+        "width": 0.354,
+        "depth": 0.33099999999999996,
+        "height": 0.354
+      },
+      "visualFootprint": {
+        "minX": -0.177000001,
+        "maxX": 0.177000001,
+        "minZ": -0.165500006,
+        "maxZ": 0.1655
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "mustardPaint"
+      ],
+      "purchaseUrl": "https://www.montanafurniture.com/sv/serier/montana-selection",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c024.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "bedside"
+        ],
+        "mountBottom": 0.55,
+        "surface": {
+          "height": 0.354,
+          "minX": -0.162,
+          "maxX": 0.162,
+          "minZ": -0.1505,
+          "maxZ": 0.1195
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 0.354,
+          "depth": 0.33099999999999996,
+          "height": 0.354
+        },
+        "canonicalType": "nightstand"
+      }
+    },
+    {
+      "productId": "expansion-c025-01",
+      "variantId": "expansion-c025",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "타원 메쉬 책상 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.7165203682875279,
+        "height": 1.0484668016433716
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.358260185,
+        "maxZ": 0.358260185
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "meshFabric",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://store.hermanmiller.com/office-chairs?lang=en_US",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c025.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.7165203682875279,
+          "height": 1.0484668016433716
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c026-01",
+      "variantId": "expansion-c026",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "척추 지지 책상 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.7944517127966526,
+        "height": 1.0818641185760498
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.397225857,
+        "maxZ": 0.397225857
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "fabricDark"
+      ],
+      "purchaseUrl": "https://store.hermanmiller.com/office-chairs?lang=en_US",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c026.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.7944517127966526,
+          "height": 1.0818641185760498
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c027-01",
+      "variantId": "expansion-c027",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "서스펜션 등받이 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.7174185059761646,
+        "height": 0.997
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.358709246,
+        "maxZ": 0.358709261
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "fabricDark",
+        "paintedWhite"
+      ],
+      "purchaseUrl": "https://store.hermanmiller.com/office-chairs?lang=en_US",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c027.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.7174185059761646,
+          "height": 0.997
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c028-01",
+      "variantId": "expansion-c028",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "일체 곡면 하이백 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.7604832790588978,
+        "height": 1.2012205123901367
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.380241632,
+        "maxZ": 0.380241647
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "meshFabric"
+      ],
+      "purchaseUrl": "https://store.hermanmiller.com/office-chairs?lang=en_US",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c028.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.7604832790588978,
+          "height": 1.2012205123901367
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c029-01",
+      "variantId": "expansion-c029",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "분절 스파인 경량 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.6946957772277196,
+        "height": 0.8619276881217957
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.347347889,
+        "maxZ": 0.34734789
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "meshFabric",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://store.hermanmiller.com/office-chairs?lang=en_US",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c029.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.6946957772277196,
+          "height": 0.8619276881217957
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c030-01",
+      "variantId": "expansion-c030",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "양옆 레일 메쉬 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.6972514979338291,
+        "height": 0.9512899518013
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.348625749,
+        "maxZ": 0.348625749
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "meshFabric"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/office-chairs",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c030.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.6972514979338291,
+          "height": 0.9512899518013
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c031-01",
+      "variantId": "expansion-c031",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "루프 팔걸이 회전 의자",
+      "dimensions": {
+        "width": 0.662248432636261,
+        "depth": 0.655317186543906,
+        "height": 0.905
+      },
+      "visualFootprint": {
+        "minX": -0.331124216,
+        "maxX": 0.331124216,
+        "minZ": -0.327658594,
+        "maxZ": 0.327658594
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "fabricLight",
+        "gentianBlueMetal"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/office-chairs",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c031.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.662248432636261,
+          "depth": 0.655317186543906,
+          "height": 0.905
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c032-01",
+      "variantId": "expansion-c032",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "S커브 캔틸레버 의자",
+      "dimensions": {
+        "width": 0.5,
+        "depth": 0.6169313192367554,
+        "height": 0.8960082530975342
+      },
+      "visualFootprint": {
+        "minX": -0.25,
+        "maxX": 0.25,
+        "minZ": -0.30846566,
+        "maxZ": 0.30846566
+      },
+      "styleTags": [
+        "midcentury",
+        "classic"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "redPlastic"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/page/panton-collection",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c032.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.5,
+          "depth": 0.6169313192367554,
+          "height": 0.8960082530975342
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c033-01",
+      "variantId": "expansion-c033",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "판형 팔걸이 회전 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.7108802191710117,
+        "height": 0.8692004742438892
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.35544011,
+        "maxZ": 0.35544011
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "fabricDark",
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/office-chairs",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c033.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.7108802191710117,
+          "height": 0.8692004742438892
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c034-01",
+      "variantId": "expansion-c034",
+      "furnitureType": "desk_chair",
+      "furnitureTypeCode": "DESK_CHAIR",
+      "label": "새들 시트 책상 의자",
+      "dimensions": {
+        "width": 0.65459593265545,
+        "depth": 0.6979494236206654,
+        "height": 1.028003454208374
+      },
+      "visualFootprint": {
+        "minX": -0.327297965,
+        "maxX": 0.327297965,
+        "minZ": -0.348974705,
+        "maxZ": 0.34897472
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "WORK_STUDY"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "tealFabric"
+      ],
+      "purchaseUrl": "https://store.flokk.com/us/en-gb/products/8106-std/configure?options=10000-CMF0050&step=options&store=auto",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c034.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "work"
+        ],
+        "sourceDimensions": {
+          "width": 0.65459593265545,
+          "depth": 0.6979494236206654,
+          "height": 1.028003454208374
+        },
+        "canonicalType": "desk_chair"
+      }
+    },
+    {
+      "productId": "expansion-c035-01",
+      "variantId": "expansion-c035",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "노출 원목 랙 선반",
+      "dimensions": {
+        "width": 1.03,
+        "depth": 0.43200000000000005,
+        "height": 1.96
+      },
+      "visualFootprint": {
+        "minX": -0.514999986,
+        "maxX": 0.514999986,
+        "minZ": -0.216000001,
+        "maxZ": 0.216000001
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight",
+        "paintedWhite",
+        "metalLight",
+        "mustardPaint"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/shelves",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c035.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.03,
+          "depth": 0.43200000000000005,
+          "height": 1.96
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c036-01",
+      "variantId": "expansion-c036",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "회전 층판 조형 선반",
+      "dimensions": {
+        "width": 0.9400000000000002,
+        "depth": 0.9498473651195588,
+        "height": 1.9089999999999998
+      },
+      "visualFootprint": {
+        "minX": -0.469999995,
+        "maxX": 0.469999995,
+        "minZ": -0.474923677,
+        "maxZ": 0.474923677
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "redPlastic",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.zanotta.com/en-us/products/furnishing-accessories/joy",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c036.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.9400000000000002,
+          "depth": 0.9498473651195588,
+          "height": 1.9089999999999998
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c037-01",
+      "variantId": "expansion-c037",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "와이어 서스펜션 벽선반",
+      "dimensions": {
+        "width": 0.8,
+        "depth": 0.248,
+        "height": 0.966
+      },
+      "visualFootprint": {
+        "minX": -0.400000006,
+        "maxX": 0.400000006,
+        "minZ": -0.123999999,
+        "maxZ": 0.123999999
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://woud.dk/collections/hylder-reoler",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c037.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "storage"
+        ],
+        "mountBottom": 1.2,
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.248,
+          "height": 0.966
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c038-01",
+      "variantId": "expansion-c038",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "프레임 컬러 하이캐비닛",
+      "dimensions": {
+        "width": 0.75,
+        "depth": 0.43100000000000005,
+        "height": 1.3
+      },
+      "visualFootprint": {
+        "minX": -0.375,
+        "maxX": 0.375,
+        "minZ": -0.2155,
+        "maxZ": 0.2155
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "paintedWhite",
+        "mustardPaint",
+        "clearGlassSheet",
+        "reededGlass",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/storage/cabinet/colour-cabinet-w-glass-doors-tall-yellow",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c038.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.75,
+          "depth": 0.43100000000000005,
+          "height": 1.3
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c039-01",
+      "variantId": "expansion-c039",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "절곡 트레이 선반",
+      "dimensions": {
+        "width": 1.2,
+        "depth": 0.341,
+        "height": 1.5299999999999998
+      },
+      "visualFootprint": {
+        "minX": -0.600000024,
+        "maxX": 0.600000024,
+        "minZ": -0.1705,
+        "maxZ": 0.170500002
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://www.muuto.com/products/shop-by-family/compile-shelving-system/",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c039.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.341,
+          "height": 1.5299999999999998
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c040-01",
+      "variantId": "expansion-c040",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "와이어 측판 벽선반",
+      "dimensions": {
+        "width": 0.6,
+        "depth": 0.1635,
+        "height": 0.5035000000000001
+      },
+      "visualFootprint": {
+        "minX": -0.300000012,
+        "maxX": 0.300000012,
+        "minZ": -0.08175,
+        "maxZ": 0.081750003
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "paintedWhite",
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.stringfurniture.com/en/series/string/pocket/original",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c040.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "storage"
+        ],
+        "mountBottom": 1.2,
+        "sourceDimensions": {
+          "width": 0.6,
+          "depth": 0.1635,
+          "height": 0.5035000000000001
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c041-01",
+      "variantId": "expansion-c041",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "브레이스 패널 책장",
+      "dimensions": {
+        "width": 1.2,
+        "depth": 0.4115,
+        "height": 1.48
+      },
+      "visualFootprint": {
+        "minX": -0.600000024,
+        "maxX": 0.600000024,
+        "minZ": -0.205750003,
+        "maxZ": 0.20575
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "woodLight",
+        "mustardPaint",
+        "paintedWhite",
+        "redPlastic"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-un/product/eames-storage-unit-esu",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c041.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.4115,
+          "height": 1.48
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c042-01",
+      "variantId": "expansion-c042",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "굴곡 띠형 벽책장",
+      "dimensions": {
+        "width": 0.5679780519624236,
+        "depth": 0.2,
+        "height": 0.552253234123914
+      },
+      "visualFootprint": {
+        "minX": -0.283989026,
+        "maxX": 0.283989026,
+        "minZ": -0.100000001,
+        "maxZ": 0.100000001
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "gentianBlueMetal"
+      ],
+      "purchaseUrl": "https://www.kartell.com/es/es/ktes/shop/product/bookworm/kar080031a",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c042.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "storage"
+        ],
+        "mountBottom": 1.2,
+        "sourceDimensions": {
+          "width": 0.5679780519624236,
+          "depth": 0.2,
+          "height": 0.552253234123914
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c043-01",
+      "variantId": "expansion-c043",
+      "furnitureType": "bookshelf",
+      "furnitureTypeCode": "BOOKSHELF",
+      "label": "바닥 천장 연결 모듈 책장",
+      "dimensions": {
+        "width": 2.602,
+        "depth": 0.3635,
+        "height": 2.7
+      },
+      "visualFootprint": {
+        "minX": -1.301000001,
+        "maxX": 1.301000001,
+        "minZ": -0.18175,
+        "maxZ": 0.18175
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "screenFrame",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://www.cassina.com/ww/en/products/infinito.html",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c043.json",
+      "placement": {
+        "installation": "FLOOR_CEILING",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 2.602,
+          "depth": 0.3635,
+          "height": 2.7
+        },
+        "canonicalType": "bookshelf"
+      }
+    },
+    {
+      "productId": "expansion-c044-01",
+      "variantId": "expansion-c044",
+      "furnitureType": "wardrobe",
+      "furnitureTypeCode": "WARDROBE",
+      "label": "폴딩 패널 옷장",
+      "dimensions": {
+        "width": 1.215,
+        "depth": 0.63,
+        "height": 2.1
+      },
+      "visualFootprint": {
+        "minX": -0.607500017,
+        "maxX": 0.607500017,
+        "minZ": -0.315,
+        "maxZ": 0.315
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight",
+        "paintedWhite",
+        "fabricLight",
+        "brass"
+      ],
+      "purchaseUrl": "https://www.ikea.com/us/en/p/idanaes-wardrobe-white-20458837/",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c044.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.215,
+          "depth": 0.63,
+          "height": 2.1
+        },
+        "canonicalType": "wardrobe"
+      }
+    },
+    {
+      "productId": "expansion-c045-01",
+      "variantId": "expansion-c045",
+      "furnitureType": "wardrobe",
+      "furnitureTypeCode": "WARDROBE",
+      "label": "하부 이동서랍 옷장",
+      "dimensions": {
+        "width": 1.22,
+        "depth": 0.6375,
+        "height": 2.16
+      },
+      "visualFootprint": {
+        "minX": -0.610000014,
+        "maxX": 0.610000014,
+        "minZ": -0.31875,
+        "maxZ": 0.31875
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metalLight",
+        "paintedWhite",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.ikea.com/se/en/p/visthus-wardrobe-grey-white-90493446/",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c045.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.22,
+          "depth": 0.6375,
+          "height": 2.16
+        },
+        "canonicalType": "wardrobe"
+      }
+    },
+    {
+      "productId": "expansion-c046-01",
+      "variantId": "expansion-c046",
+      "furnitureType": "drawer_chest",
+      "furnitureTypeCode": "DRAWER_CHEST",
+      "label": "곡선 측판 다단 서랍장",
+      "dimensions": {
+        "width": 0.6800000071525574,
+        "depth": 0.5149999928474427,
+        "height": 1.7000000476837158
+      },
+      "visualFootprint": {
+        "minX": -0.340000004,
+        "maxX": 0.340000004,
+        "minZ": -0.257499993,
+        "maxZ": 0.2575
+      },
+      "styleTags": [
+        "classic",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "screenFrame",
+        "metal",
+        "paintedWhite",
+        "chrome"
+      ],
+      "purchaseUrl": "https://www.cappellini.com/ww/en/products/progetti-compiuti.html",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c046.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.6800000071525574,
+          "depth": 0.5149999928474427,
+          "height": 1.7000000476837158
+        },
+        "canonicalType": "drawer_chest"
+      }
+    },
+    {
+      "productId": "expansion-c047-01",
+      "variantId": "expansion-c047",
+      "furnitureType": "drawer_chest",
+      "furnitureTypeCode": "DRAWER_CHEST",
+      "label": "세로 이동 서랍장",
+      "dimensions": {
+        "width": 0.35400000000000004,
+        "depth": 0.443,
+        "height": 0.765
+      },
+      "visualFootprint": {
+        "minX": -0.177000001,
+        "maxX": 0.177000001,
+        "minZ": -0.2215,
+        "maxZ": 0.2215
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "gentianBlueMetal"
+      ],
+      "purchaseUrl": "https://www.montanafurniture.com/sv/serier/montana-selection",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c047.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.6395,
+          "minX": -0.162,
+          "maxX": 0.162,
+          "minZ": -0.2015,
+          "maxZ": 0.1685
+        },
+        "surfacePartId": "tray-floor",
+        "sourceDimensions": {
+          "width": 0.35400000000000004,
+          "depth": 0.443,
+          "height": 0.765
+        },
+        "canonicalType": "drawer_chest"
+      }
+    },
+    {
+      "productId": "expansion-c048-01",
+      "variantId": "expansion-c048",
+      "furnitureType": "drawer_chest",
+      "furnitureTypeCode": "DRAWER_CHEST",
+      "label": "피라미드 테이퍼 서랍장",
+      "dimensions": {
+        "width": 0.699999988079071,
+        "depth": 0.6000000238418579,
+        "height": 1.8300000429153442
+      },
+      "visualFootprint": {
+        "minX": -0.349999994,
+        "maxX": 0.349999994,
+        "minZ": -0.300000012,
+        "maxZ": 0.300000012
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "glass",
+        "metal",
+        "screenFrame"
+      ],
+      "purchaseUrl": "https://www.cappellini.com/content/dam/ld/cappellini/catalogues/2021_en_it/cataloghi/CAP_Magazine_2023%20ita-eng_compressed.pdf",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c048.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.699999988079071,
+          "depth": 0.6000000238418579,
+          "height": 1.8300000429153442
+        },
+        "canonicalType": "drawer_chest"
+      }
+    },
+    {
+      "productId": "expansion-c049-01",
+      "variantId": "expansion-c049",
+      "furnitureType": "drawer_chest",
+      "furnitureTypeCode": "DRAWER_CHEST",
+      "label": "노출 프레임 트롤리 서랍장",
+      "dimensions": {
+        "width": 0.48400000000000004,
+        "depth": 0.535,
+        "height": 0.78
+      },
+      "visualFootprint": {
+        "minX": -0.242000001,
+        "maxX": 0.242000001,
+        "minZ": -0.267499999,
+        "maxZ": 0.267499999
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "chrome",
+        "screenFrame",
+        "paintedWhite",
+        "icePlastic"
+      ],
+      "purchaseUrl": "https://www.kartell.com/es/en/ktes/shop/product/mobil-3-drawers-1-shelf-with-wheels/551-6136",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c049.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.78,
+          "minX": -0.22,
+          "maxX": 0.22,
+          "minZ": -0.215,
+          "maxZ": 0.215
+        },
+        "surfacePartId": "open-top-shelf",
+        "sourceDimensions": {
+          "width": 0.48400000000000004,
+          "depth": 0.535,
+          "height": 0.78
+        },
+        "canonicalType": "drawer_chest"
+      }
+    },
+    {
+      "productId": "expansion-c050-01",
+      "variantId": "expansion-c050",
+      "furnitureType": "hanger",
+      "furnitureTypeCode": "HANGER",
+      "label": "꼬임 삼각 코트랙",
+      "dimensions": {
+        "width": 0.493604838848114,
+        "depth": 0.503246545791626,
+        "height": 1.5899461507797241
+      },
+      "visualFootprint": {
+        "minX": -0.246802419,
+        "maxX": 0.246802419,
+        "minZ": -0.251623273,
+        "maxZ": 0.251623273
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "paintedWhite",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/coatrack/knit-white-powder-coated-steel",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c050.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.493604838848114,
+          "depth": 0.503246545791626,
+          "height": 1.5899461507797241
+        },
+        "canonicalType": "hanger"
+      }
+    },
+    {
+      "productId": "expansion-c051-01",
+      "variantId": "expansion-c051",
+      "furnitureType": "hanger",
+      "furnitureTypeCode": "HANGER",
+      "label": "S자 프레임 행거",
+      "dimensions": {
+        "width": 1.464,
+        "depth": 0.6228253841400146,
+        "height": 1.5
+      },
+      "visualFootprint": {
+        "minX": -0.732,
+        "maxX": 0.732,
+        "minZ": -0.311412692,
+        "maxZ": 0.311412692
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "jungleGreenMetal"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/coatrack/colour-rack-s-shape-jungle-green",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c051.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.464,
+          "depth": 0.6228253841400146,
+          "height": 1.5
+        },
+        "canonicalType": "hanger"
+      }
+    },
+    {
+      "productId": "expansion-c052-01",
+      "variantId": "expansion-c052",
+      "furnitureType": "hanger",
+      "furnitureTypeCode": "HANGER",
+      "label": "삼각 받침 슬림 행거",
+      "dimensions": {
+        "width": 0.68,
+        "depth": 0.5854168407416321,
+        "height": 1.5220901330809156
+      },
+      "visualFootprint": {
+        "minX": -0.340000004,
+        "maxX": 0.340000004,
+        "minZ": -0.292708421,
+        "maxZ": 0.292708415
+      },
+      "styleTags": [
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "paintedWhite"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/coatrack/loop-stand-hall",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c052.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.68,
+          "depth": 0.5854168407416321,
+          "height": 1.5220901330809156
+        },
+        "canonicalType": "hanger"
+      }
+    },
+    {
+      "productId": "expansion-c053-01",
+      "variantId": "expansion-c053",
+      "furnitureType": "hanger",
+      "furnitureTypeCode": "HANGER",
+      "label": "트리 페그 코트랙",
+      "dimensions": {
+        "width": 0.6223388660441872,
+        "depth": 0.6223388660441872,
+        "height": 1.7709472941731792
+      },
+      "visualFootprint": {
+        "minX": -0.311169435,
+        "maxX": 0.311169435,
+        "minZ": -0.311169435,
+        "maxZ": 0.311169435
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.artek.fi/en/products/clothes-tree-160",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c053.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.6223388660441872,
+          "depth": 0.6223388660441872,
+          "height": 1.7709472941731792
+        },
+        "canonicalType": "hanger"
+      }
+    },
+    {
+      "productId": "expansion-c054-01",
+      "variantId": "expansion-c054",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "패브릭 슬링 프레임 소파",
+      "dimensions": {
+        "width": 1.75,
+        "depth": 0.8265979290008545,
+        "height": 0.8403100854002998
+      },
+      "visualFootprint": {
+        "minX": -0.875,
+        "maxX": 0.875,
+        "minZ": -0.413298965,
+        "maxZ": 0.413298965
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "chrome",
+        "fabricDark",
+        "fabricLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/inspiration/the-hay-sofa-collection",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c054.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.75,
+          "depth": 0.8265979290008545,
+          "height": 0.8403100854002998
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c055-01",
+      "variantId": "expansion-c055",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "퀼팅 블록 소파",
+      "dimensions": {
+        "width": 2.0300000000000002,
+        "depth": 0.96,
+        "height": 0.875
+      },
+      "visualFootprint": {
+        "minX": -1.015000005,
+        "maxX": 1.015000005,
+        "minZ": -0.479999997,
+        "maxZ": 0.479999989
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "fabric",
+        "fabricDark"
+      ],
+      "purchaseUrl": "https://www.hay.com/inspiration/the-hay-sofa-collection",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c055.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.0300000000000002,
+          "depth": 0.96,
+          "height": 0.875
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c056-01",
+      "variantId": "expansion-c056",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "외곽 쉘 곡선 소파",
+      "dimensions": {
+        "width": 1.7938252687454224,
+        "depth": 0.837499988079071,
+        "height": 0.7849999999999999
+      },
+      "visualFootprint": {
+        "minX": -0.896912634,
+        "maxX": 0.896912634,
+        "minZ": -0.418749988,
+        "maxZ": 0.418750004
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "metal",
+        "fabric",
+        "fabricLight",
+        "fabricDark"
+      ],
+      "purchaseUrl": "https://www.hay.com/inspiration/the-hay-sofa-collection",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c056.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.7938252687454224,
+          "depth": 0.837499988079071,
+          "height": 0.7849999999999999
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c057-01",
+      "variantId": "expansion-c057",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "노출 원목 프레임 소파",
+      "dimensions": {
+        "width": 2.095,
+        "depth": 0.806,
+        "height": 0.9
+      },
+      "visualFootprint": {
+        "minX": -1.047500001,
+        "maxX": 1.047500001,
+        "minZ": -0.403,
+        "maxZ": 0.403
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "woodLight",
+        "fabricLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/seating/sofas/arbour",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c057.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.095,
+          "depth": 0.806,
+          "height": 0.9
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c058-01",
+      "variantId": "expansion-c058",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "립 실루엣 조형 소파",
+      "dimensions": {
+        "width": 2.1887478828430176,
+        "depth": 0.7579149007797241,
+        "height": 0.8565362095832825
+      },
+      "visualFootprint": {
+        "minX": -1.094373941,
+        "maxX": 1.094373941,
+        "minZ": -0.37895745,
+        "maxZ": 0.37895745
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "redVinyl"
+      ],
+      "purchaseUrl": "https://gufram.it/prodotti/bocca/",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c058.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.1887478828430176,
+          "depth": 0.7579149007797241,
+          "height": 0.8565362095832825
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c059-01",
+      "variantId": "expansion-c059",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "하이백 패널 소파",
+      "dimensions": {
+        "width": 1.765,
+        "depth": 0.8025,
+        "height": 1.545
+      },
+      "visualFootprint": {
+        "minX": -0.8825,
+        "maxX": 0.8825,
+        "minZ": -0.40125,
+        "maxZ": 0.401250004
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "chrome",
+        "fabricDark",
+        "fabricLight",
+        "fabric"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-au/product/details/alcove-sofa",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c059.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.765,
+          "depth": 0.8025,
+          "height": 1.545
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c060-01",
+      "variantId": "expansion-c060",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "튜브 케이지 쿠션 소파",
+      "dimensions": {
+        "width": 1.6440000000000001,
+        "depth": 0.7743032097816467,
+        "height": 0.7949999999999999
+      },
+      "visualFootprint": {
+        "minX": -0.821999999,
+        "maxX": 0.821999999,
+        "minZ": -0.387151599,
+        "maxZ": 0.387151614
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "chrome",
+        "fabricDark",
+        "fabricLight"
+      ],
+      "purchaseUrl": "https://www.cassina.com/fr/fr/products/lc2-divano.html",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c060.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.6440000000000001,
+          "depth": 0.7743032097816467,
+          "height": 0.7949999999999999
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c061-01",
+      "variantId": "expansion-c061",
+      "furnitureType": "sofa",
+      "furnitureTypeCode": "SOFA",
+      "label": "주름 볼륨 로우 소파",
+      "dimensions": {
+        "width": 1.7194000482559204,
+        "depth": 1.0821421146392822,
+        "height": 0.8289934992790222
+      },
+      "visualFootprint": {
+        "minX": -0.859700024,
+        "maxX": 0.859700024,
+        "minZ": -0.541071057,
+        "maxZ": 0.541071057
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "orangeFabric",
+        "orangeFabricDark"
+      ],
+      "purchaseUrl": "https://www.ligne-roset.com/us/p/sofas/sofa-without-arms-togo-r-3232",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c061.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.7194000482559204,
+          "depth": 1.0821421146392822,
+          "height": 0.8289934992790222
+        },
+        "canonicalType": "sofa"
+      }
+    },
+    {
+      "productId": "expansion-c062-01",
+      "variantId": "expansion-c062",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "절곡 판형 사이드 테이블",
+      "dimensions": {
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.358
+      },
+      "visualFootprint": {
+        "minX": -0.224999994,
+        "maxX": 0.224999994,
+        "minZ": -0.224999994,
+        "maxZ": 0.224999994
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "brass"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/tables/coffee-table/slit",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c062.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.45,
+          "depth": 0.45,
+          "height": 0.358
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c063-01",
+      "variantId": "expansion-c063",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "보강봉 프레임 커피 테이블",
+      "dimensions": {
+        "width": 0.45,
+        "depth": 0.45,
+        "height": 0.4265
+      },
+      "visualFootprint": {
+        "minX": -0.224999994,
+        "maxX": 0.224999994,
+        "minZ": -0.224999994,
+        "maxZ": 0.224999994
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "metal",
+        "ceramic"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/tables/coffee-table/rebar-coffee-table",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c063.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "coffee"
+        ],
+        "surface": {
+          "height": 0.4265,
+          "minX": -0.21,
+          "maxX": 0.21,
+          "minZ": -0.21,
+          "maxZ": 0.21
+        },
+        "surfacePartId": "stone-slab",
+        "sourceDimensions": {
+          "width": 0.45,
+          "depth": 0.45,
+          "height": 0.4265
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c064-01",
+      "variantId": "expansion-c064",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "유리 상판 목재 테이블",
+      "dimensions": {
+        "width": 1,
+        "depth": 0.6,
+        "height": 0.34700000000000003
+      },
+      "visualFootprint": {
+        "minX": -0.5,
+        "maxX": 0.5,
+        "minZ": -0.300000012,
+        "maxZ": 0.300000012
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodLight",
+        "glass"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/tables/coffee-table/kofi",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c064.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "coffee"
+        ],
+        "surface": {
+          "height": 0.347,
+          "minX": -0.485,
+          "maxX": 0.485,
+          "minZ": -0.285,
+          "maxZ": 0.285
+        },
+        "surfacePartId": "glass-top",
+        "sourceDimensions": {
+          "width": 1,
+          "depth": 0.6,
+          "height": 0.34700000000000003
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c065-01",
+      "variantId": "expansion-c065",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "핸들 기둥 사이드 테이블",
+      "dimensions": {
+        "width": 0.36000001430511475,
+        "depth": 0.36000001430511475,
+        "height": 0.6412239670753479
+      },
+      "visualFootprint": {
+        "minX": -0.180000007,
+        "maxX": 0.180000007,
+        "minZ": -0.180000007,
+        "maxZ": 0.180000007
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "ceramic",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/tables/coffee-table/bowler",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c065.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.36000001430511475,
+          "depth": 0.36000001430511475,
+          "height": 0.6412239670753479
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c066-01",
+      "variantId": "expansion-c066",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "프리즘 접힘 테이블",
+      "dimensions": {
+        "width": 0.5103740692138672,
+        "depth": 0.4390157163143158,
+        "height": 0.3825
+      },
+      "visualFootprint": {
+        "minX": -0.255187035,
+        "maxX": 0.255187035,
+        "minZ": -0.219507858,
+        "maxZ": 0.219507858
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "paintedWhite"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/coffee-and-side-tables",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c066.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.5103740692138672,
+          "depth": 0.4390157163143158,
+          "height": 0.3825
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c067-01",
+      "variantId": "expansion-c067",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "삼각 연결 원목 테이블",
+      "dimensions": {
+        "width": 0.8,
+        "depth": 0.8,
+        "height": 0.380978632527711
+      },
+      "visualFootprint": {
+        "minX": -0.400000006,
+        "maxX": 0.400000006,
+        "minZ": -0.400000006,
+        "maxZ": 0.400000006
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodDark",
+        "metal"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/coffee-and-side-tables",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c067.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "coffee"
+        ],
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.8,
+          "height": 0.380978632527711
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c068-01",
+      "variantId": "expansion-c068",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "조형 교차 다리 유리 테이블",
+      "dimensions": {
+        "width": 1.300950566786042,
+        "depth": 0.8909100269280927,
+        "height": 0.40886700925789776
+      },
+      "visualFootprint": {
+        "minX": -0.650475304,
+        "maxX": 0.650475283,
+        "minZ": -0.445455015,
+        "maxZ": 0.445455014
+      },
+      "styleTags": [
+        "modern",
+        "midcentury"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "glass",
+        "woodDark"
+      ],
+      "purchaseUrl": "https://www.vitra.com/fr-fr/product/category/tables",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c068.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "coffee"
+        ],
+        "sourceDimensions": {
+          "width": 1.300950566786042,
+          "depth": 0.8909100269280927,
+          "height": 0.40886700925789776
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c069-01",
+      "variantId": "expansion-c069",
+      "furnitureType": "side_table",
+      "furnitureTypeCode": "SIDE_TABLE",
+      "label": "코르크 조형 사이드 테이블",
+      "dimensions": {
+        "width": 0.3100000023841858,
+        "depth": 0.3100000023841858,
+        "height": 0.33000001311302185
+      },
+      "visualFootprint": {
+        "minX": -0.155000001,
+        "maxX": 0.155000001,
+        "minZ": -0.155000001,
+        "maxZ": 0.155000001
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-us/product/category/coffee-and-side-tables",
+      "requiredClearance": {
+        "front": 0.3,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c069.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.3100000023841858,
+          "depth": 0.3100000023841858,
+          "height": 0.33000001311302185
+        },
+        "canonicalType": "side_table"
+      }
+    },
+    {
+      "productId": "expansion-c070-01",
+      "variantId": "expansion-c070",
+      "furnitureType": "media_console",
+      "furnitureTypeCode": "MEDIA_CONSOLE",
+      "label": "타공 전면 미디어장",
+      "dimensions": {
+        "width": 1.393,
+        "depth": 0.4,
+        "height": 0.484
+      },
+      "visualFootprint": {
+        "minX": -0.696500003,
+        "maxX": 0.696500003,
+        "minZ": -0.2,
+        "maxZ": 0.2
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "paintedWhite",
+        "fabricDark"
+      ],
+      "purchaseUrl": "https://www.montanafurniture.com/sv/serier/montana-selection",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c070.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.484,
+          "minX": -0.6815,
+          "maxX": 0.6815,
+          "minZ": -0.185,
+          "maxZ": 0.165
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 1.393,
+          "depth": 0.4,
+          "height": 0.484
+        },
+        "canonicalType": "media_console"
+      }
+    },
+    {
+      "productId": "expansion-c071-01",
+      "variantId": "expansion-c071",
+      "furnitureType": "media_console",
+      "furnitureTypeCode": "MEDIA_CONSOLE",
+      "label": "플루팅 슬라이딩 미디어장",
+      "dimensions": {
+        "width": 1.86,
+        "depth": 0.462,
+        "height": 0.6425
+      },
+      "visualFootprint": {
+        "minX": -0.930000007,
+        "maxX": 0.930000007,
+        "minZ": -0.231,
+        "maxZ": 0.231
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "woodLight",
+        "metalLight"
+      ],
+      "purchaseUrl": "https://www.muuto.com/product/enfold-sideboard--p6661/83630/",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c071.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.6425,
+          "minX": -0.915,
+          "maxX": 0.915,
+          "minZ": -0.216,
+          "maxZ": 0.204
+        },
+        "surfacePartId": "oak-cap",
+        "sourceDimensions": {
+          "width": 1.86,
+          "depth": 0.462,
+          "height": 0.6425
+        },
+        "canonicalType": "media_console"
+      }
+    },
+    {
+      "productId": "expansion-c072-01",
+      "variantId": "expansion-c072",
+      "furnitureType": "media_console",
+      "furnitureTypeCode": "MEDIA_CONSOLE",
+      "label": "롤러 패턴 미디어장",
+      "dimensions": {
+        "width": 1.6480000000000001,
+        "depth": 0.463,
+        "height": 0.56
+      },
+      "visualFootprint": {
+        "minX": -0.824,
+        "maxX": 0.824,
+        "minZ": -0.2315,
+        "maxZ": 0.2315
+      },
+      "styleTags": [
+        "modern",
+        "natural"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "woodDark"
+      ],
+      "purchaseUrl": "https://media.ethnicraft.com/sys-master/s3_product_medias/h78/he7/8927676235806/Roller%20Max%20162%20LD.pdf",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c072.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.56,
+          "minX": -0.795,
+          "maxX": 0.795,
+          "minZ": -0.2165,
+          "maxZ": 0.2035
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 1.6480000000000001,
+          "depth": 0.463,
+          "height": 0.56
+        },
+        "canonicalType": "media_console"
+      }
+    },
+    {
+      "productId": "expansion-c073-01",
+      "variantId": "expansion-c073",
+      "furnitureType": "media_console",
+      "furnitureTypeCode": "MEDIA_CONSOLE",
+      "label": "프레임 분할 미디어장",
+      "dimensions": {
+        "width": 1.8,
+        "depth": 0.45,
+        "height": 0.61
+      },
+      "visualFootprint": {
+        "minX": -0.899999976,
+        "maxX": 0.899999976,
+        "minZ": -0.224999994,
+        "maxZ": 0.224999994
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight",
+        "metal"
+      ],
+      "purchaseUrl": "https://inspiration.ethnicraft.com/en/built-to-grow",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c073.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.569,
+          "minX": -0.885,
+          "maxX": 0.885,
+          "minZ": -0.21,
+          "maxZ": 0.21
+        },
+        "surfacePartId": "projecting-horizontal-plane-0.57",
+        "sourceDimensions": {
+          "width": 1.8,
+          "depth": 0.45,
+          "height": 0.61
+        },
+        "canonicalType": "media_console"
+      }
+    },
+    {
+      "productId": "expansion-c074-01",
+      "variantId": "expansion-c074",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "삼각 다리 원형 테이블",
+      "dimensions": {
+        "width": 1.2,
+        "depth": 1.2,
+        "height": 0.7404319378103698
+      },
+      "visualFootprint": {
+        "minX": -0.600000024,
+        "maxX": 0.600000024,
+        "minZ": -0.600000024,
+        "maxZ": 0.600000024
+      },
+      "styleTags": [
+        "minimal",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/tables/dining-table/cph-20-table",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c074.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 1.2,
+          "height": 0.7404319378103698
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c075-01",
+      "variantId": "expansion-c075",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "와이어 케이지 다이닝 테이블",
+      "dimensions": {
+        "width": 1.37,
+        "depth": 1.37,
+        "height": 0.7109999996200204
+      },
+      "visualFootprint": {
+        "minX": -0.685000002,
+        "maxX": 0.685000002,
+        "minZ": -0.685000002,
+        "maxZ": 0.685000002
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "glass",
+        "chrome"
+      ],
+      "purchaseUrl": "https://www.knoll.com/shop/en_us/dining-dining-tables/platner-dining-table/5955.html",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c075.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "sourceDimensions": {
+          "width": 1.37,
+          "depth": 1.37,
+          "height": 0.7109999996200204
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c076-01",
+      "variantId": "expansion-c076",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "슈퍼타원 스팬레그 테이블",
+      "dimensions": {
+        "width": 1.8,
+        "depth": 1.2,
+        "height": 0.7188350231945514
+      },
+      "visualFootprint": {
+        "minX": -0.899999976,
+        "maxX": 0.899999976,
+        "minZ": -0.600000024,
+        "maxZ": 0.600000024
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "paintedWhite",
+        "chrome"
+      ],
+      "purchaseUrl": "https://www.fritzhansen.com/en/categories/by-series/superellipse/b612?market=us&sku=B612-LAMGE-SPAL-WARGRA_TB74",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c076.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "sourceDimensions": {
+          "width": 1.8,
+          "depth": 1.2,
+          "height": 0.7188350231945514
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c077-01",
+      "variantId": "expansion-c077",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "트레슬 프레임 테이블",
+      "dimensions": {
+        "width": 1.8,
+        "depth": 0.87,
+        "height": 0.7468782091308608
+      },
+      "visualFootprint": {
+        "minX": -0.899999976,
+        "maxX": 0.899999976,
+        "minZ": -0.435000002,
+        "maxZ": 0.435000002
+      },
+      "styleTags": [
+        "minimal",
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodLight",
+        "paintedWhite"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/tables/dining-tables",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c077.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "surface": {
+          "height": 0.746878209,
+          "minX": -0.885,
+          "maxX": 0.885,
+          "minZ": -0.42,
+          "maxZ": 0.42
+        },
+        "surfacePartId": "tabletop",
+        "sourceDimensions": {
+          "width": 1.8,
+          "depth": 0.87,
+          "height": 0.7468782091308608
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c078-01",
+      "variantId": "expansion-c078",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "L자 벤트우드 원형 테이블",
+      "dimensions": {
+        "width": 1,
+        "depth": 1,
+        "height": 0.7100155628472566
+      },
+      "visualFootprint": {
+        "minX": -0.5,
+        "maxX": 0.5,
+        "minZ": -0.5,
+        "maxZ": 0.5
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://shop.artek.fi/collections/tables",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c078.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "sourceDimensions": {
+          "width": 1,
+          "depth": 1,
+          "height": 0.7100155628472566
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c079-01",
+      "variantId": "expansion-c079",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "강철 루프 보강 테이블",
+      "dimensions": {
+        "width": 2,
+        "depth": 0.85,
+        "height": 0.750652689835988
+      },
+      "visualFootprint": {
+        "minX": -1,
+        "maxX": 1,
+        "minZ": -0.425000012,
+        "maxZ": 0.425000012
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "metal",
+        "woodLight"
+      ],
+      "purchaseUrl": "https://shop.artek.fi/collections/tables",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c079.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "surface": {
+          "height": 0.75065269,
+          "minX": -0.985,
+          "maxX": 0.985,
+          "minZ": -0.41,
+          "maxZ": 0.41
+        },
+        "surfacePartId": "linoleum-top",
+        "sourceDimensions": {
+          "width": 2,
+          "depth": 0.85,
+          "height": 0.750652689835988
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c080-01",
+      "variantId": "expansion-c080",
+      "furnitureType": "multi_table",
+      "furnitureTypeCode": "MULTI_TABLE",
+      "label": "삼각 단면 목재 테이블",
+      "dimensions": {
+        "width": 1.97,
+        "depth": 0.85,
+        "height": 0.7424999999999999
+      },
+      "visualFootprint": {
+        "minX": -0.985000014,
+        "maxX": 0.985000014,
+        "minZ": -0.425000012,
+        "maxZ": 0.425000012
+      },
+      "styleTags": [
+        "natural",
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.hay.com/products/furniture/tables/dining-tables",
+      "requiredClearance": {
+        "front": 0.4,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c080.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "sourceDimensions": {
+          "width": 1.97,
+          "depth": 0.85,
+          "height": 0.7424999999999999
+        },
+        "canonicalType": "multi_table"
+      }
+    },
+    {
+      "productId": "expansion-c081-01",
+      "variantId": "expansion-c081",
+      "furnitureType": "partition_shelf",
+      "furnitureTypeCode": "PARTITION_SHELF",
+      "label": "파형 슬랫 파티션",
+      "dimensions": {
+        "width": 1.822,
+        "depth": 0.3818178364789106,
+        "height": 1.485
+      },
+      "visualFootprint": {
+        "minX": -0.911,
+        "maxX": 0.911,
+        "minZ": -0.190908918,
+        "maxZ": 0.190908918
+      },
+      "styleTags": [
+        "natural"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.artek.fi/fi/tuotteet/s%C3%A4lesein%C3%A4-100",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c081.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.822,
+          "depth": 0.3818178364789106,
+          "height": 1.485
+        },
+        "canonicalType": "partition_shelf"
+      }
+    },
+    {
+      "productId": "expansion-c082-01",
+      "variantId": "expansion-c082",
+      "furnitureType": "partition_shelf",
+      "furnitureTypeCode": "PARTITION_SHELF",
+      "label": "곡면 패널 파티션",
+      "dimensions": {
+        "width": 1.3475232124328613,
+        "depth": 0.08363364636898041,
+        "height": 1.399999976158142
+      },
+      "visualFootprint": {
+        "minX": -0.673761606,
+        "maxX": 0.673761606,
+        "minZ": -0.041816823,
+        "maxZ": 0.041816823
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.fritzhansen.com/?sc_lang=en-US",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c082.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.3475232124328613,
+          "depth": 0.08363364636898041,
+          "height": 1.399999976158142
+        },
+        "canonicalType": "partition_shelf"
+      }
+    },
+    {
+      "productId": "expansion-c083-01",
+      "variantId": "expansion-c083",
+      "furnitureType": "partition_shelf",
+      "furnitureTypeCode": "PARTITION_SHELF",
+      "label": "이동형 선반 파티션",
+      "dimensions": {
+        "width": 1.89,
+        "depth": 0.65,
+        "height": 1.8125000000000002
+      },
+      "visualFootprint": {
+        "minX": -0.945000002,
+        "maxX": 0.945000002,
+        "minZ": -0.324999988,
+        "maxZ": 0.324999988
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "STORAGE"
+      ],
+      "materials": [
+        "metal",
+        "screenFrame",
+        "woodLight"
+      ],
+      "purchaseUrl": "https://www.vitra.com/en-un/product/dancing-wall-2",
+      "requiredClearance": {
+        "front": 0.5,
+        "side": 0.2
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c083.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.89,
+          "depth": 0.65,
+          "height": 1.8125000000000002
+        },
+        "canonicalType": "partition_shelf"
+      }
+    },
+    {
+      "productId": "expansion-c084-01",
+      "variantId": "expansion-c084",
+      "furnitureType": "full_length_mirror",
+      "furnitureTypeCode": "FULL_LENGTH_MIRROR",
+      "label": "스캘럽 프레임 전신거울",
+      "dimensions": {
+        "width": 0.6511538624763489,
+        "depth": 0.03800000250339508,
+        "height": 1.3799999952316284
+      },
+      "visualFootprint": {
+        "minX": -0.325576931,
+        "maxX": 0.325576931,
+        "minZ": -0.019000001,
+        "maxZ": 0.019000001
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "mirror",
+        "brass"
+      ],
+      "purchaseUrl": "https://www.hay.com/hay/furniture/mirrors/arcs-mirror",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c084.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "mirror"
+        ],
+        "mountBottom": 0,
+        "sourceDimensions": {
+          "width": 0.6511538624763489,
+          "depth": 0.03800000250339508,
+          "height": 1.3799999952316284
+        },
+        "canonicalType": "full_length_mirror"
+      }
+    },
+    {
+      "productId": "expansion-c085-01",
+      "variantId": "expansion-c085",
+      "furnitureType": "full_length_mirror",
+      "furnitureTypeCode": "FULL_LENGTH_MIRROR",
+      "label": "유기 곡선 전신거울",
+      "dimensions": {
+        "width": 0.7952555418014526,
+        "depth": 0.03800000250339508,
+        "height": 1.7472000122070312
+      },
+      "visualFootprint": {
+        "minX": -0.397627771,
+        "maxX": 0.397627771,
+        "minZ": -0.019000001,
+        "maxZ": 0.019000001
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "mirror",
+        "brass"
+      ],
+      "purchaseUrl": "https://fermliving.us/products/pond-mirror-full-size-brass",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c085.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "mirror"
+        ],
+        "mountBottom": 0,
+        "sourceDimensions": {
+          "width": 0.7952555418014526,
+          "depth": 0.03800000250339508,
+          "height": 1.7472000122070312
+        },
+        "canonicalType": "full_length_mirror"
+      }
+    },
+    {
+      "productId": "expansion-c086-01",
+      "variantId": "expansion-c086",
+      "furnitureType": "full_length_mirror",
+      "furnitureTypeCode": "FULL_LENGTH_MIRROR",
+      "label": "각진 조형 스탠딩 거울",
+      "dimensions": {
+        "width": 0.6399999856948853,
+        "depth": 0.41249999730288983,
+        "height": 1.6319999694824219
+      },
+      "visualFootprint": {
+        "minX": -0.319999993,
+        "maxX": 0.319999993,
+        "minZ": -0.20625,
+        "maxZ": 0.206249997
+      },
+      "styleTags": [
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "mirror",
+        "metal"
+      ],
+      "purchaseUrl": "https://fermliving.com/fr-fr/collections/mirrors",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c086.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "mirror"
+        ],
+        "sourceDimensions": {
+          "width": 0.6399999856948853,
+          "depth": 0.41249999730288983,
+          "height": 1.6319999694824219
+        },
+        "canonicalType": "full_length_mirror"
+      }
+    },
+    {
+      "productId": "expansion-c087-01",
+      "variantId": "expansion-c087",
+      "furnitureType": "full_length_mirror",
+      "furnitureTypeCode": "FULL_LENGTH_MIRROR",
+      "label": "다층 웨이브 미러 조명",
+      "dimensions": {
+        "width": 0.7473433017730713,
+        "depth": 0.05650000274181366,
+        "height": 1.9726402759552002
+      },
+      "visualFootprint": {
+        "minX": -0.373671651,
+        "maxX": 0.373671651,
+        "minZ": -0.028250001,
+        "maxZ": 0.028250001
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST"
+      ],
+      "materials": [
+        "mirror",
+        "pinkDiffuser"
+      ],
+      "purchaseUrl": "https://www.poltronova.it/it/ultrafragola/",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c087.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "mirror"
+        ],
+        "mountBottom": 0,
+        "sourceDimensions": {
+          "width": 0.7473433017730713,
+          "depth": 0.05650000274181366,
+          "height": 1.9726402759552002
+        },
+        "canonicalType": "full_length_mirror"
+      }
+    },
+    {
+      "productId": "expansion-c088-01",
+      "variantId": "expansion-c088",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "아치 암 플로어 조명",
+      "dimensions": {
+        "width": 1.7799999690055848,
+        "depth": 0.4017413258552551,
+        "height": 2.216219663619995
+      },
+      "visualFootprint": {
+        "minX": -0.889999981,
+        "maxX": 0.889999986,
+        "minZ": -0.200870663,
+        "maxZ": 0.200870663
+      },
+      "styleTags": [
+        "midcentury"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "ceramic",
+        "chrome",
+        "ledDiffuser",
+        "screenFrame"
+      ],
+      "purchaseUrl": "https://japan.flos.com/meet-our-icons/",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c088.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "lighting"
+        ],
+        "sourceDimensions": {
+          "width": 1.7799999690055848,
+          "depth": 0.4017413258552551,
+          "height": 2.216219663619995
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c089-01",
+      "variantId": "expansion-c089",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "볼 리플렉터 테이블 조명",
+      "dimensions": {
+        "width": 0.48417943716049194,
+        "depth": 0.5017610285788683,
+        "height": 0.5733923917985686
+      },
+      "visualFootprint": {
+        "minX": -0.242089733,
+        "maxX": 0.242089719,
+        "minZ": -0.250880519,
+        "maxZ": 0.250880519
+      },
+      "styleTags": [
+        "midcentury"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "metal",
+        "glass",
+        "paintedWhite",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://japan.flos.com/families/",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c089.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.48417943716049194,
+          "depth": 0.5017610285788683,
+          "height": 0.5733923917985686
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c090-01",
+      "variantId": "expansion-c090",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "오프셋 셰이드 조명",
+      "dimensions": {
+        "width": 0.38999998569488525,
+        "depth": 0.38999998569488525,
+        "height": 0.35821908712387085
+      },
+      "visualFootprint": {
+        "minX": -0.194999993,
+        "maxX": 0.194999993,
+        "minZ": -0.194999993,
+        "maxZ": 0.194999993
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "ceramic",
+        "screenFrame",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://flos.com/en/wo/snoopy/M-snoopy.html",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c090.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.38999998569488525,
+          "depth": 0.38999998569488525,
+          "height": 0.35821908712387085
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c091-01",
+      "variantId": "expansion-c091",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "구형 밸런스 테이블 조명",
+      "dimensions": {
+        "width": 0.21000000000000002,
+        "depth": 0.2,
+        "height": 0.3811234752377721
+      },
+      "visualFootprint": {
+        "minX": -0.105000001,
+        "maxX": 0.105000001,
+        "minZ": -0.100000001,
+        "maxZ": 0.100000001
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "brass",
+        "opalGlass"
+      ],
+      "purchaseUrl": "https://flos.com/en/wo/ic-lights-t1-low-brass-halogen/F3171059.html",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c091.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.21000000000000002,
+          "depth": 0.2,
+          "height": 0.3811234752377721
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c092-01",
+      "variantId": "expansion-c092",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "다층 셰이드 테이블 조명",
+      "dimensions": {
+        "width": 0.28999999165534973,
+        "depth": 0.28999999165534973,
+        "height": 0.36800000071525574
+      },
+      "visualFootprint": {
+        "minX": -0.144999996,
+        "maxX": 0.144999996,
+        "minZ": -0.144999996,
+        "maxZ": 0.144999996
+      },
+      "styleTags": [
+        "classic",
+        "midcentury"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "chrome",
+        "paintedWhite",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://www.louispoulsen.com/en-id/shop-by/room/living-room/table-lamps",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c092.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.28999999165534973,
+          "depth": 0.28999999165534973,
+          "height": 0.36800000071525574
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c093-01",
+      "variantId": "expansion-c093",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "머시룸 테이블 조명",
+      "dimensions": {
+        "width": 0.4000000059604645,
+        "depth": 0.4000000059604645,
+        "height": 0.550000011920929
+      },
+      "visualFootprint": {
+        "minX": -0.200000003,
+        "maxX": 0.200000003,
+        "minZ": -0.200000003,
+        "maxZ": 0.200000003
+      },
+      "styleTags": [
+        "midcentury"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "paintedWhite",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://www.louispoulsen.com/en-id/shop-by/room/living-room/table-lamps",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c093.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.4000000059604645,
+          "depth": 0.4000000059604645,
+          "height": 0.550000011920929
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c094-01",
+      "variantId": "expansion-c094",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "사선 원추 태스크 조명",
+      "dimensions": {
+        "width": 0.15071551501750946,
+        "depth": 0.17399999499320984,
+        "height": 0.38691797890514135
+      },
+      "visualFootprint": {
+        "minX": -0.075357765,
+        "maxX": 0.075357758,
+        "minZ": -0.086999997,
+        "maxZ": 0.086999997
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "metal",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://www.louispoulsen.com/en-id/shop-by/room/living-room/table-lamps",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c094.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.15071551501750946,
+          "depth": 0.17399999499320984,
+          "height": 0.38691797890514135
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c095-01",
+      "variantId": "expansion-c095",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "더블 암 태스크 조명",
+      "dimensions": {
+        "width": 0.30051322865996904,
+        "depth": 0.23,
+        "height": 0.6325
+      },
+      "visualFootprint": {
+        "minX": -0.150256611,
+        "maxX": 0.150256619,
+        "minZ": -0.115000002,
+        "maxZ": 0.115000002
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "chrome",
+        "metal",
+        "metalLight",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://artemide.it/en/company/identity",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c095.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.30051322865996904,
+          "depth": 0.23,
+          "height": 0.6325
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c096-01",
+      "variantId": "expansion-c096",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "카운터웨이트 암 조명",
+      "dimensions": {
+        "width": 0.5608277864132318,
+        "depth": 0.11,
+        "height": 0.6720572529209519
+      },
+      "visualFootprint": {
+        "minX": -0.280413892,
+        "maxX": 0.280413894,
+        "minZ": -0.055,
+        "maxZ": 0.055
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "screenFrame",
+        "redPlastic",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://artemide.it/en/company/identity",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c096.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.5608277864132318,
+          "depth": 0.11,
+          "height": 0.6720572529209519
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c097-01",
+      "variantId": "expansion-c097",
+      "furnitureType": "mood_lamp",
+      "furnitureTypeCode": "MOOD_LAMP",
+      "label": "이중 반구 포터블 조명",
+      "dimensions": {
+        "width": 0.1599999964237213,
+        "depth": 0.1599999964237213,
+        "height": 0.2800000011920929
+      },
+      "visualFootprint": {
+        "minX": -0.079999998,
+        "maxX": 0.079999998,
+        "minZ": -0.079999998,
+        "maxZ": 0.079999998
+      },
+      "styleTags": [
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "mustardPaint",
+        "ledDiffuser"
+      ],
+      "purchaseUrl": "https://www.andtradition.com/products/flowerpot-vp9/1000",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c097.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.1599999964237213,
+          "depth": 0.1599999964237213,
+          "height": 0.2800000011920929
+        },
+        "canonicalType": "mood_lamp"
+      }
+    },
+    {
+      "productId": "expansion-c098-01",
+      "variantId": "expansion-c098",
+      "furnitureType": "plant",
+      "furnitureTypeCode": "PLANT",
+      "label": "직사각 레그 플랜터",
+      "dimensions": {
+        "width": 0.8676402467489243,
+        "depth": 0.5255342721939087,
+        "height": 0.9913419485092163
+      },
+      "visualFootprint": {
+        "minX": -0.433820119,
+        "maxX": 0.433820128,
+        "minZ": -0.262767136,
+        "maxZ": 0.262767136
+      },
+      "styleTags": [
+        "modern",
+        "minimal"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "metal",
+        "soil",
+        "plantStem",
+        "plantLight",
+        "plant"
+      ],
+      "purchaseUrl": "https://fermliving.com/products/plant-box-large-black",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c098.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "plant"
+        ],
+        "sourceDimensions": {
+          "width": 0.8676402467489243,
+          "depth": 0.5255342721939087,
+          "height": 0.9913419485092163
+        },
+        "canonicalType": "plant"
+      }
+    },
+    {
+      "productId": "expansion-c099-01",
+      "variantId": "expansion-c099",
+      "furnitureType": "plant",
+      "furnitureTypeCode": "PLANT",
+      "label": "모래시계 플랜터",
+      "dimensions": {
+        "width": 0.5871589183807373,
+        "depth": 0.5805715322494507,
+        "height": 0.6860893368721008
+      },
+      "visualFootprint": {
+        "minX": -0.293579459,
+        "maxX": 0.293579459,
+        "minZ": -0.290285766,
+        "maxZ": 0.290285766
+      },
+      "styleTags": [
+        "modern"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "ceramic",
+        "soil",
+        "plantStem",
+        "plantLight",
+        "plant"
+      ],
+      "purchaseUrl": "https://fermliving.com/products/hourglass-pot-cashmere-extra-small",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c099.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "plant"
+        ],
+        "sourceDimensions": {
+          "width": 0.5871589183807373,
+          "depth": 0.5805715322494507,
+          "height": 0.6860893368721008
+        },
+        "canonicalType": "plant"
+      }
+    },
+    {
+      "productId": "expansion-c100-01",
+      "variantId": "expansion-c100",
+      "furnitureType": "plant",
+      "furnitureTypeCode": "PLANT",
+      "label": "리브 스탠드 플랜터",
+      "dimensions": {
+        "width": 0.4654186964035034,
+        "depth": 0.4601777493953705,
+        "height": 0.8834371566772461
+      },
+      "visualFootprint": {
+        "minX": -0.232709348,
+        "maxX": 0.232709348,
+        "minZ": -0.230088875,
+        "maxZ": 0.230088875
+      },
+      "styleTags": [
+        "modern",
+        "natural"
+      ],
+      "lifestyleTags": [
+        "REST",
+        "HOBBY_LEISURE"
+      ],
+      "materials": [
+        "metalLight",
+        "soil",
+        "metal",
+        "plantStem",
+        "plantLight",
+        "plant"
+      ],
+      "purchaseUrl": "https://fermliving.com/de-de/collections/plant-pots",
+      "requiredClearance": {
+        "front": 0.2,
+        "side": 0.1
+      },
+      "renderCapability": "VARIANT_JSON",
+      "variantPath": "variants/expansion-c100.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "plant"
+        ],
+        "sourceDimensions": {
+          "width": 0.4654186964035034,
+          "depth": 0.4601777493953705,
+          "height": 0.8834371566772461
+        },
+        "canonicalType": "plant"
+      }
     },
     {
       "productId": "hanger-basic-01",
@@ -1204,7 +6693,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/hanger-basic.json"
+      "variantPath": "variants/hanger-basic.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.11,
+          "depth": 0.51,
+          "height": 1.75
+        },
+        "canonicalType": "hanger"
+      }
     },
     {
       "productId": "hanger-corner-01",
@@ -1240,7 +6741,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/hanger-corner.json"
+      "variantPath": "variants/hanger-corner.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.8,
+          "height": 1.75
+        },
+        "canonicalType": "hanger"
+      }
     },
     {
       "productId": "hanger-natural-morsning-01",
@@ -1276,7 +6789,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/hanger-natural-morsning.json"
+      "variantPath": "variants/hanger-natural-morsning.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.54,
+          "depth": 0.47,
+          "height": 1.39
+        },
+        "canonicalType": "hanger"
+      }
     },
     {
       "productId": "hanger-shelf-01",
@@ -1314,7 +6839,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/hanger-shelf.json"
+      "variantPath": "variants/hanger-shelf.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.9,
+          "depth": 0.36,
+          "height": 1.75
+        },
+        "canonicalType": "hanger"
+      }
     },
     {
       "productId": "lamp-floor-01",
@@ -1352,7 +6889,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/lamp-floor.json"
+      "variantPath": "variants/lamp-floor.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "lighting"
+        ],
+        "sourceDimensions": {
+          "width": 0.52,
+          "depth": 0.52,
+          "height": 1.48
+        },
+        "canonicalType": "mood_lamp"
+      }
     },
     {
       "productId": "lamp-indirect-01",
@@ -1389,7 +6938,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/lamp-indirect.json"
+      "variantPath": "variants/lamp-indirect.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "lighting"
+        ],
+        "sourceDimensions": {
+          "width": 0.19,
+          "depth": 0.19,
+          "height": 0.3745
+        },
+        "canonicalType": "mood_lamp"
+      }
     },
     {
       "productId": "lamp-midcentury-globe-01",
@@ -1427,7 +6988,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/lamp-midcentury-globe.json"
+      "variantPath": "variants/lamp-midcentury-globe.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "lighting"
+        ],
+        "sourceDimensions": {
+          "width": 0.28,
+          "depth": 0.28,
+          "height": 0.285
+        },
+        "canonicalType": "mood_lamp"
+      }
     },
     {
       "productId": "lamp-table-01",
@@ -1465,7 +7038,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/lamp-table.json"
+      "variantPath": "variants/lamp-table.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "lighting"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.28,
+          "depth": 0.28,
+          "height": 0.46
+        },
+        "canonicalType": "mood_lamp"
+      }
     },
     {
       "productId": "media-console-drawer-01",
@@ -1504,7 +7097,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/media-console-drawer.json"
+      "variantPath": "variants/media-console-drawer.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.48,
+          "minX": -0.585,
+          "maxX": 0.585,
+          "minZ": -0.195,
+          "maxZ": 0.195
+        },
+        "surfacePartId": "console-top",
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.42,
+          "height": 0.48
+        },
+        "canonicalType": "media_console"
+      }
     },
     {
       "productId": "media-console-low-01",
@@ -1542,7 +7155,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/media-console-low.json"
+      "variantPath": "variants/media-console-low.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.36,
+          "minX": -0.585,
+          "maxX": 0.585,
+          "minZ": -0.16,
+          "maxZ": 0.16
+        },
+        "surfacePartId": "console-top",
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.35,
+          "height": 0.36
+        },
+        "canonicalType": "media_console"
+      }
     },
     {
       "productId": "media-console-midcentury-stockholm-01",
@@ -1579,7 +7212,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/media-console-midcentury-stockholm.json"
+      "variantPath": "variants/media-console-midcentury-stockholm.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.6454,
+          "minX": -0.596,
+          "maxX": 0.596,
+          "minZ": -0.1515,
+          "maxZ": 0.1515
+        },
+        "surfacePartId": "top-panel",
+        "sourceDimensions": {
+          "width": 1.27,
+          "depth": 0.381,
+          "height": 0.6604
+        },
+        "canonicalType": "media_console"
+      }
     },
     {
       "productId": "media-console-open-01",
@@ -1618,7 +7271,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/media-console-open.json"
+      "variantPath": "variants/media-console-open.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "surface": {
+          "height": 0.64,
+          "minX": -0.585,
+          "maxX": 0.585,
+          "minZ": -0.185,
+          "maxZ": 0.185
+        },
+        "surfacePartId": "top-panel",
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.4,
+          "height": 0.64
+        },
+        "canonicalType": "media_console"
+      }
     },
     {
       "productId": "mirror-classic-rounded-01",
@@ -1656,7 +7329,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/mirror-classic-rounded.json"
+      "variantPath": "variants/mirror-classic-rounded.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "mirror"
+        ],
+        "sourceDimensions": {
+          "width": 0.78,
+          "depth": 0.097,
+          "height": 1.968
+        },
+        "canonicalType": "full_length_mirror"
+      }
     },
     {
       "productId": "mirror-standing-01",
@@ -1693,7 +7378,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/mirror-standing.json"
+      "variantPath": "variants/mirror-standing.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "mirror"
+        ],
+        "sourceDimensions": {
+          "width": 0.45,
+          "depth": 0.36,
+          "height": 1.6825
+        },
+        "canonicalType": "full_length_mirror"
+      }
     },
     {
       "productId": "mirror-storage-01",
@@ -1730,7 +7427,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/mirror-storage.json"
+      "variantPath": "variants/mirror-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "mirror"
+        ],
+        "sourceDimensions": {
+          "width": 0.485,
+          "depth": 0.36,
+          "height": 1.585
+        },
+        "canonicalType": "full_length_mirror"
+      }
     },
     {
       "productId": "mirror-wall-01",
@@ -1767,7 +7476,20 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/mirror-wall.json"
+      "variantPath": "variants/mirror-wall.json",
+      "placement": {
+        "installation": "WALL",
+        "roles": [
+          "mirror"
+        ],
+        "mountBottom": 0,
+        "sourceDimensions": {
+          "width": 0.42,
+          "depth": 0.072,
+          "height": 1.55
+        },
+        "canonicalType": "full_length_mirror"
+      }
     },
     {
       "productId": "monitor-basic-01",
@@ -1805,7 +7527,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/monitor-basic.json"
+      "variantPath": "variants/monitor-basic.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "work"
+        ],
+        "supportTypes": [
+          "desk"
+        ],
+        "sourceDimensions": {
+          "width": 0.556,
+          "depth": 0.181,
+          "height": 0.417
+        },
+        "canonicalType": "monitor"
+      }
     },
     {
       "productId": "monitor-dual-01",
@@ -1843,7 +7580,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/monitor-dual.json"
+      "variantPath": "variants/monitor-dual.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "work"
+        ],
+        "supportTypes": [
+          "desk"
+        ],
+        "sourceDimensions": {
+          "width": 1.132,
+          "depth": 0.181,
+          "height": 0.417
+        },
+        "canonicalType": "monitor"
+      }
     },
     {
       "productId": "monitor-gaming-odyssey-01",
@@ -1883,7 +7635,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/monitor-gaming-odyssey.json"
+      "variantPath": "variants/monitor-gaming-odyssey.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "work"
+        ],
+        "supportTypes": [
+          "desk"
+        ],
+        "sourceDimensions": {
+          "width": 0.7142,
+          "depth": 0.2635,
+          "height": 0.5819
+        },
+        "canonicalType": "monitor"
+      }
     },
     {
       "productId": "monitor-ultrawide-01",
@@ -1921,7 +7688,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/monitor-ultrawide.json"
+      "variantPath": "variants/monitor-ultrawide.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "work"
+        ],
+        "supportTypes": [
+          "desk"
+        ],
+        "sourceDimensions": {
+          "width": 0.809,
+          "depth": 0.223,
+          "height": 0.483
+        },
+        "canonicalType": "monitor"
+      }
     },
     {
       "productId": "multi-table-compact-01",
@@ -1958,7 +7740,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/multi-table-compact.json"
+      "variantPath": "variants/multi-table-compact.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "surface": {
+          "height": 0.73,
+          "minX": -0.32,
+          "maxX": 0.32,
+          "minZ": -0.32,
+          "maxZ": 0.32
+        },
+        "surfacePartId": "tabletop",
+        "sourceDimensions": {
+          "width": 0.67,
+          "depth": 0.67,
+          "height": 0.73
+        },
+        "canonicalType": "multi_table"
+      }
     },
     {
       "productId": "multi-table-gateleg-01",
@@ -1997,7 +7799,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/multi-table-gateleg.json"
+      "variantPath": "variants/multi-table-gateleg.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "surface": {
+          "height": 0.74,
+          "minX": -0.745,
+          "maxX": -0.225,
+          "minZ": -0.385,
+          "maxZ": 0.385
+        },
+        "surfacePartId": "drop-leaf-left",
+        "sourceDimensions": {
+          "width": 1.52,
+          "depth": 0.8,
+          "height": 0.74
+        },
+        "canonicalType": "multi_table"
+      }
     },
     {
       "productId": "multi-table-storage-01",
@@ -2035,7 +7857,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/multi-table-storage.json"
+      "variantPath": "variants/multi-table-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "surface": {
+          "height": 0.9,
+          "minX": -0.615,
+          "maxX": 0.615,
+          "minZ": -0.38,
+          "maxZ": 0.38
+        },
+        "surfacePartId": "countertop",
+        "sourceDimensions": {
+          "width": 1.26,
+          "depth": 0.79,
+          "height": 0.9
+        },
+        "canonicalType": "multi_table"
+      }
     },
     {
       "productId": "multi-table-two-seat-01",
@@ -2073,7 +7915,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/multi-table-two-seat.json"
+      "variantPath": "variants/multi-table-two-seat.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "dining"
+        ],
+        "surface": {
+          "height": 0.75,
+          "minX": -0.385,
+          "maxX": 0.385,
+          "minZ": -0.285,
+          "maxZ": 0.285
+        },
+        "surfacePartId": "tabletop",
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.6,
+          "height": 0.75
+        },
+        "canonicalType": "multi_table"
+      }
     },
     {
       "productId": "nightstand-classic-gullaberg-01",
@@ -2110,7 +7972,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/nightstand-classic-gullaberg.json"
+      "variantPath": "variants/nightstand-classic-gullaberg.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "surface": {
+          "height": 0.69,
+          "minX": -0.25,
+          "maxX": 0.25,
+          "minZ": -0.2,
+          "maxZ": 0.2
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 0.53,
+          "depth": 0.43,
+          "height": 0.69
+        },
+        "canonicalType": "nightstand"
+      }
     },
     {
       "productId": "nightstand-drawer-01",
@@ -2147,7 +8029,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/nightstand-drawer.json"
+      "variantPath": "variants/nightstand-drawer.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "surface": {
+          "height": 0.49,
+          "minX": -0.16,
+          "maxX": 0.16,
+          "minZ": -0.198,
+          "maxZ": 0.172
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 0.35,
+          "depth": 0.426,
+          "height": 0.49
+        },
+        "canonicalType": "nightstand"
+      }
     },
     {
       "productId": "nightstand-midcentury-trolley-01",
@@ -2184,7 +8086,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/nightstand-midcentury-trolley.json"
+      "variantPath": "variants/nightstand-midcentury-trolley.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.32,
+          "depth": 0.32,
+          "height": 0.4
+        },
+        "canonicalType": "nightstand"
+      }
     },
     {
       "productId": "nightstand-open-01",
@@ -2221,7 +8135,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/nightstand-open.json"
+      "variantPath": "variants/nightstand-open.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "surface": {
+          "height": 0.45,
+          "minX": -0.17,
+          "maxX": 0.17,
+          "minZ": -0.125,
+          "maxZ": 0.125
+        },
+        "surfacePartId": "top",
+        "sourceDimensions": {
+          "width": 0.37,
+          "depth": 0.28,
+          "height": 0.45
+        },
+        "canonicalType": "nightstand"
+      }
     },
     {
       "productId": "nightstand-round-01",
@@ -2258,7 +8192,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/nightstand-round.json"
+      "variantPath": "variants/nightstand-round.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.45,
+          "depth": 0.45,
+          "height": 0.53
+        },
+        "canonicalType": "nightstand"
+      }
     },
     {
       "productId": "partition-shelf-kallax-01",
@@ -2294,7 +8240,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/partition-shelf-kallax.json"
+      "variantPath": "variants/partition-shelf-kallax.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.47,
+          "depth": 0.39,
+          "height": 0.77
+        },
+        "canonicalType": "partition_shelf"
+      }
     },
     {
       "productId": "partition-shelf-slim-01",
@@ -2333,7 +8292,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/partition-shelf-slim.json"
+      "variantPath": "variants/partition-shelf-slim.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.5,
+          "depth": 0.32,
+          "height": 1.41
+        },
+        "canonicalType": "partition_shelf"
+      }
     },
     {
       "productId": "partition-shelf-storage-01",
@@ -2369,7 +8341,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/partition-shelf-storage.json"
+      "variantPath": "variants/partition-shelf-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.77,
+          "depth": 0.39,
+          "height": 1.49
+        },
+        "canonicalType": "partition_shelf"
+      }
     },
     {
       "productId": "partition-shelf-translucent-01",
@@ -2406,7 +8391,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/partition-shelf-translucent.json"
+      "variantPath": "variants/partition-shelf-translucent.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "divider",
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.52,
+          "depth": 0.3,
+          "height": 1.52
+        },
+        "canonicalType": "partition_shelf"
+      }
     },
     {
       "productId": "plant-corner-01",
@@ -2445,7 +8443,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/plant-corner.json"
+      "variantPath": "variants/plant-corner.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "plant"
+        ],
+        "sourceDimensions": {
+          "width": 0.6005779884792202,
+          "depth": 0.6231243531863027,
+          "height": 0.8999999922374311
+        },
+        "canonicalType": "plant"
+      }
     },
     {
       "productId": "plant-floor-01",
@@ -2484,7 +8494,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/plant-floor.json"
+      "variantPath": "variants/plant-floor.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "plant"
+        ],
+        "sourceDimensions": {
+          "width": 0.32917215269250133,
+          "depth": 0.33407750271294784,
+          "height": 0.3999999965988789
+        },
+        "canonicalType": "plant"
+      }
     },
     {
       "productId": "plant-midcentury-01",
@@ -2524,7 +8546,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/plant-midcentury.json"
+      "variantPath": "variants/plant-midcentury.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "plant"
+        ],
+        "sourceDimensions": {
+          "width": 0.3418371500697426,
+          "depth": 0.3570907760380737,
+          "height": 0.6499999931191831
+        },
+        "canonicalType": "plant"
+      }
     },
     {
       "productId": "plant-tabletop-01",
@@ -2563,7 +8597,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/plant-tabletop.json"
+      "variantPath": "variants/plant-tabletop.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "plant"
+        ],
+        "supportTypes": [
+          "desk",
+          "nightstand",
+          "side_table",
+          "multi_table",
+          "media_console",
+          "drawer_chest"
+        ],
+        "sourceDimensions": {
+          "width": 0.09667013873202057,
+          "depth": 0.10344419281736927,
+          "height": 0.1400000007522717
+        },
+        "canonicalType": "plant"
+      }
     },
     {
       "productId": "rug-geometric-01",
@@ -2603,7 +8657,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/rug-geometric.json"
+      "variantPath": "variants/rug-geometric.json",
+      "placement": {
+        "installation": "FLOOR_OVERLAY",
+        "roles": [
+          "rug"
+        ],
+        "sourceDimensions": {
+          "width": 1.3,
+          "depth": 1.6,
+          "height": 0.009
+        },
+        "canonicalType": "rug"
+      }
     },
     {
       "productId": "rug-rectangular-01",
@@ -2639,7 +8705,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/rug-rectangular.json"
+      "variantPath": "variants/rug-rectangular.json",
+      "placement": {
+        "installation": "FLOOR_OVERLAY",
+        "roles": [
+          "rug"
+        ],
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 1.8,
+          "height": 0.002
+        },
+        "canonicalType": "rug"
+      }
     },
     {
       "productId": "rug-round-01",
@@ -2675,7 +8753,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/rug-round.json"
+      "variantPath": "variants/rug-round.json",
+      "placement": {
+        "installation": "FLOOR_OVERLAY",
+        "roles": [
+          "rug"
+        ],
+        "sourceDimensions": {
+          "width": 1.3,
+          "depth": 1.3,
+          "height": 0.018
+        },
+        "canonicalType": "rug"
+      }
     },
     {
       "productId": "rug-runner-01",
@@ -2712,7 +8802,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/rug-runner.json"
+      "variantPath": "variants/rug-runner.json",
+      "placement": {
+        "installation": "FLOOR_OVERLAY",
+        "roles": [
+          "rug"
+        ],
+        "sourceDimensions": {
+          "width": 0.7,
+          "depth": 1.8,
+          "height": 0.006
+        },
+        "canonicalType": "rug"
+      }
     },
     {
       "productId": "side-table-coffee-01",
@@ -2750,7 +8852,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/side-table-coffee.json"
+      "variantPath": "variants/side-table-coffee.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "coffee"
+        ],
+        "surface": {
+          "height": 0.45,
+          "minX": -0.435,
+          "maxX": 0.435,
+          "minZ": -0.26,
+          "maxZ": 0.26
+        },
+        "surfacePartId": "tabletop",
+        "sourceDimensions": {
+          "width": 0.9,
+          "depth": 0.55,
+          "height": 0.45
+        },
+        "canonicalType": "side_table"
+      }
     },
     {
       "productId": "side-table-midcentury-stockholm-01",
@@ -2787,7 +8909,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/side-table-midcentury-stockholm.json"
+      "variantPath": "variants/side-table-midcentury-stockholm.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.48,
+          "depth": 0.48,
+          "height": 0.51
+        },
+        "canonicalType": "side_table"
+      }
     },
     {
       "productId": "side-table-round-01",
@@ -2825,7 +8959,19 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/side-table-round.json"
+      "variantPath": "variants/side-table-round.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "sourceDimensions": {
+          "width": 0.49,
+          "depth": 0.49,
+          "height": 0.51
+        },
+        "canonicalType": "side_table"
+      }
     },
     {
       "productId": "side-table-storage-01",
@@ -2863,7 +9009,27 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/side-table-storage.json"
+      "variantPath": "variants/side-table-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "bedside"
+        ],
+        "surface": {
+          "height": 0.52,
+          "minX": -0.385,
+          "maxX": 0.385,
+          "minZ": -0.14,
+          "maxZ": 0.14
+        },
+        "surfacePartId": "top-panel",
+        "sourceDimensions": {
+          "width": 0.8,
+          "depth": 0.31,
+          "height": 0.52
+        },
+        "canonicalType": "side_table"
+      }
     },
     {
       "productId": "sofa-bed-classic-storage-01",
@@ -2904,7 +9070,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-bed-classic-storage.json"
+      "variantPath": "variants/sofa-bed-classic-storage.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.09,
+          "depth": 0.89,
+          "height": 0.83
+        },
+        "canonicalType": "sofa_bed"
+      }
     },
     {
       "productId": "sofa-bed-compact-01",
@@ -2942,7 +9121,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-bed-compact.json"
+      "variantPath": "variants/sofa-bed-compact.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.42,
+          "depth": 1,
+          "height": 0.87
+        },
+        "canonicalType": "sofa_bed"
+      }
     },
     {
       "productId": "sofa-bed-daybed-01",
@@ -2981,7 +9173,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-bed-daybed.json"
+      "variantPath": "variants/sofa-bed-daybed.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.05,
+          "depth": 0.87,
+          "height": 0.63
+        },
+        "canonicalType": "sofa_bed"
+      }
     },
     {
       "productId": "sofa-bed-folding-01",
@@ -3019,7 +9224,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-bed-folding.json"
+      "variantPath": "variants/sofa-bed-folding.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2,
+          "depth": 0.97,
+          "height": 0.9
+        },
+        "canonicalType": "sofa_bed"
+      }
     },
     {
       "productId": "sofa-bed-midcentury-orange-01",
@@ -3058,7 +9276,20 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-bed-midcentury-orange.json"
+      "variantPath": "variants/sofa-bed-midcentury-orange.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "sleep",
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.89,
+          "depth": 1.02,
+          "height": 0.88
+        },
+        "canonicalType": "sofa_bed"
+      }
     },
     {
       "productId": "sofa-classic-ektorp-01",
@@ -3096,7 +9327,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-classic-ektorp.json"
+      "variantPath": "variants/sofa-classic-ektorp.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 2.18,
+          "depth": 0.88,
+          "height": 0.88
+        },
+        "canonicalType": "sofa"
+      }
     },
     {
       "productId": "sofa-midcentury-stockholm-01",
@@ -3138,7 +9381,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-midcentury-stockholm.json"
+      "variantPath": "variants/sofa-midcentury-stockholm.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.32,
+          "depth": 0.74,
+          "height": 0.79
+        },
+        "canonicalType": "sofa"
+      }
     },
     {
       "productId": "sofa-modular-01",
@@ -3176,7 +9431,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-modular.json"
+      "variantPath": "variants/sofa-modular.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.4,
+          "depth": 0.95,
+          "height": 0.71
+        },
+        "canonicalType": "sofa"
+      }
     },
     {
       "productId": "sofa-single-01",
@@ -3215,7 +9482,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-single.json"
+      "variantPath": "variants/sofa-single.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 0.93,
+          "depth": 0.99,
+          "height": 0.83
+        },
+        "canonicalType": "sofa"
+      }
     },
     {
       "productId": "sofa-two-seat-01",
@@ -3254,7 +9533,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/sofa-two-seat.json"
+      "variantPath": "variants/sofa-two-seat.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "seating"
+        ],
+        "sourceDimensions": {
+          "width": 1.21,
+          "depth": 0.78,
+          "height": 0.68
+        },
+        "canonicalType": "sofa"
+      }
     },
     {
       "productId": "tv-medium-01",
@@ -3292,7 +9583,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/tv-medium.json"
+      "variantPath": "variants/tv-medium.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "seating"
+        ],
+        "supportTypes": [
+          "media_console"
+        ],
+        "sourceDimensions": {
+          "width": 0.9675,
+          "depth": 0.191,
+          "height": 0.6097
+        },
+        "canonicalType": "tv"
+      }
     },
     {
       "productId": "tv-natural-frame-01",
@@ -3330,7 +9636,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/tv-natural-frame.json"
+      "variantPath": "variants/tv-natural-frame.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "seating"
+        ],
+        "supportTypes": [
+          "media_console"
+        ],
+        "sourceDimensions": {
+          "width": 0.9695,
+          "depth": 0.1968,
+          "height": 0.5919
+        },
+        "canonicalType": "tv"
+      }
     },
     {
       "productId": "tv-small-01",
@@ -3368,7 +9689,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/tv-small.json"
+      "variantPath": "variants/tv-small.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "seating"
+        ],
+        "supportTypes": [
+          "media_console"
+        ],
+        "sourceDimensions": {
+          "width": 0.7374,
+          "depth": 0.1505,
+          "height": 0.4654
+        },
+        "canonicalType": "tv"
+      }
     },
     {
       "productId": "tv-wide-01",
@@ -3406,7 +9742,22 @@
         "side": 0.1
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/tv-wide.json"
+      "variantPath": "variants/tv-wide.json",
+      "placement": {
+        "installation": "SUPPORT",
+        "roles": [
+          "seating"
+        ],
+        "supportTypes": [
+          "media_console"
+        ],
+        "sourceDimensions": {
+          "width": 1.2341,
+          "depth": 0.237,
+          "height": 0.758
+        },
+        "canonicalType": "tv"
+      }
     },
     {
       "productId": "wardrobe-classic-gullaberg-01",
@@ -3443,7 +9794,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/wardrobe-classic-gullaberg.json"
+      "variantPath": "variants/wardrobe-classic-gullaberg.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.28,
+          "depth": 0.64,
+          "height": 2.01
+        },
+        "canonicalType": "wardrobe"
+      }
     },
     {
       "productId": "wardrobe-hinged-01",
@@ -3481,7 +9844,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/wardrobe-hinged.json"
+      "variantPath": "variants/wardrobe-hinged.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.79,
+          "depth": 0.55,
+          "height": 1.76
+        },
+        "canonicalType": "wardrobe"
+      }
     },
     {
       "productId": "wardrobe-natural-nordkisa-01",
@@ -3519,7 +9894,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/wardrobe-natural-nordkisa.json"
+      "variantPath": "variants/wardrobe-natural-nordkisa.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.2,
+          "depth": 0.47,
+          "height": 1.86
+        },
+        "canonicalType": "wardrobe"
+      }
     },
     {
       "productId": "wardrobe-open-01",
@@ -3556,7 +9943,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/wardrobe-open.json"
+      "variantPath": "variants/wardrobe-open.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 0.99,
+          "depth": 0.51,
+          "height": 1.73
+        },
+        "canonicalType": "wardrobe"
+      }
     },
     {
       "productId": "wardrobe-sliding-01",
@@ -3595,7 +9994,19 @@
         "side": 0.2
       },
       "renderCapability": "VARIANT_JSON",
-      "variantPath": "variants/wardrobe-sliding.json"
+      "variantPath": "variants/wardrobe-sliding.json",
+      "placement": {
+        "installation": "FLOOR",
+        "roles": [
+          "storage"
+        ],
+        "sourceDimensions": {
+          "width": 1.17,
+          "depth": 0.55,
+          "height": 1.76
+        },
+        "canonicalType": "wardrobe"
+      }
     }
   ]
 }

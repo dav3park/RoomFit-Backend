@@ -136,7 +136,9 @@ class RuleBasedSemanticPlacementTest {
                 recommend(room, List.of("curtain_blind"), List.of("blind-roller")),
                 "curtain_blind");
 
-        assertTouchesWallWithMatchingRotation(room, blind);
+        assertThat(FurnitureInstallationPolicy.resolve(room,List.of(blind)).get(blind.getId()).valid()).isTrue();
+        assertThat(blind.getWidth()).isEqualTo(2.0);
+        assertThat(blind.getHeight()).isEqualTo(1.2);
         assertThat(blind.getRotation()).isEqualTo(180.0);
         assertThat(blind.getPosition().getX()).isEqualTo(5.0);
     }
@@ -160,6 +162,19 @@ class RuleBasedSemanticPlacementTest {
         assertThat(first.getPosition().getZ()).isEqualTo(desk.getPosition().getZ());
         assertThat(second.getPosition().getX()).isEqualTo(first.getPosition().getX());
         assertThat(second.getPosition().getZ()).isEqualTo(first.getPosition().getZ());
+    }
+
+    @Test
+    void tabletopSelectionFallsBackToFloorLampWhenNoSupportExists() {
+        var table=products.findById("lamp-table-01").orElseThrow();var floor=products.findById("lamp-floor-01").orElseThrow();
+        var preferred=new com.roomfit.product.domain.MockProduct(table.getProductId(),table.getVariantId(),table.getType(),table.getName(),null,
+                table.getWidth(),table.getDepth(),table.getHeight(),(Integer)null,List.of("modern"),null,null,table.getRequiredClearance(),List.of("WORK_STUDY"));
+        var repository=new MockProductRepository(List.of(preferred,floor));
+        var service=new RuleBasedPlacementService(new MockProductService(repository,new PurchaseUrlHealthCheckService(repository)),new ProductRecommendationService(repository));
+        var context=new AgentContext(1L,LifestyleGoal.STUDY_FOCUSED,List.of(DesignStyle.MODERN),List.of("mood_lamp"),List.of(),List.of(),List.of(),List.of());
+        var result=service.recommend(context,emptyRoom());
+        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendedFurniture()).singleElement().extracting(Furniture::getVariantId).isEqualTo("lamp-floor");
     }
 
     private PlacementResult recommend(Room room, List<String> requestedTypes, List<String> variants) {

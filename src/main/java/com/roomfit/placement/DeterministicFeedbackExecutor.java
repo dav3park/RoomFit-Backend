@@ -235,7 +235,7 @@ public class DeterministicFeedbackExecutor {
                         placement.rotation(), FurnitureStatus.RECOMMENDED);
                 List<Furniture> snapshot = appended(base, added);
                 ValidationResult validation = validationService.validateChange(room, base, snapshot);
-                if (validationService.isSafeAddition(room, base, added)) {
+                if (hardValid(validation)) {
                     validCandidates.add(new CandidateEvaluation(snapshot, furnitureId, product.getProductId(),
                             score(context, snapshot, validation),
                             distanceFromReference(placement.position(), reference, room), globalOrder));
@@ -254,19 +254,16 @@ public class DeterministicFeedbackExecutor {
     private List<FeedbackPlacementCandidateGenerator.PlacementCandidate> additionPlacements(
             Room room, List<Furniture> base, MockProduct product, FeedbackOperation operation, Furniture reference) {
         String type = GeneratedFurnitureCatalog.get().normalizeType(product.getType());
-        String supportType = switch (type) {
-            case "monitor" -> "desk";
-            case "tv" -> "media_console";
-            default -> null;
-        };
-        if (supportType == null) {
+        var policy = GeneratedFurnitureCatalog.get().placementPolicy(product.getVariantId())
+                .orElseGet(() -> com.roomfit.product.catalog.FurniturePlacementPolicy.legacy(type));
+        if (!"SUPPORT".equals(policy.installation())) {
             return candidateGenerator.forAdd(room, product, operation.placement(), reference);
         }
         return base.stream()
                 .filter(this::active)
-                .filter(item -> supportType.equals(GeneratedFurnitureCatalog.get().normalizeType(item.getType())))
+                .filter(item -> policy.supportTypes().contains(GeneratedFurnitureCatalog.get().normalizeType(item.getType())))
                 .map(support -> new FeedbackPlacementCandidateGenerator.PlacementCandidate(
-                        new Position(support.getPosition().getX(), support.getPosition().getZ()),
+                        FurnitureInstallationPolicy.supportPosition(support),
                         support.getRotation(), 0))
                 .toList();
     }
@@ -337,6 +334,13 @@ public class DeterministicFeedbackExecutor {
         Furniture current = base.get(index);
         if (FurnitureBoundary.clamp(room, current.getPosition(), current).isEmpty()) {
             return OperationAttempt.failed("NO_VALID_BOUNDARY_PLACEMENT");
+        }
+        if (reference!=null && operation.placement().relation()==FeedbackRelation.NEXT_TO
+                && FurnitureInstallationPolicy.policy(current).supportTypes().contains(GeneratedFurnitureCatalog.get().normalizeType(reference.getType()))) {
+            Furniture updated=copy(current,FurnitureInstallationPolicy.supportPosition(reference),reference.getRotation());
+            List<Furniture> snapshot=replace(base,index,updated);
+            if(!samePosition(current,updated)&&valid(room,base,snapshot))return OperationAttempt.applied(snapshot,current.getId());
+            return OperationAttempt.failed("NO_VALID_MOVE_PLACEMENT");
         }
         if (semanticMove(operation.placement().relation())) {
             for (FeedbackPlacementCandidateGenerator.PlacementCandidate candidate

@@ -41,7 +41,11 @@ public class RenderableProductCatalog {
     }
 
     public List<MockProduct> findCandidates(FeedbackProductRequirements requirements, FurnitureSize referenceSize) {
-        List<MockProduct> candidates = matchingCandidates(requirements, referenceSize)
+        List<MockProduct> matching = matchingCandidates(requirements, referenceSize).toList();
+        boolean hasGeneratedProduct = matching.stream().anyMatch(product -> product.getVariantId() != null);
+        // Legacy shapes are fallbacks; generated products carry canonical renderer metadata.
+        List<MockProduct> candidates = matching.stream()
+                .filter(product -> !hasGeneratedProduct || product.getVariantId() != null)
                 .limit(MAX_PRODUCT_CANDIDATES)
                 .toList();
         return List.copyOf(candidates);

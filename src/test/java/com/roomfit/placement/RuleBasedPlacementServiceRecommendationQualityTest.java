@@ -89,7 +89,7 @@ class RuleBasedPlacementServiceRecommendationQualityTest {
 
         PlacementResult result = service.recommend(context, testRoom);
 
-        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendationStatus()).as(result.getUnplacedFurniture()+" placed="+result.getRecommendedFurniture().stream().map(f->f.getVariantId()+"@"+f.getPosition().getX()+","+f.getPosition().getZ()+"/"+f.getRotation()+"/"+f.getHeight()).toList()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
         ValidationResult validation = validationService.validate(testRoom, result.getRecommendedFurniture());
         assertThat(validation.isCollisionFree()).isTrue();
         assertThat(validation.isBoundaryValid()).isTrue();
@@ -99,26 +99,14 @@ class RuleBasedPlacementServiceRecommendationQualityTest {
     }
 
     @Test
-    void recommend_bedAndDeskTogether_stillLetsFurnitureDomainPolicyCatchLoftDeskConflict() {
-        // RuleBasedPlacementService 자체는 bed-loft-desk와 canonical desk의
-        // 상호배제를 모른다(그건 FurnitureDomainPolicy의 책임) — 이번 추천 로직
-        // 개선이 그 경계를 몰래 넘어 정책을 우회하지 않는지 확인한다. STUDY_FOCUSED
-        // + style 없음이면 "bed" 요청에 bed-loft-desk(유일하게 WORK_STUDY 태그
-        // 보유)가 선택된다.
+    void recommend_bedAndDeskTogether_avoidsAnIntegratedLoftDeskConflict() {
         AgentContext context = new AgentContext(1L, LifestyleGoal.STUDY_FOCUSED, List.of(),
                 List.of("bed", "desk"), List.of(), List.of(), List.of(), List.of());
-
         PlacementResult result = service.recommend(context, room(6.0, 6.0));
-
-        Furniture bed = findByType(result.getRecommendedFurniture(), "bed");
-        Furniture desk = findByType(result.getRecommendedFurniture(), "desk");
-        assertThat(bed.getVariantId()).isEqualTo("bed-loft-desk");
-        assertThat(desk.getType()).isEqualTo("desk");
-
-        assertThatThrownBy(() -> furnitureDomainPolicy.validateFinalState(result.getRecommendedFurniture()))
-                .isInstanceOf(CustomException.class)
-                .satisfies(exception -> assertThat(((CustomException) exception).getErrorCode())
-                        .isEqualTo(ErrorCode.FURNITURE_DOMAIN_CONFLICT));
+        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(findByType(result.getRecommendedFurniture(), "bed").getVariantId()).isNotEqualTo("bed-loft-desk");
+        assertThat(findByType(result.getRecommendedFurniture(), "desk").getType()).isEqualTo("desk");
+        furnitureDomainPolicy.validateFinalState(result.getRecommendedFurniture());
     }
 
     private Furniture findByType(List<Furniture> furniture, String type) {

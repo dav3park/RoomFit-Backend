@@ -24,7 +24,6 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
-        continue-on-error: true   # TODO: 11개 알려진 실패 테스트 고치면 이 줄 삭제
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

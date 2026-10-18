@@ -98,9 +98,12 @@ class LayoutFeedbackControllerTest {
     void feedback_withSmallestDesk_returnsProductFailureWithoutSnapshotOrCandidates() throws Exception {
         Long layoutId = createLayout();
         Layout layout = layoutRepository.findById(layoutId).orElseThrow();
-        Furniture smallest = new Furniture("desk-smallest", "desk", "컴팩트 책상", 1.2, 0.6, 0.73,
+        var product = com.roomfit.product.catalog.GeneratedFurnitureCatalog.get().products().stream()
+                .filter(p -> "desk".equals(p.getType()))
+                .min(java.util.Comparator.comparingDouble(p -> p.getWidth() * p.getDepth())).orElseThrow();
+        Furniture smallest = new Furniture("desk-smallest", "desk", product.getName(), product.getWidth(), product.getDepth(), product.getHeight(),
                 new Position(2.0, 2.0), 0, FurnitureStatus.RECOMMENDED,
-                "desk-compact-01", List.of("minimal", "classic"), "desk-compact");
+                product.getProductId(), product.getStyleTags(), product.getVariantId());
         layout.setFurniture(new ArrayList<>(List.of(smallest)));
         layoutRepository.save(layout);
 
@@ -123,7 +126,7 @@ class LayoutFeedbackControllerTest {
                 .andExpect(jsonPath("$.data.clarification").value(nullValue()))
                 .andExpect(jsonPath("$.data.clarifications", hasSize(0)))
                 .andExpect(jsonPath("$.data.recommendedFurniture[0].id").value("desk-smallest"))
-                .andExpect(jsonPath("$.data.recommendedFurniture[0].productId").value("desk-compact-01"));
+                .andExpect(jsonPath("$.data.recommendedFurniture[0].productId").value(product.getProductId()));
     }
 
     @Test
@@ -248,9 +251,9 @@ class LayoutFeedbackControllerTest {
                 .andExpect(jsonPath("$.data.recommendedFurniture[?(@.id =~ /mood-lamp-feedback-.*/)].type")
                         .value(hasItems("mood_lamp")))
                 .andExpect(jsonPath("$.data.recommendedFurniture[?(@.id =~ /mood-lamp-feedback-.*/)].productId")
-                        .value(hasItems("lamp-floor-01")))
+                        .value(hasItems("expansion-c088-01")))
                 .andExpect(jsonPath("$.data.recommendedFurniture[?(@.id =~ /mood-lamp-feedback-.*/)].variantId")
-                        .value(hasItems("lamp-floor")))
+                        .value(hasItems("expansion-c088")))
                 .andExpect(jsonPath("$.data.interpretedIntent.operations").value(hasItems("ADD_FURNITURE")))
                 .andExpect(jsonPath("$.data.feedbackResult.applied").value(true));
     }

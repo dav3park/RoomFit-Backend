@@ -32,6 +32,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.reset;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -115,11 +116,15 @@ class FurnitureDomainPolicyControllerTest {
         TestState state = createState(before, requestedTypes);
         List<FurnitureSnapshot> savedBefore = snapshot(state.layoutId());
         reset(feedbackExecutor);
-        String[] appliedOperations = requestedTypes.stream()
-                .map(ignored -> "ADD_FURNITURE")
-                .toArray(String[]::new);
-        doReturn(appliedExecution(after, appliedOperations))
-                .when(feedbackExecutor).execute(any(), any(), anyList(), any(), anyInt());
+        doAnswer(invocation -> {
+            FeedbackOperation operation = ((FeedbackPlan) invocation.getArgument(0)).operations().getFirst();
+            FeedbackResult result = appliedExecution(after, operation.type().name()).result();
+            String addedId = after.stream()
+                    .filter(item -> operation.productRequirements().furnitureType().equals(item.getType()))
+                    .findFirst().orElseThrow().getId();
+            return new FeedbackExecution(after, result,
+                    List.of(FeedbackOperationExecution.applied(operation, addedId)));
+        }).when(feedbackExecutor).execute(any(), any(), anyList(), any(), anyInt());
 
         expectDomainConflict(post("/api/layouts/{layoutId}/furniture-additions", state.layoutId())
                 .contentType(MediaType.APPLICATION_JSON)

@@ -1,5 +1,7 @@
 package com.roomfit.placement;
 
+import com.roomfit.product.catalog.OriginalCatalogFixture;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roomfit.agent.domain.AgentContext;
 import com.roomfit.agent.domain.DesignStyle;
@@ -27,7 +29,7 @@ class FeedbackPlanEvaluationHarnessTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final DeterministicFeedbackExecutor executor =
-            new DeterministicFeedbackExecutor(new ValidationService(), new MockProductRepository());
+            new DeterministicFeedbackExecutor(new ValidationService(), OriginalCatalogFixture.repository());
 
     @TestFactory
     Stream<DynamicTest> evaluatesFeedbackPlansSemantically() {

@@ -18,6 +18,7 @@ public final class GeneratedFurnitureCatalog {
 
     public static final String RESOURCE_PATH = "/catalog/furniture-catalog.json";
 
+    private final Map<String,FurniturePlacementPolicy> placementPolicies;
     private final String catalogVersion;
     private final String sourceHash;
     private final Map<String, String> typeAliases;
@@ -34,11 +35,17 @@ public final class GeneratedFurnitureCatalog {
         this.variantIds = this.products.stream().map(MockProduct::getVariantId).collect(java.util.stream.Collectors.toUnmodifiableSet());
         this.visualFootprints = document.products().stream().collect(java.util.stream.Collectors.toUnmodifiableMap(
                 CatalogProduct::variantId, CatalogProduct::visualFootprint));
+        this.placementPolicies=document.products().stream().collect(java.util.stream.Collectors.toUnmodifiableMap(
+                CatalogProduct::variantId, product -> product.placement()==null?FurniturePlacementPolicy.legacy(product.furnitureType()):product.placement()));
         validateUniqueIds(this.products);
     }
 
     public static GeneratedFurnitureCatalog get() {
         return Holder.INSTANCE;
+    }
+
+    public Optional<FurniturePlacementPolicy> placementPolicy(String variantId) {
+        return Optional.ofNullable(variantId==null?null:placementPolicies.get(variantId));
     }
 
     public List<MockProduct> products() {
@@ -183,7 +190,8 @@ public final class GeneratedFurnitureCatalog {
             String purchaseUrl,
             Clearance requiredClearance,
             String renderCapability,
-            String variantPath
+            String variantPath,
+            FurniturePlacementPolicy placement
     ) {
     }
 

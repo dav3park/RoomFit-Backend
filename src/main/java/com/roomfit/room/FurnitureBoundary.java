@@ -53,8 +53,10 @@ public final class FurnitureBoundary {
                     GeneratedFurnitureCatalog.get().visualFootprint(variantId);
             if (generated.isPresent()) {
                 GeneratedFurnitureCatalog.VisualFootprint footprint = generated.get();
+                var dimensions=GeneratedFurnitureCatalog.get().placementPolicy(variantId).map(com.roomfit.product.catalog.FurniturePlacementPolicy::sourceDimensions).orElse(null);
+                double sx=dimensions==null?1:width/dimensions.width(),sz=dimensions==null?1:depth/dimensions.depth();
                 return new LocalFootprint(
-                        footprint.minX(), footprint.maxX(), footprint.minZ(), footprint.maxZ(),
+                        footprint.minX()*sx, footprint.maxX()*sx, footprint.minZ()*sz, footprint.maxZ()*sz,
                         FootprintSource.VARIANT_VISUAL);
             }
         }

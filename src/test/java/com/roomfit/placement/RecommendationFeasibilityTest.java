@@ -11,10 +11,13 @@ import com.roomfit.product.service.PurchaseUrlHealthCheckService;
 import com.roomfit.product.service.ProductRecommendationService;
 import com.roomfit.room.Furniture;
 import com.roomfit.room.FurnitureBoundary;
+import com.roomfit.room.FurnitureStatus;
+import com.roomfit.room.Position;
 import com.roomfit.room.Opening;
 import com.roomfit.room.Room;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -47,22 +50,38 @@ class RecommendationFeasibilityTest {
         assertThat(result.getRequestedFurnitureCount()).isEqualTo(1);
         assertThat(result.getPlacedFurnitureCount()).isEqualTo(1);
         assertThat(result.getUnplacedFurniture()).isEmpty();
-        assertThat(result.getRecommendedFurniture()).singleElement().satisfies(furniture -> {
+        assertThat(result.getRecommendedFurniture().stream()
+                .filter(furniture -> furnitureType.equals(furniture.getType()))).singleElement().satisfies(furniture -> {
             assertThat(furniture.getType()).isEqualTo(furnitureType);
             assertThat(furniture.getProductId()).isNotBlank();
             assertThat(furniture.getVariantId()).isNotBlank();
             assertThat(catalog.visualFootprint(furniture.getVariantId())).isPresent();
             assertThat(FurnitureBoundary.isInside(room, furniture)).isTrue();
+            if (!room.getFurniture().isEmpty()) {
+                assertThat(FurnitureSupportPolicy.isStrictStack(room.getFurniture().getFirst(), furniture)).isTrue();
+            }
         });
         assertThat(new ValidationService().validate(room, result.getRecommendedFurniture()).isBoundaryValid())
                 .isTrue();
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"monitor", "tv"})
+    void screenWithoutSupportIsUnplacedInsteadOfPlacedOnFloor(String furnitureType) {
+        PlacementResult result = placementService.recommend(context(furnitureType), room(30, 30));
+
+        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.FAILED);
+        assertThat(result.getRecommendedFurniture()).isEmpty();
+        assertThat(result.getPlacedFurnitureCount()).isZero();
+        assertThat(result.getUnplacedFurniture()).singleElement()
+                .extracting(UnplacedFurniture::furnitureType).isEqualTo(furnitureType);
+    }
+
     @Test
     void generatedCatalog_has21TypesAnd93UniqueRenderableVariantsWithFiniteRotatedFootprints() {
         List<MockProduct> products = catalog.products();
-        assertThat(catalog.catalogVersion()).isEqualTo("2026-07-18.2");
-        assertThat(products).hasSize(93);
+        assertThat(catalog.catalogVersion()).isEqualTo("2026-10-18.1");
+        assertThat(products).hasSize(193);
         assertThat(products.stream().map(MockProduct::getType).collect(java.util.stream.Collectors.toSet())).hasSize(21);
         assertThat(products).extracting(MockProduct::getProductId).doesNotHaveDuplicates().allMatch(id -> !id.isBlank());
         assertThat(products).extracting(MockProduct::getVariantId).doesNotHaveDuplicates().allMatch(id -> !id.isBlank());
@@ -127,6 +146,18 @@ class RecommendationFeasibilityTest {
         List<Opening> openings = "curtain_blind".equals(furnitureType)
                 ? List.of(new Opening("window-1", "window", "north", 14, 2, 1.2, 0.9))
                 : List.of();
-        return new Room(null, width, depth, 3, "meter", openings, List.of());
+        String supportVariant = switch (furnitureType) {
+            case "monitor" -> "desk-compact";
+            case "tv" -> "media-console-drawer";
+            default -> null;
+        };
+        List<Furniture> supports = supportVariant == null ? List.of() : catalog.products().stream()
+                .filter(product -> supportVariant.equals(product.getVariantId()))
+                .map(product -> new Furniture("support-1", product.getType(), product.getName(),
+                        product.getWidth(), product.getDepth(), product.getHeight(),
+                        new Position(width / 2, depth / 2), 0, FurnitureStatus.EXISTING,
+                        product.getProductId(), product.getStyleTags(), product.getVariantId()))
+                .toList();
+        return new Room(null, width, depth, 3, "meter", openings, supports);
     }
 }

@@ -80,8 +80,8 @@ class RuleBasedPlacementVariantIdTest {
         MockProductService productService = mock(MockProductService.class);
         when(productService.findByProductIds(List.of())).thenReturn(List.of());
         ProductRecommendationService productRecommendationService = mock(ProductRecommendationService.class);
-        when(productRecommendationService.recommend(eq("desk"), any(AgentContext.class), any(Room.class)))
-                .thenReturn(Optional.of(recommended));
+        when(productRecommendationService.rankedCandidates(eq("desk"), any(AgentContext.class), any(Room.class)))
+                .thenReturn(List.of(recommended));
 
         AgentContext context = new AgentContext(1L, LifestyleGoal.STUDY_FOCUSED, List.of(DesignStyle.MINIMAL),
                 List.of("desk"), List.of(), List.of(1L), List.of(), List.of("minimal"));
@@ -100,8 +100,8 @@ class RuleBasedPlacementVariantIdTest {
         MockProductService productService = mock(MockProductService.class);
         when(productService.findByProductIds(List.of())).thenReturn(List.of());
         ProductRecommendationService productRecommendationService = mock(ProductRecommendationService.class);
-        when(productRecommendationService.recommend(eq("desk"), any(AgentContext.class), any(Room.class)))
-                .thenReturn(Optional.of(product("desk-corner")));
+        when(productRecommendationService.rankedCandidates(eq("desk"), any(AgentContext.class), any(Room.class)))
+                .thenReturn(List.of(product("desk-corner")));
 
         Furniture existingDesk = new Furniture("existing-desk", "desk", "기존 책상", 1.2, 0.6, 0.72,
                 new Position(2.0, 1.0), 0, FurnitureStatus.EXISTING);
@@ -122,7 +122,7 @@ class RuleBasedPlacementVariantIdTest {
                 });
         assertThat(result.getRecommendedFurniture()).filteredOn(item -> !item.getId().equals("existing-desk"))
                 .singleElement().extracting(Furniture::getType).isEqualTo("desk");
-        verify(productRecommendationService).recommend(eq("desk"), any(), any());
+        verify(productRecommendationService).rankedCandidates(eq("desk"), any(), any());
     }
 
     @Test
@@ -130,8 +130,8 @@ class RuleBasedPlacementVariantIdTest {
         MockProductService productService = mock(MockProductService.class);
         when(productService.findByProductIds(List.of())).thenReturn(List.of());
         ProductRecommendationService recommendations = mock(ProductRecommendationService.class);
-        when(recommendations.recommend(eq("desk"), any(AgentContext.class), any(Room.class)))
-                .thenReturn(Optional.of(product("desk-compact")));
+        when(recommendations.rankedCandidates(eq("desk"), any(AgentContext.class), any(Room.class)))
+                .thenReturn(List.of(product("desk-compact")));
         Room room = new Room(null, 8.0, 8.0, 2.4, "meter", List.of(), List.of(
                 existingDesk("existing-desk-1", 1.0, 1.0), existingDesk("existing-desk-2", 1.0, 3.0)));
         AgentContext context = new AgentContext(1L, LifestyleGoal.STUDY_FOCUSED, List.of(DesignStyle.MINIMAL),

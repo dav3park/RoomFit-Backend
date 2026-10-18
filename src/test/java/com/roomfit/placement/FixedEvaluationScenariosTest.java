@@ -37,7 +37,7 @@ class FixedEvaluationScenariosTest {
 
         PlacementResult result = service.recommend(context, room);
 
-        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendationStatus()).as(result.getUnplacedFurniture().toString()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
         assertThat(result.getPlacedFurnitureCount()).isEqualTo(3);
         assertThat(typesOf(result.getRecommendedFurniture())).containsExactlyInAnyOrder("desk", "desk_chair", "monitor");
         assertFullyValid(room, result);
@@ -51,7 +51,7 @@ class FixedEvaluationScenariosTest {
 
         PlacementResult result = service.recommend(context, room);
 
-        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendationStatus()).as(result.getUnplacedFurniture().toString()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
         assertThat(result.getPlacedFurnitureCount()).isEqualTo(2);
         Furniture wardrobe = findByType(result.getRecommendedFurniture(), "wardrobe");
         // natural 스타일 태그를 가진 wardrobe 후보가 존재하므로(wardrobe-classic-gullaberg,
@@ -68,7 +68,7 @@ class FixedEvaluationScenariosTest {
 
         PlacementResult result = service.recommend(context, room);
 
-        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendationStatus()).as(result.getUnplacedFurniture().toString()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
         assertThat(result.getPlacedFurnitureCount()).isEqualTo(3);
         Furniture bed = findByType(result.getRecommendedFurniture(), "bed");
         // bed-loft-desk는 modern/minimal 스타일이라 natural과 겹치지 않아 style 비교에서
@@ -87,7 +87,7 @@ class FixedEvaluationScenariosTest {
 
         PlacementResult result = service.recommend(context, room);
 
-        assertThat(result.getRecommendationStatus()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
+        assertThat(result.getRecommendationStatus()).as(result.getUnplacedFurniture().toString()).isEqualTo(RecommendationExecutionStatus.SUCCESS);
         assertThat(result.getPlacedFurnitureCount()).isEqualTo(3);
         Furniture tv = findByType(result.getRecommendedFurniture(), "tv");
         Furniture mediaConsole = findByType(result.getRecommendedFurniture(), "media_console");

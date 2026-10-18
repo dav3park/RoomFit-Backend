@@ -190,22 +190,34 @@ public class RuleBasedPlacementService implements PlacementService {
 
     private PlacementAttempt tryAddFurniture(Room room, List<Furniture> placed, AgentContext context,
                                              String itemType, MockProduct exactSelectedProduct) {
-        // selectedProductIds에 이 타입의 정확한 선택이 있으면 그걸 그대로 쓴다(3번 우선순위 그대로 유지).
-        // 없을 때만 ProductRecommendationService가 Catalog에서 하나를 고른다.
-        MockProduct product = exactSelectedProduct != null
-                ? exactSelectedProduct
-                : productRecommendationService.recommend(itemType, context, room).orElse(null);
-        if (exactSelectedProduct == null && product != null && product.getVariantId() == null) {
-            // Preserve ProductRecommendationService's public legacy tie-break,
-            // but initial AI layouts use a generated equivalent when available
-            // so every canonical request carries renderer/footprint metadata.
-            product = GeneratedFurnitureCatalog.get().products().stream()
-                    .filter(candidate -> GeneratedFurnitureCatalog.get().sameType(itemType, candidate.getType()))
-                    .findFirst().orElse(product);
+        if (exactSelectedProduct != null) return tryProduct(room, placed, itemType, exactSelectedProduct);
+        List<MockProduct> ranked = productRecommendationService.rankedCandidates(itemType, context, room).stream()
+                .filter(product -> !"bed-loft-desk".equals(product.getVariantId())
+                        || java.util.stream.Stream.concat(context.getRequiredItems().stream(), context.getOptionalItems().stream())
+                            .noneMatch(type -> GeneratedFurnitureCatalog.get().sameType("desk", type))
+                            && placed.stream().noneMatch(item -> GeneratedFurnitureCatalog.get().sameType("desk", item.getType())))
+                .toList();
+        List<MockProduct> generated = ranked.stream().filter(product -> product.getVariantId() != null).toList();
+        List<MockProduct> pool = generated.isEmpty() ? ranked : generated;
+        LinkedHashSet<MockProduct> candidates = new LinkedHashSet<>(pool.stream().limit(4).toList());
+        pool.stream().sorted(Comparator.comparingDouble(product -> product.getWidth() * product.getDepth()))
+                .limit(2).forEach(candidates::add);
+        Set<String> modes = new LinkedHashSet<>();
+        for (MockProduct product : pool) {
+            String mode = GeneratedFurnitureCatalog.get().placementPolicy(product.getVariantId())
+                    .map(policy -> policy.installation()).orElse("FLOOR");
+            if (modes.add(mode)) candidates.add(product);
         }
-        if (product == null) {
-            return new PlacementAttempt(null, null, "NO_RENDERABLE_PRODUCT");
+        PlacementAttempt failure = new PlacementAttempt(null, null, "NO_RENDERABLE_PRODUCT");
+        for (MockProduct product : candidates.stream().limit(8).toList()) {
+            PlacementAttempt attempt = tryProduct(room, placed, itemType, product);
+            if (attempt.furniture() != null) return attempt;
+            failure = attempt;
         }
+        return failure;
+    }
+
+    private PlacementAttempt tryProduct(Room room, List<Furniture> placed, String itemType, MockProduct product) {
         FurnitureSpec spec = FurnitureSpec.from(itemType, product);
         // 시도한 모든 후보 위치의 실패 사유를 모아, 가장 흔했던(대표적인) 사유를
         // 반환한다 — 마지막으로 시도한 위치의 사유만 보면, 후보 20개 중 19개가
@@ -213,16 +225,26 @@ public class RuleBasedPlacementService implements PlacementService {
         // 보고된다. 빈도가 같으면 validationReason()의 검사 순서(경계 -> 충돌 ->
         // 문 -> 창문 -> 동선)로 deterministic하게 tie-break한다.
         Map<String, Integer> reasonCounts = new LinkedHashMap<>();
-        for (PlacementCandidate placementCandidate : placementCandidates(itemType, spec, room, placed)) {
-            Furniture prototype = createRecommendedFurniture(generateFurnitureId(itemType, placed), spec,
-                    placementCandidate.position(), placementCandidate.rotation());
-            Position safePosition = FurnitureBoundary.clamp(room, placementCandidate.position(), prototype).orElse(null);
+        Furniture origin=createRecommendedFurniture(generateFurnitureId(itemType,placed),spec,new Position(0,0),0);
+        var installation=FurnitureInstallationPolicy.policy(origin);
+        List<Furniture> prototypes;
+        if("WINDOW".equals(installation.installation()))prototypes=room.getOpenings().stream().filter(o->"window".equals(o.getType())).limit(4)
+                .map(opening->FurnitureInstallationPolicy.windowCandidate(room,origin,opening)).filter(java.util.Objects::nonNull).toList();
+        else prototypes=placementCandidates(itemType,spec,room,placed).stream()
+                .map(pose->createRecommendedFurniture(origin.getId(),spec,pose.position(),pose.rotation())).toList();
+        if("SUPPORT".equals(installation.installation()))prototypes=placed.stream()
+                .filter(other->installation.supportTypes().contains(GeneratedFurnitureCatalog.get().normalizeType(other.getType())))
+                .limit(4).map(other->createRecommendedFurniture(origin.getId(),spec,FurnitureInstallationPolicy.supportPosition(other),other.getRotation())).toList();
+        if("WALL".equals(installation.installation())||"FLOOR_CEILING".equals(installation.installation()))prototypes=wallCandidates(spec,room).stream()
+                .map(pose->createRecommendedFurniture(origin.getId(),spec,pose.position(),pose.rotation())).toList();
+        for (Furniture prototype : prototypes) {
+            Position safePosition = FurnitureBoundary.clamp(room, prototype.getPosition(), prototype).orElse(null);
             if (safePosition == null) {
                 reasonCounts.merge("NO_VALID_BOUNDARY_PLACEMENT", 1, Integer::sum);
                 continue;
             }
-            Furniture candidate = createRecommendedFurniture(generateFurnitureId(itemType, placed), spec,
-                    safePosition, placementCandidate.rotation());
+            Furniture candidate = new Furniture(prototype.getId(),prototype.getType(),prototype.getLabel(),prototype.getWidth(),prototype.getDepth(),prototype.getHeight(),
+                    safePosition,prototype.getRotation(),prototype.getStatus(),prototype.getProductId(),prototype.getStyleTags(),prototype.getVariantId());
             ValidationResult validation = validationService.validateChange(room, placed, appended(placed, candidate));
             if (isHardValid(validation)) {
                 placed.add(candidate);
@@ -259,6 +281,14 @@ public class RuleBasedPlacementService implements PlacementService {
             return deduplicate(relationshipCandidates(itemType, spec, placed));
         }
         List<PlacementCandidate> candidates = new ArrayList<>();
+        var policy=GeneratedFurnitureCatalog.get().placementPolicy(spec.variantId()).orElse(null);
+        if(policy!=null&&policy.roles().contains("divider")) {
+            var sleepers=placed.stream().filter(item->Set.of("bed","sofa_bed").contains(GeneratedFurnitureCatalog.get().normalizeType(item.getType()))).limit(2).toList();
+            var others=placed.stream().filter(item->Set.of("desk","sofa").contains(GeneratedFurnitureCatalog.get().normalizeType(item.getType()))).limit(2).toList();
+            for(var a:sleepers)for(var b:others){double dx=b.getPosition().getX()-a.getPosition().getX(),dz=b.getPosition().getZ()-a.getPosition().getZ();
+                candidates.add(new PlacementCandidate(new Position((a.getPosition().getX()+b.getPosition().getX())/2,(a.getPosition().getZ()+b.getPosition().getZ())/2),
+                        (Math.toDegrees(Math.atan2(dx,-dz))+360)%360,PlacementRelation.SAFE,candidates.size()));}
+        }
         candidates.addAll(relationshipCandidates(itemType, spec, placed));
         candidates.addAll(environmentCandidates(itemType, spec, room));
         candidates.addAll(safeCandidates(itemType, spec, room, placed));
@@ -359,6 +389,19 @@ public class RuleBasedPlacementService implements PlacementService {
         FurnitureBoundary.UsableBounds usable = FurnitureBoundary.usableBounds(room).orElse(null);
         if (usable == null) return List.of();
         List<PlacementCandidate> candidates = new ArrayList<>();
+        if (!room.getWalls().isEmpty()) {
+            for (var wall : room.getWalls()) {
+                double dx=wall.getEnd().getX()-wall.getStart().getX(), dz=wall.getEnd().getZ()-wall.getStart().getZ(), len=Math.hypot(dx,dz);
+                if (len < spec.width()) continue;
+                double nx=-dz/len, nz=dx/len, mx=(wall.getStart().getX()+wall.getEnd().getX())/2, mz=(wall.getStart().getZ()+wall.getEnd().getZ())/2;
+                if (!FurnitureBoundary.containsPoint(room,mx+nx*.3,mz+nz*.3)) {nx=-nx;nz=-nz;}
+                double rotation=(Math.toDegrees(Math.atan2(-nx,nz))+360)%360;
+                for(double t:new double[]{.5,.25,.75}) candidates.add(new PlacementCandidate(
+                    new Position(wall.getStart().getX()+dx*t+nx*(spec.depth()/2+.08),wall.getStart().getZ()+dz*t+nz*(spec.depth()/2+.08)),
+                    rotation,PlacementRelation.WALL,candidates.size()));
+            }
+            return candidates;
+        }
         addWallCandidates(candidates, spec, usable, "south", 0, 0);
         addWallCandidates(candidates, spec, usable, "east", 90, 3);
         addWallCandidates(candidates, spec, usable, "north", 180, 6);

@@ -51,18 +51,20 @@ public class ValidationService {
                 .filter(item -> !FurnitureDomainPolicy.isRug(item))
                 .toList();
 
-        boolean collisionFree = checkCollisionFree(physicalObstacles, warnings);
-        boolean boundaryValid = checkBoundaryValid(room, activeFurniture, warnings);
+        boolean collisionFree = checkCollisionFree(room, physicalObstacles, warnings);
+        List<ValidationIssue> installationIssues=installationIssues(room,activeFurniture,null);
+        boolean boundaryValid = checkBoundaryValid(room, activeFurniture, warnings) && installationIssues.isEmpty();
         boolean doorClearance = checkOpeningClearance(room, physicalObstacles, "door", warnings);
         boolean windowClearance = checkOpeningClearance(room, physicalObstacles, "window", warnings);
         boolean pathSecured = checkPathSecured(room, physicalObstacles, warnings);
 
         List<ValidationIssue> issues = new ArrayList<>();
-        issues.addAll(collisionIssues(physicalObstacles, null));
+        issues.addAll(installationIssues);
+        issues.addAll(collisionIssues(room, physicalObstacles, null));
         issues.addAll(boundaryIssues(room, activeFurniture));
         issues.addAll(openingIssues(room, physicalObstacles));
         issues.addAll(pathIssues(room, physicalObstacles));
-        issues.addAll(zoneIssues(physicalObstacles, null));
+        issues.addAll(zoneIssues(room, physicalObstacles, null));
 
         return result(collisionFree, boundaryValid, doorClearance, windowClearance, pathSecured, warnings, issues);
     }
@@ -77,7 +79,12 @@ public class ValidationService {
         List<Furniture> candidateItems = candidate == null ? List.of() : candidate;
         List<Furniture> activeBaseline = active(baselineItems);
         List<Furniture> activeCandidate = active(candidateItems);
-        Set<String> evaluatedIds = changedActiveIds(baselineItems, activeCandidate);
+        Set<String> evaluatedIds = new HashSet<>(changedActiveIds(baselineItems, activeCandidate));
+        var beforeInstallations=FurnitureInstallationPolicy.resolve(room,activeBaseline);
+        var afterInstallations=FurnitureInstallationPolicy.resolve(room,activeCandidate);
+        for(var item:activeCandidate){var before=beforeInstallations.get(item.getId());var after=afterInstallations.get(item.getId());
+            if(before!=null&&(!before.equals(after)))evaluatedIds.add(item.getId());
+        }
         List<Furniture> evaluated = activeCandidate.stream()
                 .filter(item -> evaluatedIds.contains(item.getId()))
                 .toList();
@@ -85,10 +92,11 @@ public class ValidationService {
         List<Furniture> physicalEvaluated = physical(evaluated);
         List<String> warnings = new ArrayList<>();
 
-        boolean collisionFree = checkCollisionFreeForChanges(physicalCandidate, evaluatedIds, warnings);
-        boolean boundaryValid = checkBoundaryValid(room, evaluated, warnings);
-        boolean doorClearance = checkOpeningClearance(room, physicalEvaluated, "door", warnings);
-        boolean windowClearance = checkOpeningClearance(room, physicalEvaluated, "window", warnings);
+        boolean collisionFree = checkCollisionFreeForChanges(room, physicalCandidate, evaluatedIds, warnings);
+        List<ValidationIssue> installationIssues=installationIssues(room,activeCandidate,evaluatedIds);
+        boolean boundaryValid = checkBoundaryValid(room, evaluated, warnings) && installationIssues.isEmpty();
+        boolean doorClearance = checkOpeningClearance(room, physicalEvaluated, "door", warnings, activeCandidate);
+        boolean windowClearance = checkOpeningClearance(room, physicalEvaluated, "window", warnings, activeCandidate);
 
         List<String> ignoredWarnings = new ArrayList<>();
         boolean baselinePathSecured = checkPathSecured(room, physical(activeBaseline), ignoredWarnings);
@@ -101,19 +109,14 @@ public class ValidationService {
         }
 
         List<ValidationIssue> issues = new ArrayList<>();
-        issues.addAll(collisionIssues(physicalCandidate, evaluatedIds));
+        issues.addAll(installationIssues);
+        issues.addAll(collisionIssues(room, physicalCandidate, evaluatedIds));
         issues.addAll(boundaryIssues(room, evaluated));
-        issues.addAll(openingIssues(room, physicalEvaluated));
+        issues.addAll(openingIssues(room, physicalEvaluated, activeCandidate));
         issues.addAll(pathIssues(room, pathScope));
-        issues.addAll(zoneIssues(physicalCandidate, evaluatedIds));
+        issues.addAll(zoneIssues(room, physicalCandidate, evaluatedIds));
 
         return result(collisionFree, boundaryValid, doorClearance, windowClearance, pathSecured, warnings, issues);
-    }
-
-    boolean isSafeAddition(Room room, List<Furniture> baseline, Furniture added) {
-        List<Furniture> candidate = new ArrayList<>(baseline);
-        candidate.add(added);
-        return hardValid(validateChange(room, baseline, candidate));
     }
 
     private ValidationResult result(boolean collisionFree, boolean boundaryValid,
@@ -191,10 +194,10 @@ public class ValidationService {
                 && checkPathSecured(room, standalone, warnings);
     }
 
-    private boolean checkCollisionFree(List<Furniture> furniture, List<String> warnings) {
+    private boolean checkCollisionFree(Room room, List<Furniture> furniture, List<String> warnings) {
         for (int i = 0; i < furniture.size(); i++) {
             for (int j = i + 1; j < furniture.size(); j++) {
-                if (FurnitureSupportPolicy.isStrictStack(furniture.get(i), furniture.get(j))
+                if (installationExempt(room,furniture.get(i),furniture.get(j),furniture) || FurnitureSupportPolicy.isStrictStack(furniture.get(i), furniture.get(j))
                         || FurnitureSupportPolicy.isCollisionExempt(furniture.get(i), furniture.get(j))) {
                     continue;
                 }
@@ -207,7 +210,7 @@ public class ValidationService {
         return true;
     }
 
-    private boolean checkCollisionFreeForChanges(List<Furniture> furniture, Set<String> evaluatedIds,
+    private boolean checkCollisionFreeForChanges(Room room, List<Furniture> furniture, Set<String> evaluatedIds,
                                                  List<String> warnings) {
         for (int i = 0; i < furniture.size(); i++) {
             Furniture currentItem = furniture.get(i);
@@ -216,7 +219,7 @@ public class ValidationService {
                 if (!evaluatedIds.contains(currentItem.getId()) && !evaluatedIds.contains(otherItem.getId())) {
                     continue;
                 }
-                if (FurnitureSupportPolicy.isStrictStack(currentItem, otherItem)
+                if (installationExempt(room,currentItem,otherItem,furniture) || FurnitureSupportPolicy.isStrictStack(currentItem, otherItem)
                         || FurnitureSupportPolicy.isCollisionExempt(currentItem, otherItem)) {
                     continue;
                 }
@@ -241,6 +244,11 @@ public class ValidationService {
 
     private boolean checkOpeningClearance(Room room, List<Furniture> furniture,
                                            String openingType, List<String> warnings) {
+        return checkOpeningClearance(room,furniture,openingType,warnings,furniture);
+    }
+
+    private boolean checkOpeningClearance(Room room,List<Furniture> furniture,String openingType,List<String> warnings,List<Furniture> installationScope) {
+        var installations=FurnitureInstallationPolicy.resolve(room,installationScope);
         for (Opening opening : room.getOpenings()) {
             if (!openingType.equals(opening.getType())) {
                 continue;
@@ -254,7 +262,7 @@ public class ValidationService {
                 if ("window".equals(openingType) && isAttachedWindowTreatment(room, opening, item)) {
                     continue;
                 }
-                if ("window".equals(openingType) && item.getHeight() < windowSillHeight(opening)) {
+                if ("window".equals(openingType) && outsideOpeningHeight(room,opening,item,installations)) {
                     continue;
                 }
                 if (obbOverlap(clearanceCorners, worldCorners(item))) {
@@ -269,6 +277,10 @@ public class ValidationService {
     private boolean isAttachedWindowTreatment(Room room, Opening opening, Furniture item) {
         if (!GeneratedFurnitureCatalog.get().sameType("curtain_blind", item.getType())) {
             return false;
+        }
+        if(GeneratedFurnitureCatalog.get().placementPolicy(item.getVariantId()).isPresent()) {
+            var installation=FurnitureInstallationPolicy.resolve(room,List.of(item)).get(item.getId());
+            return installation!=null&&installation.valid()&&opening.getId().equals(installation.openingId());
         }
         FurnitureBoundary.UsableBounds usable = FurnitureBoundary.usableBounds(room).orElse(null);
         if (usable == null) return false;
@@ -338,7 +350,21 @@ public class ValidationService {
     // 재사용하되, 독립된 결과 목록으로 쌓는다 — 기존 boolean/warnings 동작을 바꾸지
     // 않기 위해 일부러 별도 루프로 분리했다.
 
-    private List<ValidationIssue> collisionIssues(List<Furniture> furniture, Set<String> evaluatedIds) {
+    private List<ValidationIssue> installationIssues(Room room,List<Furniture> furniture,Set<String> evaluatedIds) {
+        var installations=FurnitureInstallationPolicy.resolve(room,furniture);
+        return furniture.stream().filter(item->evaluatedIds==null||evaluatedIds.contains(item.getId()))
+            .filter(item->!installations.get(item.getId()).valid())
+            .map(item->new ValidationIssue(item.getId(),null,ValidationIssue.Type.INSTALLATION_INVALID,ValidationIssue.Severity.ERROR,
+                installations.get(item.getId()).reason())).toList();
+    }
+
+    private boolean installationExempt(Room room,Furniture first,Furniture second,List<Furniture> all) {
+        var installed=FurnitureInstallationPolicy.resolve(room,all);var a=installed.get(first.getId());var b=installed.get(second.getId());
+        if(a==null||b==null||!a.valid()||!b.valid())return false;
+        return first.getId().equals(b.supportId())||second.getId().equals(a.supportId())||a.minY()>=b.maxY()-1e-6||b.minY()>=a.maxY()-1e-6;
+    }
+
+    private List<ValidationIssue> collisionIssues(Room room, List<Furniture> furniture, Set<String> evaluatedIds) {
         List<ValidationIssue> issues = new ArrayList<>();
         for (int i = 0; i < furniture.size(); i++) {
             Furniture a = furniture.get(i);
@@ -347,7 +373,7 @@ public class ValidationService {
                 if (evaluatedIds != null && !evaluatedIds.contains(a.getId()) && !evaluatedIds.contains(b.getId())) {
                     continue;
                 }
-                if (FurnitureSupportPolicy.isStrictStack(a, b) || FurnitureSupportPolicy.isCollisionExempt(a, b)) {
+                if (installationExempt(room,a,b,furniture) || FurnitureSupportPolicy.isStrictStack(a, b) || FurnitureSupportPolicy.isCollisionExempt(a, b)) {
                     continue;
                 }
                 if (obbOverlap(worldCorners(a), worldCorners(b))) {
@@ -371,6 +397,11 @@ public class ValidationService {
     }
 
     private List<ValidationIssue> openingIssues(Room room, List<Furniture> furniture) {
+        return openingIssues(room,furniture,furniture);
+    }
+
+    private List<ValidationIssue> openingIssues(Room room,List<Furniture> furniture,List<Furniture> installationScope) {
+        var installations=FurnitureInstallationPolicy.resolve(room,installationScope);
         List<ValidationIssue> issues = new ArrayList<>();
         for (String openingType : List.of("door", "window")) {
             ValidationIssue.Type type = "door".equals(openingType)
@@ -381,7 +412,7 @@ public class ValidationService {
                 if (clearanceCorners.isEmpty()) continue;
                 for (Furniture item : furniture) {
                     if ("window".equals(openingType) && isAttachedWindowTreatment(room, opening, item)) continue;
-                    if ("window".equals(openingType) && item.getHeight() < windowSillHeight(opening)) continue;
+                    if ("window".equals(openingType) && outsideOpeningHeight(room,opening,item,installations)) continue;
                     if (obbOverlap(clearanceCorners, worldCorners(item))) {
                         issues.add(new ValidationIssue(item.getId(), null, type, ValidationIssue.Severity.ERROR,
                                 "door".equals(openingType) ? "문 앞 공간을 가리고 있습니다." : "창문 앞 공간을 가리고 있습니다."));
@@ -390,6 +421,13 @@ public class ValidationService {
             }
         }
         return issues;
+    }
+
+    private boolean outsideOpeningHeight(Room room,Opening opening,Furniture item,Map<String,FurnitureInstallationPolicy.Installation> installations) {
+        var installation=installations.get(item.getId());
+        double bottom=installation==null?0:installation.minY(),top=installation==null?item.getHeight():installation.maxY();
+        double sill=FurnitureInstallationPolicy.windowBottom(room,opening);
+        return top<sill||bottom>=sill+opening.getHeight();
     }
 
     private List<ValidationIssue> pathIssues(Room room, List<Furniture> furniture) {
@@ -409,9 +447,10 @@ public class ValidationService {
         return issues;
     }
 
-    private List<ValidationIssue> zoneIssues(List<Furniture> furniture, Set<String> evaluatedIds) {
+    private List<ValidationIssue> zoneIssues(Room room, List<Furniture> furniture, Set<String> evaluatedIds) {
         List<ValidationIssue> issues = new ArrayList<>();
         for (Furniture item : furniture) {
+            if (Set.of("SUPPORT","WALL","WINDOW").contains(FurnitureInstallationPolicy.policy(item).installation())) continue;
             List<FurnitureClearance.Zone> zones = FurnitureClearance.zonesWorld(item);
             if (zones.isEmpty()) continue;
             for (Furniture other : furniture) {
@@ -419,7 +458,7 @@ public class ValidationService {
                 if (evaluatedIds != null && !evaluatedIds.contains(item.getId()) && !evaluatedIds.contains(other.getId())) {
                     continue;
                 }
-                if (FurnitureSupportPolicy.isStrictStack(item, other)
+                if (installationExempt(room,item,other,furniture) || FurnitureSupportPolicy.isStrictStack(item, other)
                         || FurnitureSupportPolicy.isCollisionExempt(item, other)) continue;
                 List<double[]> otherCorners = worldCorners(other);
                 if (obbOverlap(worldCorners(item), otherCorners)) {

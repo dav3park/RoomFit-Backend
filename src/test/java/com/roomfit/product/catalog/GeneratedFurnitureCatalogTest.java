@@ -21,8 +21,8 @@ class GeneratedFurnitureCatalogTest {
     void packagedCatalogLoadsAllProductsWithUniqueIdsAndValidDimensions() {
         GeneratedFurnitureCatalog catalog = GeneratedFurnitureCatalog.get();
 
-        assertThat(catalog.products()).hasSize(93);
-        assertThat(catalog.variantIds()).hasSize(93);
+        assertThat(catalog.products()).hasSize(193);
+        assertThat(catalog.variantIds()).hasSize(193);
         assertThat(catalog.products()).extracting(MockProduct::getProductId).doesNotHaveDuplicates();
         assertThat(catalog.products()).extracting(MockProduct::getVariantId).doesNotHaveDuplicates();
         assertThat(catalog.products()).allMatch(product -> product.getProductId().equals(product.getVariantId() + "-01"));

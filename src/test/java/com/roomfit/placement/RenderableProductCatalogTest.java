@@ -23,9 +23,41 @@ class RenderableProductCatalogTest {
         assertThat(deskCandidates).hasSize(RenderableProductCatalog.MAX_PRODUCT_CANDIDATES);
         assertThat(deskCandidates).allMatch(product -> product.getVariantId() == null
                 || catalog.supportedVariantIds().contains(product.getVariantId()));
-        assertThat(catalog.supportedVariantIds()).hasSize(93).contains(
+        assertThat(catalog.supportedVariantIds()).hasSize(193).contains(
                 "desk-compact", "chair-midcentury-shell", "bookshelf-high", "hanger-basic",
                 "nightstand-open", "sofa-single", "lamp-floor");
+    }
+
+    @Test
+    void generatedProductsTakePrecedenceOverLegacyFallbacksForCanonicalRequests() {
+        RenderableProductCatalog catalog = new RenderableProductCatalog(new MockProductRepository());
+
+        assertThat(catalog.findCandidates(requirements("mood_lamp"), null))
+                .isNotEmpty()
+                .allSatisfy(product -> {
+                    assertThat(product.getType()).isEqualTo("mood_lamp");
+                    assertThat(product.getVariantId()).isNotBlank();
+                });
+    }
+
+    @Test
+    void legacyProductRemainsAvailableWhenNoMatchingGeneratedProductExists() {
+        MockProduct legacy = product("lamp-legacy", null, "lamp", 0.2, 0.2, 1);
+        RenderableProductCatalog catalog = new RenderableProductCatalog(List.of(legacy));
+
+        assertThat(catalog.findCandidates(requirements("mood_lamp"), null)).containsExactly(legacy);
+    }
+
+    @Test
+    void metadataConstrainedSwapKeepsLegacyMatchesForAmbiguityChecks() {
+        MockProduct legacy = product("lamp-legacy", null, "lamp", 0.2, 0.2, 1);
+        MockProduct generated = product("lamp-floor-01", "lamp-floor", "mood_lamp", 0.3, 0.3, 1.4);
+        RenderableProductCatalog catalog = new RenderableProductCatalog(List.of(legacy, generated));
+        FeedbackProductRequirements requirements = new FeedbackProductRequirements(
+                "mood_lamp", FeedbackSizePreference.ANY, false, List.of("minimal"));
+
+        assertThat(catalog.findSwapCandidates(requirements, null))
+                .containsExactlyInAnyOrder(legacy, generated);
     }
 
     @Test
