@@ -31,6 +31,10 @@ public class OpenAiCompatibleLlmClient implements LlmClient {
         return new OpenAiCompatibleLlmClient(properties, restClientBuilder(properties), objectMapper, Usage.FEEDBACK);
     }
 
+    public static OpenAiCompatibleLlmClient forFeedback(LlmFeedbackProperties properties, ObjectMapper objectMapper, int connectTimeoutMs) {
+        return new OpenAiCompatibleLlmClient(properties, restClientBuilder(properties, connectTimeoutMs), objectMapper, Usage.FEEDBACK);
+    }
+
     OpenAiCompatibleLlmClient(LlmFeedbackProperties properties,
                               RestClient.Builder restClientBuilder,
                               ObjectMapper objectMapper) {
@@ -137,9 +141,13 @@ public class OpenAiCompatibleLlmClient implements LlmClient {
     }
 
     private static RestClient.Builder restClientBuilder(LlmFeedbackProperties properties) {
+        return restClientBuilder(properties, properties.getTimeoutMs());
+    }
+
+    private static RestClient.Builder restClientBuilder(LlmFeedbackProperties properties, int connectTimeoutMs) {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
         int timeoutMs = Math.max(1, properties.getTimeoutMs());
-        requestFactory.setConnectTimeout(timeoutMs);
+        requestFactory.setConnectTimeout(Math.max(1, connectTimeoutMs));
         requestFactory.setReadTimeout(timeoutMs);
         return RestClient.builder().requestFactory(requestFactory);
     }

@@ -95,6 +95,7 @@ class DesignConsultationServiceTest {
         assertThatThrownBy(() -> service.analyze(request, List.of())).isInstanceOfSatisfying(CustomException.class, error -> {
             assertThat(error.getErrorCode()).isEqualTo(ErrorCode.CONSULTATION_FAILED); assertThat(error.getMessage()).doesNotContain("private");
         });
+        verify(client,times(1)).completeStructuredContent(anyString(),any(),anyMap(),anyString());
     }
     @Test void disabledConfigurationDoesNotPretendToAnalyze() {
         var disabled = new DesignConsultationService(new LlmFeedbackProperties(), mapper);
@@ -110,6 +111,41 @@ class DesignConsultationServiceTest {
         provider(response(List.of(item("STYLE", "natural", "내추럴", "USER_TEXT", "fabricated", null))));
         assertThatThrownBy(() -> service.analyze(request, List.of())).isInstanceOfSatisfying(CustomException.class,
                 error -> assertThat(error.getErrorCode().name()).isEqualTo("CONSULTATION_RESPONSE_INVALID"));
+    }
+    @Test void repairsOneInvalidResponseAndValidatesTheReplacement() throws Exception {
+        String invalid=response(List.of(item("PURPOSE", "업무 / 공부", "업무 공간", "USER_TEXT", "fabricated", null)));
+        when(client.completeStructuredContent(anyString(), any(), anyMap(), anyString()))
+                .thenReturn(invalid, response(List.of(work())));
+        var result=service.analyze(request, List.of());
+        assertThat(result.requirements()).hasSize(1);
+        assertThat(result.requirements().getFirst().evidence()).isEqualTo("재택근무");
+        verify(client,times(2)).completeStructuredContent(anyString(), any(), anyMap(), anyString());
+    }
+    @Test void rejectsAnInvalidRepairInsteadOfFallingBackToSuccessfulDefaults() throws Exception {
+        provider(response(List.of(item("KEEP_FURNITURE", "invented", "가구 유지", "USER_TEXT", "침대", null))));
+        assertThatThrownBy(() -> service.analyze(request, List.of())).isInstanceOfSatisfying(CustomException.class,
+                error -> assertThat(error.getErrorCode().name()).isEqualTo("CONSULTATION_RESPONSE_INVALID"));
+        verify(client,times(2)).completeStructuredContent(anyString(), any(), anyMap(), anyString());
+    }
+    @Test void repairCannotExceedTheProviderRequestBudget() throws Exception {
+        provider(response(List.of(work())));
+        for(int i=0;i<19;i++)service.analyze(request,List.of());
+        provider(response(List.of(item("STYLE", "natural", "내추럴", "USER_TEXT", "fabricated", null))));
+        assertThatThrownBy(() -> service.analyze(request, List.of())).isInstanceOf(CustomException.class);
+        verify(client,times(20)).completeStructuredContent(anyString(), any(), anyMap(), anyString());
+    }
+    @Test void chargesRepairToTheNewMinuteWhenTheWindowExpiresDuringAnalysis() throws Exception {
+        String invalid=response(List.of(item("STYLE", "natural", "내추럴", "USER_TEXT", "fabricated", null)));
+        String valid=response(List.of(work()));
+        when(client.completeStructuredContent(anyString(),any(),anyMap(),anyString())).thenAnswer(call->{
+            org.springframework.test.util.ReflectionTestUtils.setField(service,"window",System.nanoTime()-61_000_000_000L);
+            org.springframework.test.util.ReflectionTestUtils.setField(service,"requests",19);
+            return invalid;
+        }).thenReturn(valid);
+        service.analyze(request,List.of());
+        for(int i=0;i<19;i++)service.analyze(request,List.of());
+        assertThatThrownBy(()->service.analyze(request,List.of())).isInstanceOfSatisfying(CustomException.class,
+                error->assertThat(error.getErrorCode()).isEqualTo(ErrorCode.CONSULTATION_RATE_LIMITED));
     }
     @Test void limitsProviderCallsAcrossAllClientIds() throws Exception {
         provider(response(List.of(work())));

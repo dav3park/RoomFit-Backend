@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import java.util.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
 
 class ConsultationAnalysisPlanTest {
     final ObjectMapper mapper=new ObjectMapper();
@@ -48,5 +50,18 @@ class ConsultationAnalysisPlanTest {
         for(var bad:List.of(item("책상","USER_TEXT","실제로 없는 근거",List.of(effect("REQUIRE_TYPE","desk",1))),
                 item("가구 유지","INFERENCE","사진을 보고 추정",List.of(effect("KEEP_ITEM","invented",0)))))
             assertThatThrownBy(()->ConsultationAnalysisPlan.parse(response(List.of(bad)),request,0,service,mapper)).isInstanceOf(IllegalArgumentException.class);
+    }
+    @Test void repairsInvalidExecutionCountsWhileRetainingTheExclusion()throws Exception{
+        var client=mock(com.roomfit.llm.OpenAiCompatibleLlmClient.class);
+        var invalid=item("책상 1개","USER_TEXT","책상",List.of(effect("REQUIRE_TYPE","desk",0)));
+        var corrected=item("책상 1개","USER_TEXT","책상",List.of(effect("REQUIRE_TYPE","desk",1)));
+        var excluded=item("옷장 제외","USER_TEXT","옷장은 필요 없어",List.of(effect("EXCLUDE_TYPE","wardrobe",0)));
+        when(client.completeStructuredContent(anyString(),any(),anyMap(),anyString()))
+                .thenReturn(response(List.of(invalid,excluded)),response(List.of(corrected,excluded)));
+        var result=new DesignConsultationService(client,mapper).analyze(
+                new DesignConsultationRequest("r",request.description(),List.of(),true),List.of());
+        assertThat(result.preparation().conditions().getFirst().effects()).containsExactly(new ConsultationPreparation.Effect("REQUIRE_TYPE","desk",1));
+        assertThat(result.preparation().conditions().getLast().effects()).containsExactly(new ConsultationPreparation.Effect("EXCLUDE_TYPE","wardrobe",0));
+        verify(client,times(2)).completeStructuredContent(anyString(),any(),anyMap(),anyString());
     }
 }
