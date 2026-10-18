@@ -61,12 +61,13 @@ public class DesignConsultationService {
                     Map.of("url", ConsultationImage.dataUrl(image), "detail", "auto")));
             imageMs = elapsedMs(started);
             String instructions = request.recommendationReady()?ConsultationAnalysisPlan.INSTRUCTIONS:INSTRUCTIONS;
+            if(request.recommendationReady()&&!images.isEmpty())instructions+="\n"+ConsultationPhotoInventory.INSTRUCTIONS;
             for (int attempt = 0; ; attempt++) {
                 stage = "provider_request";
                 long providerStarted = System.nanoTime();
                 attempts++;
                 String response;
-                try { response = client.completeStructuredContent(instructions, content, request.recommendationReady()?ConsultationAnalysisPlan.schema():schema(), "roomfit_design_consultation"); }
+                try { response = client.completeStructuredContent(instructions, content, request.recommendationReady()?ConsultationAnalysisPlan.schema(images.size()):schema(), "roomfit_design_consultation"); }
                 finally { providerMs += elapsedMs(providerStarted); }
                 outputChars += response.length();
                 stage = "response_validation";
@@ -149,11 +150,14 @@ public class DesignConsultationService {
             """;
 
     DesignConsultationResult parse(String response, DesignConsultationRequest request, int imageCount) throws Exception {
+        return parse(response,request,imageCount,12);
+    }
+    DesignConsultationResult parse(String response, DesignConsultationRequest request, int imageCount,int maxConditions) throws Exception {
         JsonNode root = mapper.readTree(response);
         fields(root, Set.of("summary", "requirements", "questions"));
         String summary = text(root, "summary", 800, false);
         JsonNode items = root.get("requirements"), questions = root.get("questions");
-        if (!items.isArray() || items.size() > 12 || !questions.isArray() || questions.size() > 4) invalid("ANALYSIS_COLLECTION_LIMIT");
+        if (!items.isArray() || items.size() > maxConditions || !questions.isArray() || questions.size() > 4) invalid("ANALYSIS_COLLECTION_LIMIT");
         var result = new ArrayList<DesignConsultationResult.Requirement>();
         for (JsonNode item : items) {
             fields(item, Set.of("kind", "value", "description", "source", "evidence", "imageIndex", "priority"));

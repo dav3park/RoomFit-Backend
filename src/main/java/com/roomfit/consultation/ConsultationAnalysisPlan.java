@@ -7,17 +7,22 @@ import java.util.*;
 /** One interpretation supplies both review text and executable intent; confirmation does not reinterpret it. */
 final class ConsultationAnalysisPlan {
     private ConsultationAnalysisPlan() {}
-    static Map<String,Object> schema() {
+    static Map<String,Object> schema() { return schema(0); }
+    static Map<String,Object> schema(int imageCount) {
         var string=Map.<String,Object>of("type","string");
-        return ConsultationPreparation.object(Map.of("summary",string,"questions",Map.of("type","array","items",string),
+        var properties=new LinkedHashMap<String,Object>(Map.of("summary",string,"questions",Map.of("type","array","items",string),
                 "requirements",Map.of("type","array","items",ConsultationPreparation.object(Map.of(
                         "description",string,"source",Map.of("type","string","enum",List.of("USER_TEXT","REFERENCE_IMAGE","INFERENCE")),
                         "evidence",string,"imageIndex",Map.of("type",List.of("integer","null")),"priority",Map.of("type","string","enum",List.of("REQUIRED","PREFERRED")),
                         "effects",Map.of("type","array","items",ConsultationPreparation.effectSchema()),"unresolved",Map.of("type","array","items",string))))));
+        if(imageCount>0)properties.put("photoInventory",ConsultationPhotoInventory.schema());
+        return ConsultationPreparation.object(properties);
     }
     static DesignConsultationResult parse(String json,DesignConsultationRequest request,int imageCount,DesignConsultationService service,ObjectMapper mapper)throws Exception {
         var root=mapper.readTree(json);
-        if(!root.isObject()||root.size()!=3||!root.has("summary")||!root.has("requirements")||!root.has("questions")||!root.get("requirements").isArray()||root.get("requirements").size()>12)
+        if(root.path("requirements").isArray()&&root.get("requirements").size()>12)throw new ConsultationValidationException("PLAN_FIELDS");
+        if(imageCount>0&&root.isObject())root=ConsultationPhotoInventory.expand((ObjectNode)root,imageCount);
+        if(!root.isObject()||root.size()!=3||!root.has("summary")||!root.has("requirements")||!root.has("questions")||!root.get("requirements").isArray())
             throw new ConsultationValidationException("PLAN_FIELDS");
         var legacy=(ObjectNode)root.deepCopy();var legacyItems=mapper.createArrayNode();
         var preparedItems=mapper.createArrayNode();var inputs=new ArrayList<ConsultationPreparation.Input>();int index=0;
@@ -36,7 +41,8 @@ final class ConsultationAnalysisPlan {
             inputs.add(new ConsultationPreparation.Input(id,item.path("description").asText(),item.path("priority").asText()));
         }
         legacy.set("requirements",legacyItems);
-        var analysis=service.parse(mapper.writeValueAsString(legacy),request,imageCount);
+        // Validate bounded image expansion before applying explicit-text precedence and the final 12-condition limit.
+        var analysis=service.parse(mapper.writeValueAsString(legacy),request,imageCount,imageCount>0?ConsultationPhotoInventory.MAX_EXPANDED_CONDITIONS:12);
         var wrapper=mapper.createObjectNode();wrapper.set("conditions",preparedItems);
         var preparation=ConsultationPreparation.parse(mapper.writeValueAsString(wrapper),new ConsultationPreparation.Request(request.revision(),inputs,request.furniture()),mapper);
         var requirements=new ArrayList<DesignConsultationResult.Requirement>();var conditions=new ArrayList<ConsultationPreparation.Condition>();
@@ -47,7 +53,7 @@ final class ConsultationAnalysisPlan {
             // A direct user choice wins over a generated default for the same dimension.
             if(!requirement.source().equals("USER_TEXT")&&condition.unresolved().isEmpty()&&condition.effects().stream().allMatch(effect->{
                 for(int j=0;j<analysis.requirements().size();j++){
-                    if(!analysis.requirements().get(j).source().equals("USER_TEXT")||!preparation.conditions().get(j).unresolved().isEmpty())continue;
+                    if(!analysis.requirements().get(j).source().equals("USER_TEXT"))continue;
                     if(preparation.conditions().get(j).effects().stream().anyMatch(explicit->
                             DesignConsultationService.VALUES.containsKey(effect.kind())?explicit.kind().equals(effect.kind()):
                             effect.kind().equals("REQUIRE_TYPE")&&explicit.value().equals(effect.value())
@@ -59,12 +65,13 @@ final class ConsultationAnalysisPlan {
             String signature=condition.unresolved().isEmpty()?condition.effects().stream().map(effect->effect.kind()+":"+effect.value()+":"+effect.count()).sorted().reduce("",(a,b)->a+"|"+b):"";
             if(!signature.isEmpty()&&seen.containsKey(signature)){
                 int previous=seen.get(signature);
-                if(requirement.priority().equals("REQUIRED"))requirements.set(previous,requirement);
+                if(requirement.priority().equals("REQUIRED")||requirement.source().equals("REFERENCE_IMAGE")&&!requirements.get(previous).source().equals("USER_TEXT"))requirements.set(previous,requirement);
                 continue;
             }
             if(!signature.isEmpty())seen.put(signature,requirements.size());
             conditions.add(new ConsultationPreparation.Condition(String.valueOf(requirements.size()),condition.effects(),condition.unresolved()));requirements.add(requirement);
         }
+        if(requirements.size()>12)throw new ConsultationValidationException("PHOTO_CONDITION_LIMIT");
         return new DesignConsultationResult(analysis.revision(),analysis.source(),analysis.summary(),List.copyOf(requirements),analysis.questions(),
                 new ConsultationPreparation.Result(analysis.revision(),List.copyOf(conditions)));
     }
