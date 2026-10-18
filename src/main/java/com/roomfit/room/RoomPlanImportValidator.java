@@ -34,35 +34,53 @@ public class RoomPlanImportValidator {
         // 막고 있어도 그건 방의 원래 상태라서, 일반 가구는 고정설비 위에 "새로 만든 위반"만 검사한다.
         List<Furniture> fixtures = Fixtures.only(room.getFurniture());
         List<Furniture> placed = new ArrayList<>(fixtures);
+        // 이미 방에 있던 상태로 받아들인 항목(고정설비 + 문/창 앞·동선만 어긋난 가구). 이후 가구는
+        // 이 위에 새로 만든 위반만 검사한다.
+        List<Furniture> baseline = new ArrayList<>(fixtures);
 
         for (Furniture original : Fixtures.withoutFixtures(List.copyOf(room.getFurniture()))) {
-            Optional<Furniture> normalized = findStrictSafePlacement(room, placed, original);
+            Optional<Furniture> normalized = findPlacement(room, placed, baseline, original, true);
             if (normalized.isPresent()) {
                 Furniture result = normalized.get();
                 placed.add(result);
                 addRepositionWarningIfNeeded(original, result, warnings);
+                continue;
+            }
+            // 창문 아래 침대처럼 실제 방은 문/창 앞·동선 규칙을 어기고 있을 수 있다. 그런 가구를 통째로
+            // 빼면 스캔과 다른 방이 되므로, 충돌·방 범위만 지키면 경고와 함께 받아들인다.
+            Optional<Furniture> relaxed = findPlacement(room, placed, baseline, original, false);
+            if (relaxed.isPresent()) {
+                Furniture result = relaxed.get();
+                placed.add(result);
+                baseline.add(result);
+                addRepositionWarningIfNeeded(original, result, warnings);
+                warnings.add(warning("FURNITURE_CLEARANCE_ACCEPTED", result,
+                        "문/창문 앞 공간 또는 동선을 가리지만 스캔된 실제 배치라서 그대로 받아들였습니다.",
+                        null, original.getPosition(), result.getPosition(), original.getRotation(), result.getRotation()));
             } else {
                 warnings.add(warning("FURNITURE_UNPLACED", original,
-                        "어떤 위치·90도 회전에서도 strict-safe 배치를 찾지 못해 업로드된 활성 가구에서 제외했습니다.",
+                        "어떤 위치·90도 회전에서도 다른 가구와 겹치지 않고 방 안에 들어가는 배치를 찾지 못해 제외했습니다.",
                         null, original.getPosition(), null, original.getRotation(), null));
             }
         }
 
         room.setFurniture(placed);
-        if (!strictSafe(room, fixtures, placed)) {
+        if (!strictSafe(room, baseline, placed)) {
             throw new IllegalStateException("RoomPlan import must persist only strict-safe furniture");
         }
         room.setImportMetadata(warnings.isEmpty() ? RoomImportStatus.ACCEPTED : RoomImportStatus.ACCEPTED_WITH_WARNINGS,
                 warnings);
     }
 
-    private Optional<Furniture> findStrictSafePlacement(Room room, List<Furniture> placed, Furniture original) {
+    private Optional<Furniture> findPlacement(Room room, List<Furniture> placed, List<Furniture> baseline,
+                                              Furniture original, boolean strict) {
         List<Double> rotations = rotationOrder(original.getRotation());
         for (double rotation : rotations) {
             Furniture rotated = copy(original, original.getPosition(), rotation);
             for (Position candidate : candidatePositions(room, rotated, original.getPosition())) {
                 Furniture proposal = copy(original, candidate, rotation);
-                if (strictSafe(room, fixtures(placed), append(placed, proposal))) {
+                List<Furniture> next = append(placed, proposal);
+                if (strict ? strictSafe(room, baseline, next) : physicallySafe(room, baseline, next)) {
                     return Optional.of(proposal);
                 }
             }
@@ -117,16 +135,21 @@ public class RoomPlanImportValidator {
         return result;
     }
 
-    private List<Furniture> fixtures(List<Furniture> placed) {
-        return placed.stream().filter(Furniture::isFixture).toList();
+    private ValidationResult validateAgainst(Room room, List<Furniture> baseline, List<Furniture> furniture) {
+        return baseline.isEmpty()
+                ? validationService.validate(room, furniture)
+                : validationService.validateChange(room, baseline, furniture);
     }
 
-    private boolean strictSafe(Room room, List<Furniture> fixtures, List<Furniture> furniture) {
-        ValidationResult result = fixtures.isEmpty()
-                ? validationService.validate(room, furniture)
-                : validationService.validateChange(room, fixtures, furniture);
+    private boolean strictSafe(Room room, List<Furniture> baseline, List<Furniture> furniture) {
+        ValidationResult result = validateAgainst(room, baseline, furniture);
         return result.isCollisionFree() && result.isBoundaryValid() && result.isDoorClearance()
                 && result.isWindowClearance() && result.isPathSecured();
+    }
+
+    private boolean physicallySafe(Room room, List<Furniture> baseline, List<Furniture> furniture) {
+        ValidationResult result = validateAgainst(room, baseline, furniture);
+        return result.isCollisionFree() && result.isBoundaryValid();
     }
 
     private List<Furniture> append(List<Furniture> placed, Furniture proposal) {

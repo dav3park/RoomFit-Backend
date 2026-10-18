@@ -77,6 +77,24 @@ class RoomPlanFixtureImportControllerTest {
     }
 
     @Test
+    void realStudioScan_keepsKitchenInPlaceAndBedUnderWindow() throws Exception {
+        // 실기기 스캔(벽 6개 L자 원룸): 침대가 창문 앞을 일부 가리지만 실제 배치라서 빠지면 안 된다.
+        String scan = new String(getClass().getResourceAsStream("/roomplan/studio-kitchen-scan.json").readAllBytes(),
+                java.nio.charset.StandardCharsets.UTF_8);
+        mockMvc.perform(post("/api/rooms/upload")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(scan))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.furniture.length()").value(10))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'bed-1')].type").value("bed"))
+                .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_CLEARANCE_ACCEPTED')].entityId")
+                        .value("bed-1"))
+                .andExpect(jsonPath("$.data.importWarnings[?(@.code == 'FURNITURE_UNPLACED')]").isEmpty())
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'refrigerator-1')].position.x").value(1.29))
+                .andExpect(jsonPath("$.data.furniture[?(@.id == 'base_cabinet-1')].position.x").value(0.73));
+    }
+
+    @Test
     void wallMountWithoutElevation_isRejected() throws Exception {
         mockMvc.perform(post("/api/rooms/upload")
                         .contentType(MediaType.APPLICATION_JSON)
